@@ -9,8 +9,7 @@ import {
 import { Link } from "react-router-dom";
 const MotionLink = motion(Link);
 
-// Import your PNG image from the local system
-import starPublicityImage from '../../../public/assets/herobus.png'; 
+// CHANGE #1: The incorrect image import from the public folder has been removed.
 
 const GALLERY_IMAGES = [
   "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
@@ -31,23 +30,14 @@ const Career = () => {
   const [totalContentWidth, setTotalContentWidth] = useState(0);
 
   useEffect(() => {
-    // Function to calculate and set the scrollable width
     const calculateWidth = () => {
       if (horizontalImagesRef.current) {
         setTotalContentWidth(horizontalImagesRef.current.scrollWidth);
       }
     };
-
-    // Calculate on initial mount
     calculateWidth();
-
-    // Recalculate on window resize to handle orientation changes or browser resizing
     window.addEventListener("resize", calculateWidth);
-
-    // Also recalculate after a short delay to ensure images have loaded and rendered
     const imageLoadTimeout = setTimeout(calculateWidth, 500);
-
-    // Cleanup function to remove event listener
     return () => {
       window.removeEventListener("resize", calculateWidth);
       clearTimeout(imageLoadTimeout);
@@ -57,7 +47,6 @@ const Career = () => {
   const xTransform = useTransform(
     galleryScrollYProgress,
     [0, 1],
-    // Ensure the transform value doesn't go positive
     [0, -Math.max(0, totalContentWidth - (typeof window !== 'undefined' ? window.innerWidth : 0))],
     { ease: easeInOut }
   );
@@ -353,8 +342,9 @@ const Career = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.3 }}
         >
+          {/* CHANGE #2: The src attribute now uses a direct string path */}
           <img
-            src={starPublicityImage}
+            src="/assets/herobus.png"
             alt="Star Publicity Team or Concept"
             className="w-[500px] h-auto md:w-[800px] lg:w-[1200px] object-contain"
             style={{ filter: "grayscale(100%) brightness(50%)" }}

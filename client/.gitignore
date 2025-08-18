@@ -1,0 +1,9 @@
+# Dependencies
+/node_modules
+
+# Environment variables (NEVER push secrets)
+.env
+
+# Production build folder
+/build
+/dist
