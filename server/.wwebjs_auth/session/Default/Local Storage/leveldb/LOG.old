@@ -1,15 +1,3 @@
-2025/08/16-13:01:26.694 73d4 Reusing MANIFEST C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2025/08/16-13:01:26.695 73d4 Recovering log #20
-2025/08/16-13:01:26.696 73d4 Reusing old log C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\Local Storage\leveldb/000020.log 
-2025/08/16-13:03:27.345 73d4 Level-0 table #24: started
-2025/08/16-13:03:27.351 73d4 Level-0 table #24: 12469 bytes OK
-2025/08/16-13:03:27.354 73d4 Delete type=0 #20
-2025/08/16-13:03:27.356 73d4 Compacting 4@0 + 1@1 files
-2025/08/16-13:03:27.363 73d4 Generated table #25@0: 76 keys, 9177 bytes
-2025/08/16-13:03:27.363 73d4 Compacted 4@0 + 1@1 files => 9177 bytes
-2025/08/16-13:03:27.365 73d4 compacted to: files[ 0 1 0 0 0 0 0 ]
-2025/08/16-13:03:27.366 73d4 Delete type=2 #12
-2025/08/16-13:03:27.366 73d4 Delete type=2 #15
-2025/08/16-13:03:27.366 73d4 Delete type=2 #18
-2025/08/16-13:03:27.366 73d4 Delete type=2 #21
-2025/08/16-13:03:27.366 73d4 Delete type=2 #24
+2025/08/18-15:03:57.584 45b4 Reusing MANIFEST C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2025/08/18-15:03:57.586 45b4 Recovering log #23
+2025/08/18-15:03:57.587 45b4 Reusing old log C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\Local Storage\leveldb/000023.log 

@@ -1,46 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import vedeo from "../../../assets/hero.mp4";
 import { useSendATLInquiryMutation } from "../../../features/auth/contactApi";
 
-// --- Import Local Images ---
-import unipolesImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import busBrandingImage from "../../../assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png";
-import busStandsImage from "../../../assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png";
-import autoBrandingImage from "../../../assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png";
-import cityGantriesImage from "../../../assets/ATL_BTL_TTL/City Gantries/City Gantries 1.png";
-import kiosksImage from "../../../assets/ATL_BTL_TTL/Kiosks Advertisements/Kiosks Advertisements 1.png";
-import mallAdsImage from "../../../assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png";
-import vanActivityImage from "../../../assets/ATL_BTL_TTL/Van activity/Van activity 1.png";
-import petrolPumpsImage from "../../../assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png";
-import wallWrapsImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import wallPaintingsImage from "../../../assets/ATL_BTL_TTL/wall painting/wall painting 1.png";
-import railwayAdsImage from "../../../assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png";
-import metroAdsImage from "../../../assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png";
-import airportAdsImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import newspaperAdsImage from "../../../assets/ATL_BTL_TTL/ATL Media/newspaper Ad.png";
-import tvAdsImage from "../../../assets/ATL_BTL_TTL/Metro/Television/Television 1.png";
-import radioAdsImage from "../../../assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png";
+// --- CORRECTED: No local image imports are needed. ---
+// The atlServices array now uses direct string paths.
 
 const atlServices = [
-    { name: "Unipoles", image: unipolesImage, path: "/media/ATL/unipoles" },
-    { name: "Bus Branding", image: busBrandingImage, path: "/media/ATL/bus-branding" },
-    { name: "Bus Stands", image: busStandsImage, path: "/media/ATL/bus-stands" },
-    { name: "Auto Branding", image: autoBrandingImage, path: "/media/ATL/auto-branding" },
-    { name: "City Gantries", image: cityGantriesImage, path: "/media/ATL/city-gantries" },
-    { name: "Kiosks Advertisements", image: kiosksImage, path: "/media/ATL/kiosks" },
-    { name: "City Mall Advertisements", image: mallAdsImage, path: "/media/ATL/mall-ads" },
-    { name: "Van Activity", image: vanActivityImage, path: "/media/ATL/van-activity" },
-    { name: "Petrol Pumps", image: petrolPumpsImage, path: "/media/ATL/petrol-pumps" },
-    { name: "Wall Wraps", image: wallWrapsImage, path: "/media/ATL/wall-wraps" },
-    { name: "Wall Paintings", image: wallPaintingsImage, path: "/media/ATL/wall-paintings" },
-    { name: "Indian Railway Trains/Stations", image: railwayAdsImage, path: "/media/ATL/railway-ads" },
-    { name: "Metro Trains/Stations", image: metroAdsImage, path: "/media/ATL/metro-ads" },
-    { name: "Airports Advertisements", image: airportAdsImage, path: "/media/ATL/airport-ads" },
-    { name: "Newspaper Advertisements", image: newspaperAdsImage, path: "/media/ATL/newspaper-ads" },
-    { name: "News Channels Advertisements", image: tvAdsImage, path: "/media/ATL/tv-ads" },
-    { name: "FM Radio Advertisements", image: radioAdsImage, path: "/media/ATL/radio-ads" },
+    { name: "Unipoles", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/unipoles" },
+    { name: "Bus Branding", image: "/assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png", path: "/media/ATL/bus-branding" },
+    { name: "Bus Stands", image: "/assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png", path: "/media/ATL/bus-stands" },
+    { name: "Auto Branding", image: "/assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png", path: "/media/ATL/auto-branding" },
+    { name: "City Gantries", image: "/assets/ATL_BTL_TTL/City Gantries/City Gantries 1.png", path: "/media/ATL/city-gantries" },
+    { name: "Kiosks Advertisements", image: "/assets/ATL_BTL_TTL/Kiosks Advertisements/Kiosks Advertisements 1.png", path: "/media/ATL/kiosks" },
+    { name: "City Mall Advertisements", image: "/assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png", path: "/media/ATL/mall-ads" },
+    { name: "Van Activity", image: "/assets/ATL_BTL_TTL/Van activity/Van activity 1.png", path: "/media/ATL/van-activity" },
+    { name: "Petrol Pumps", image: "/assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png", path: "/media/ATL/petrol-pumps" },
+    { name: "Wall Wraps", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/wall-wraps" },
+    { name: "Wall Paintings", image: "/assets/ATL_BTL_TTL/wall painting/wall painting 1.png", path: "/media/ATL/wall-paintings" },
+    { name: "Indian Railway Trains/Stations", image: "/assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png", path: "/media/ATL/railway-ads" },
+    { name: "Metro Trains/Stations", image: "/assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png", path: "/media/ATL/metro-ads" },
+    { name: "Airports Advertisements", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/airport-ads" },
+    { name: "Newspaper Advertisements", image: "/assets/ATL_BTL_TTL/ATL Media/newspaper Ad.png", path: "/media/ATL/newspaper-ads" },
+    { name: "News Channels Advertisements", image: "/assets/ATL_BTL_TTL/Metro/Television/Television 1.png", path: "/media/ATL/tv-ads" },
+    { name: "FM Radio Advertisements", image: "/assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png", path: "/media/ATL/radio-ads" },
 ];
 
 const differentiators = [
@@ -218,12 +201,12 @@ function ATLMarketing() {
                 </div>
             </section>
 
-            {/* VIDEO: Adjusted padding and negative margin for a seamless look on all devices. */}
-            <section className="relative -mt-16 md:-mt-24 z-20 px-4 sm:px-8 pb-16 sm:pb-24">
-                <div className="max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border-2 sm:border-4 border-[#B2B0E8] transform hover:scale-[1.005] transition-transform duration-300 ease-out bg-[#B2B0E8]/10">
-                    <video src={vedeo} controls autoPlay muted loop playsInline className="w-full h-auto" />
-                </div>
-            </section>
+               {/* VIDEO: Adjusted padding and negative margin for a seamless look on all devices. */}
+<section className="relative -mt-16 md:-mt-24 z-20 px-4 sm:px-8 pb-16 sm:pb-24">
+    <div className="max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border-2 sm:border-4 border-white transform hover:scale-[1.005] transition-transform duration-300 ease-out bg-gray-100">
+        <video src="/assets/hero.mp4" controls autoPlay muted loop playsInline className="w-full h-auto" />
+    </div>
+</section>
 
             {/* DESCRIPTION: Adjusted padding, font sizes, and grid layout for readability on mobile. */}
             <section className="py-16 md:py-24 px-6 sm:px-12 bg-white relative">

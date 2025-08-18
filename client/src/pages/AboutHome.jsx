@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Step 1: Import your local images
-// Make sure you have an 'assets' folder in your 'src' directory (src/assets)
-// and that your image files are placed inside it.
-import whoWeAreImg from "../assets/ATL_BTL_TTL/ATL Media/Bus Shelter Advertisement.png";
-import audienceImg from "../assets/ATL_BTL_TTL/ATL Media/Unipole.png";
-import creativityImg from "../assets/ATL_BTL_TTL/ATL Media/Unipols 2.png";
-import phoneImg from "../assets/ATL_BTL_TTL/ATL Media/Newspaper Ad.png";
-
+// CORRECTED: The local image imports have been removed.
 
 function App() {
   const [activeTab, setActiveTab] = useState("who");
@@ -16,8 +9,8 @@ function App() {
   const tabs = {
     who: {
       label: "Who we are?",
-      // Step 2: Use the imported image variable
-      thumbnailImage: whoWeAreImg,
+      // CORRECTED: Using a direct path string
+      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Bus Shelter Advertisement.png",
       infoBoxHeading: "Created For You",
       infoBoxText1: (
         <>
@@ -41,8 +34,8 @@ function App() {
     },
     solutions: {
       label: "AUDIENCE",
-      // Use the imported image variable
-      thumbnailImage: audienceImg,
+      // CORRECTED: Using a direct path string
+      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Unipole.png",
       infoBoxHeading: "Know Your Crowd",
       infoBoxText1: (
         <>
@@ -63,8 +56,8 @@ function App() {
     },
     tools: {
       label: "CREATIVITY",
-      // Use the imported image variable
-      thumbnailImage: creativityImg,
+      // CORRECTED: Using a direct path string
+      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Unipols 2.png",
       infoBoxHeading: "Ideas That Spark",
       infoBoxText1: (
         <>
@@ -176,8 +169,8 @@ function App() {
             className="w-full max-w-sm md:max-w-md lg:max-w-lg h-[600px] rounded-xl overflow-hidden shadow-xl mb-10"
           >
             <img
-              // Step 3: Use the imported image variable here as well
-              src={phoneImg}
+              // CORRECTED: Using a direct path string
+              src="/assets/ATL_BTL_TTL/ATL Media/Newspaper Ad.png"
               alt="Phone Screen"
               className="w-full h-full object-cover"
             />

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/logo2.png"; // Adjust the path as necessary
 
 // --- Centralized Navigation Configuration ---
 const navigationConfig = [
@@ -488,7 +487,7 @@ const Navbar = ({ offset, bannerHeight = 0 }) => {
               <Link to="/" aria-label="Home" className="block">
                 <img
                   className="h-10 sm:h-12 lg:h-16 w-auto"
-                  src={logo}
+                  src="/assets/logo2.png" // This is the corrected path
                   alt="Star Publicity Logo"
                 />
               </Link>

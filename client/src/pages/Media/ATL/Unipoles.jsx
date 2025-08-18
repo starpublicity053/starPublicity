@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion"; // Imported for the new CTA section
 
-// --- Import Local Images ---
-import heroBgImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols hero Section.png";
-import benefitDaylightImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 3.png";
-import benefitTrafficImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 4.png";
-import benefitWeatherproofImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 2.png";
+// --- CORRECTED: Local image imports have been removed. ---
 
 const Unipoles = () => {
   const refs = [
@@ -365,7 +361,8 @@ const Unipoles = () => {
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
-            backgroundImage: `url(${heroBgImage})`, // Using local image
+            // CORRECTED: Using direct path string for backgroundImage
+            backgroundImage: `url("/assets/ATL_BTL_TTL/Unipols/Unipols hero Section.png")`, 
             filter: "brightness(0.5) contrast(1.1) grayscale(0.2)",
             transform: "scale(1.03)",
           }}
@@ -428,7 +425,8 @@ const Unipoles = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative overflow-hidden">
               <img
-                src={benefitDaylightImage} // Using local image
+                // CORRECTED: Using direct path string for src
+                src="/assets/ATL_BTL_TTL/Unipols/Unipols 3.png" 
                 alt="Full wrap advertisement on public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -448,7 +446,8 @@ const Unipoles = () => {
           <div className="flex flex-col md:flex-row-reverse items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative overflow-hidden">
               <img
-                src={benefitTrafficImage} // Using local image
+                // CORRECTED: Using direct path string for src
+                src="/assets/ATL_BTL_TTL/Unipols/Unipols 4.png" 
                 alt="Digital screens inside public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -468,7 +467,8 @@ const Unipoles = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative overflow-hidden">
               <img
-                src={benefitWeatherproofImage} // Using local image
+                // CORRECTED: Using direct path string for src
+                src="/assets/ATL_BTL_TTL/Unipols/Unipols 2.png" 
                 alt="Map with highlighted routes and data"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -522,11 +522,9 @@ const Unipoles = () => {
           ))}
         </div>
       </div>
-
-      {/* FOURTH SECTION: Case Study/Portfolio Section - Hero + Grid Layout */}
       
       {/* Call to Action Section - MOVED FROM ATL.JSX */}
-      <section className="relative py-24 px-6 sm:px-12 text-white text-center overflow-hidden" style={{ backgroundColor: '#1A2A80' }}> {/* Applied new color here */}
+      <section className="relative py-24 px-6 sm:px-12 text-white text-center overflow-hidden" style={{ backgroundColor: '#1A2A80' }}>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
         <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#06B6D4] rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>

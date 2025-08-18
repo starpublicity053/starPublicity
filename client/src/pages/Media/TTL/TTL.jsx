@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import vedeo from "../../../assets/hero.mp4";
 import { useSendTTLInquiryMutation } from "../../../features/auth/contactApi";
 
 const ttlServices = [
@@ -107,12 +106,12 @@ function TTLMarketing() {
                 </div>
             </section>
 
-            {/* VIDEO: Adjusted padding and negative margin for a seamless look on all devices. */}
-            <section className="relative -mt-16 md:-mt-24 z-20 px-4 sm:px-8 pb-16 sm:pb-24">
-                <div className="max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border-2 sm:border-4 border-white transform hover:scale-[1.005] transition-transform duration-300 ease-out bg-gray-100">
-                    <video src={vedeo} controls autoPlay muted loop playsInline className="w-full h-auto" />
-                </div>
-            </section>
+           {/* VIDEO: Adjusted padding and negative margin for a seamless look on all devices. */}
+<section className="relative -mt-16 md:-mt-24 z-20 px-4 sm:px-8 pb-16 sm:pb-24">
+    <div className="max-w-6xl mx-auto rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border-2 sm:border-4 border-white transform hover:scale-[1.005] transition-transform duration-300 ease-out bg-gray-100">
+        <video src="/assets/hero.mp4" controls autoPlay muted loop playsInline className="w-full h-auto" />
+    </div>
+</section>
 
             {/* DESCRIPTION: Adjusted padding, font sizes, and grid layout for readability on mobile. */}
             <section className="py-16 md:py-24 px-6 sm:px-12 bg-white relative">

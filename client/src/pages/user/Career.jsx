@@ -9,8 +9,7 @@ import {
 import { Link } from "react-router-dom";
 const MotionLink = motion(Link);
 
-// Import your PNG image from the local system
-import starPublicityImage from '../../assets/herobus.png'; 
+// CORRECTED: The incorrect image import has been removed.
 
 const GALLERY_IMAGES = [
   "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
@@ -354,7 +353,8 @@ const Career = () => {
           viewport={{ once: true, amount: 0.3 }}
         >
           <img
-            src={starPublicityImage}
+            // CORRECTED: Using direct path string for src
+            src="/assets/herobus.png"
             alt="Star Publicity Team or Concept"
             className="w-[500px] h-auto md:w-[800px] lg:w-[1200px] object-contain"
             style={{ filter: "grayscale(100%) brightness(50%)" }}

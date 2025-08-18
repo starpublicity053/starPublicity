@@ -30,14 +30,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// --- IMPORT YOUR PNG ICONS HERE ---
-import billboardIcon from "../../assets/bilboard.png";
-import busIcon from "../../assets/bus1.png";
-import vanIcon from "../../assets/van.png";
-import mallIcon from "../../assets/mall.png";
-import busShelterIcon from "../../assets/busshelter.png";
-import unipolIcon from "../../assets/unipole.png";
-
 // --- FONT & NEW HEADING STYLES ---
 const FontStyles = () => (
     <style>
@@ -87,13 +79,14 @@ const ModernHeroSection = () => {
   const elementsRef = useRef([]);
   const smallCirclesRef = useRef([]);
 
+  // CORRECTED: Removed imports and using direct paths for images from the public folder.
   const mediaOptions = [
-    { text: "Billboard Ad", src: billboardIcon, alt: "Billboard Icon" },
-    { text: "Bus Ad", src: busIcon, alt: "Bus Icon" },
-    { text: "Van Ad", src: vanIcon, alt: "Van Icon" },
-    { text: "Mall Branding", src: mallIcon, alt: "Mall Icon" },
-    { text: "Bus Shelter Ad", src: busShelterIcon, alt: "Bus Shelter Icon" },
-    { text: "Unipole Ad", src: unipolIcon, alt: "Unipole Icon" },
+    { text: "Billboard Ad", src: "/assets/bilboard.png", alt: "Billboard Icon" },
+    { text: "Bus Ad", src: "/assets/bus1.png", alt: "Bus Icon" },
+    { text: "Van Ad", src: "/assets/van.png", alt: "Van Icon" },
+    { text: "Mall Branding", src: "/assets/mall.png", alt: "Mall Icon" },
+    { text: "Bus Shelter Ad", src: "/assets/busshelter.png", alt: "Bus Shelter Icon" },
+    { text: "Unipole Ad", src: "/assets/unipole.png", alt: "Unipole Icon" },
   ];
 
   useEffect(() => {
@@ -121,7 +114,6 @@ const ModernHeroSection = () => {
       let radius = 150;
       const updateOrbitRadius = () => {
         if (!animationWrapperRef.current) return;
-        // RESPONSIVE: Adjust radius based on screen width
         const screenWidth = window.innerWidth;
         if (screenWidth < 640) {
             radius = animationWrapperRef.current.offsetWidth * 0.45;
@@ -173,7 +165,6 @@ const ModernHeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 to-blue-900/80 z-10"></div>
       <div className="absolute inset-0 z-10 opacity-10" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E")`}}></div>
       <div className="z-20 w-full max-w-7xl mx-auto flex flex-col items-center justify-center gap-y-12 lg:gap-y-16">
-        {/* RESPONSIVE: Adjusted max-width for smaller screens */}
         <div ref={animationWrapperRef} className="relative flex-shrink-0 flex items-center justify-center w-full max-w-[300px] aspect-square sm:max-w-[400px] lg:max-w-[550px]">
           <div ref={(el) => (elementsRef.current[0] = el)} className="relative w-[55%] aspect-square bg-white rounded-full flex items-center justify-center shadow-2xl shadow-blue-900/70 p-4">
             <div className="text-center text-slate-800 px-2 sm:px-4">
@@ -182,7 +173,6 @@ const ModernHeroSection = () => {
             </div>
           </div>
           {mediaOptions.map((item, index) => (
-            // RESPONSIVE: Adjusted circle and icon sizes
             <div
               key={index}
               ref={(el) => { elementsRef.current[index + 1] = el; smallCirclesRef.current[index] = el; }}
@@ -194,7 +184,6 @@ const ModernHeroSection = () => {
             </div>
           ))}
         </div>
-        {/* RESPONSIVE: Stacks vertically on mobile, row on sm+ */}
         <div ref={(el) => (elementsRef.current[mediaOptions.length + 1] = el)} className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 lg:gap-16 text-white">
           <div className="flex items-center gap-3 text-center sm:text-left"><Map className="w-8 h-8 text-cyan-300 flex-shrink-0" /><div><h3 className="font-bold text-lg">PAN India</h3><p className="text-sm text-blue-200">Extensive Coverage</p></div></div>
           <div className="flex items-center gap-3 text-center sm:text-left"><ShoppingBag className="w-8 h-8 text-cyan-300 flex-shrink-0" /><div><h3 className="font-bold text-lg">500+ Brands</h3><p className="text-sm text-blue-200">Trusted By Leaders</p></div></div>
@@ -206,7 +195,7 @@ const ModernHeroSection = () => {
 };
 
 
-// --- FULL DATA SOURCE (Restored) ---
+// --- FULL DATA SOURCE ---
 const dashboardData = {
     states: [
         { name: "Punjab", cities: ["Ludhiana", "Amritsar", "Jalandhar"] },
@@ -278,7 +267,6 @@ const DetailModal = ({ item, onClose }) => {
 
     return (
         <AnimatePresence>
-            {/* RESPONSIVE: Outer container allows scrolling on mobile */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -286,7 +274,6 @@ const DetailModal = ({ item, onClose }) => {
                 onClick={onClose}
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-start md:items-center justify-center p-4 overflow-y-auto"
             >
-                {/* RESPONSIVE: Added margin for mobile view and vertical stacking */}
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -368,7 +355,6 @@ const MediaFinderSection = () => {
                     </p>
                 </div>
 
-                {/* RESPONSIVE: Stacks on mobile, becomes 2-col on medium screens+ */}
                 <div className="w-full grid grid-cols-1 md:grid-cols-[300px_1fr] lg:grid-cols-[320px_1fr] gap-6 md:min-h-[70vh]">
                     <div className="bg-slate-800/40 border border-white/10 rounded-xl p-4 flex flex-col">
                         <h3 className="text-xl font-bold mb-4 px-2">Select Location</h3>
@@ -431,7 +417,6 @@ const MediaFinderSection = () => {
                                 exit="hidden"
                                 className="flex-grow overflow-y-auto custom-scrollbar -mr-2 pr-2"
                             >
-                                {/* RESPONSIVE: Adjusts column count based on screen size */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                                     {results.length > 0 ? (
                                         results.map(spot => {
@@ -491,10 +476,8 @@ const AdvertisingMediaSection = () => {
     ];
 
     return (
-        // RESPONSIVE: Adjusted padding
         <motion.section className="bg-white pt-16 pb-24 px-4 sm:px-8 md:px-12 text-gray-800 relative">
             <div className="max-w-7xl mx-auto text-center">
-                {/* RESPONSIVE: Adjusts column count */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                     {mediaTypes.map((media, index) => (
                         <motion.div

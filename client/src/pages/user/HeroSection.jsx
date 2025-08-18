@@ -378,9 +378,9 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import new_hero from "../../assets/hero__image.png";
-// import backgroundImage from "../../../public/assets/BG_image.png";
-import backgroundImage from "../../assets/Hero_section.jpg";
+
+// CORRECTED: Removed incorrect image imports.
+// We will use direct path strings below.
 
 // The StatCard component is well-built and needs no changes.
 const StatCard = ({ value, label, className = "" }) => (
@@ -496,7 +496,8 @@ const HeroSection = () => {
       ref={heroSectionRef}
       className="relative min-h-[109vh] w-full flex items-center font-sans text-white overflow-hidden py-24 sm:py-32"
       style={{
-        backgroundImage: `url(${backgroundImage})`,
+        // CORRECTED: Using direct path string for backgroundImage
+        backgroundImage: `url("/assets/Hero_section.jpg")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -533,7 +534,8 @@ const HeroSection = () => {
           {/* DESKTOP: Image and cards are grouped. The cards are positioned relative to the image, not a fixed container. */}
           <div className="hidden md:block relative">
             <img
-              src={new_hero}
+              // CORRECTED: Using direct path string for src
+              src="/assets/hero__image.png"
               alt="Bus with digital advertising"
               className="w-full h-auto"
             />
@@ -562,7 +564,8 @@ const HeroSection = () => {
           {/* MOBILE: A simple, unbreakable vertical layout. Image is on top, cards are stacked below. */}
           <div className="block md:hidden">
             <img
-              src={new_hero}
+              // CORRECTED: Using direct path string for src
+              src="/assets/hero__image.png"
               alt="Bus with digital advertising"
               className="w-full h-auto px-8"
             />
