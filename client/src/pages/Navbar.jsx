@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../../public/assets/logo2.png"; // Adjust the path as necessary
+import logo from "../assets/logo2.png"; // Adjust the path as necessary
 
 // --- Centralized Navigation Configuration ---
 const navigationConfig = [

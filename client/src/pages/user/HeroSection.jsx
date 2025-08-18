@@ -378,9 +378,9 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import new_hero from "../../../public/assets/hero__image.png";
+import new_hero from "../../assets/hero__image.png";
 // import backgroundImage from "../../../public/assets/BG_image.png";
-import backgroundImage from "../../../public/assets/Hero_section.jpg";
+import backgroundImage from "../../assets/Hero_section.jpg";
 
 // The StatCard component is well-built and needs no changes.
 const StatCard = ({ value, label, className = "" }) => (

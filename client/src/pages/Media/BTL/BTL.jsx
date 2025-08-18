@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import vedeo from "../../../../public/assets/hero.mp4"; // Ensure this path is correct
+import vedeo from "../../../assets/hero.mp4"; // Ensure this path is correct
 
 // Make sure you have created this mutation in your contactApi.js file
 import { useSendBTLInquiryMutation } from "../../../features/auth/contactApi";

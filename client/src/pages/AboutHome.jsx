@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 // Step 1: Import your local images
 // Make sure you have an 'assets' folder in your 'src' directory (src/assets)
 // and that your image files are placed inside it.
-import whoWeAreImg from "../../public/assets/ATL_BTL_TTL/ATL Media/Bus Shelter Advertisement.png";
-import audienceImg from "../../public/assets/ATL_BTL_TTL/ATL Media/Unipole.png";
-import creativityImg from "../../public/assets/ATL_BTL_TTL/ATL Media/Unipols 2.png";
-import phoneImg from "../../public/assets/ATL_BTL_TTL/ATL Media/Newspaper Ad.png";
+import whoWeAreImg from "../assets/ATL_BTL_TTL/ATL Media/Bus Shelter Advertisement.png";
+import audienceImg from "../assets/ATL_BTL_TTL/ATL Media/Unipole.png";
+import creativityImg from "../assets/ATL_BTL_TTL/ATL Media/Unipols 2.png";
+import phoneImg from "../assets/ATL_BTL_TTL/ATL Media/Newspaper Ad.png";
 
 
 function App() {

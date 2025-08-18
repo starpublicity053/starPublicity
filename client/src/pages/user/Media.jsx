@@ -31,12 +31,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 // --- IMPORT YOUR PNG ICONS HERE ---
-import billboardIcon from "../../../public/assets/bilboard.png";
-import busIcon from "../../../public/assets/bus1.png";
-import vanIcon from "../../../public/assets/van.png";
-import mallIcon from "../../../public/assets/mall.png";
-import busShelterIcon from "../../../public/assets/busshelter.png";
-import unipolIcon from "../../../public/assets/unipole.png";
+import billboardIcon from "../../assets/bilboard.png";
+import busIcon from "../../assets/bus1.png";
+import vanIcon from "../../assets/van.png";
+import mallIcon from "../../assets/mall.png";
+import busShelterIcon from "../../assets/busshelter.png";
+import unipolIcon from "../../assets/unipole.png";
 
 // --- FONT & NEW HEADING STYLES ---
 const FontStyles = () => (

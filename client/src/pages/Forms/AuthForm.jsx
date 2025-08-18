@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import animationData from "../../../src/assets/login-animation.json";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { setCredentials } from "../../features/auth/authSlice";

@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion"; // Imported for the new CTA section
 
 // --- Import Local Images ---
-import heroBgImage from "../../../../public/assets/ATL_BTL_TTL/Unipols/Unipols hero Section.png";
-import benefitDaylightImage from "../../../../public/assets/ATL_BTL_TTL/Unipols/Unipols 3.png";
-import benefitTrafficImage from "../../../../public/assets/ATL_BTL_TTL/Unipols/Unipols 4.png";
-import benefitWeatherproofImage from "../../../../public/assets/ATL_BTL_TTL/Unipols/Unipols 2.png";
+import heroBgImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols hero Section.png";
+import benefitDaylightImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 3.png";
+import benefitTrafficImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 4.png";
+import benefitWeatherproofImage from "../../../assets/ATL_BTL_TTL/Unipols/Unipols 2.png";
 
 const Unipoles = () => {
   const refs = [

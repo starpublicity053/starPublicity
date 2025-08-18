@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import vedeo from "../../../../public/assets/hero.mp4";
+import vedeo from "../../../assets/hero.mp4";
 import { useSendTTLInquiryMutation } from "../../../features/auth/contactApi";
 
 const ttlServices = [

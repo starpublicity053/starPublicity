@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import vedeo from "../../../../public/assets/hero.mp4";
+import vedeo from "../../../assets/hero.mp4";
 import { useSendATLInquiryMutation } from "../../../features/auth/contactApi";
 
 // --- Import Local Images ---
-import unipolesImage from "../../../../public/assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import busBrandingImage from "../../../../public/assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png";
-import busStandsImage from "../../../../public/assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png";
-import autoBrandingImage from "../../../../public/assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png";
-import cityGantriesImage from "../../../../public/assets/ATL_BTL_TTL/City Gantries/City Gantries 1.png";
-import kiosksImage from "../../../../public/assets/ATL_BTL_TTL/Kiosks Advertisements/Kiosks Advertisements 1.png";
-import mallAdsImage from "../../../../public/assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png";
-import vanActivityImage from "../../../../public/assets/ATL_BTL_TTL/Van activity/Van activity 1.png";
-import petrolPumpsImage from "../../../../public/assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png";
-import wallWrapsImage from "../../../../public/assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import wallPaintingsImage from "../../../../public/assets/ATL_BTL_TTL/wall painting/wall painting 1.png";
-import railwayAdsImage from "../../../../public/assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png";
-import metroAdsImage from "../../../../public/assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png";
-import airportAdsImage from "../../../../public/assets/ATL_BTL_TTL/ATL Media/unipole.png";
-import newspaperAdsImage from "../../../../public/assets/ATL_BTL_TTL/ATL Media/newspaper Ad.png";
-import tvAdsImage from "../../../../public/assets/ATL_BTL_TTL/Metro/Television/Television 1.png";
-import radioAdsImage from "../../../../public/assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png";
+import unipolesImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
+import busBrandingImage from "../../../assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png";
+import busStandsImage from "../../../assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png";
+import autoBrandingImage from "../../../assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png";
+import cityGantriesImage from "../../../assets/ATL_BTL_TTL/City Gantries/City Gantries 1.png";
+import kiosksImage from "../../../assets/ATL_BTL_TTL/Kiosks Advertisements/Kiosks Advertisements 1.png";
+import mallAdsImage from "../../../assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png";
+import vanActivityImage from "../../../assets/ATL_BTL_TTL/Van activity/Van activity 1.png";
+import petrolPumpsImage from "../../../assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png";
+import wallWrapsImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
+import wallPaintingsImage from "../../../assets/ATL_BTL_TTL/wall painting/wall painting 1.png";
+import railwayAdsImage from "../../../assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png";
+import metroAdsImage from "../../../assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png";
+import airportAdsImage from "../../../assets/ATL_BTL_TTL/ATL Media/unipole.png";
+import newspaperAdsImage from "../../../assets/ATL_BTL_TTL/ATL Media/newspaper Ad.png";
+import tvAdsImage from "../../../assets/ATL_BTL_TTL/Metro/Television/Television 1.png";
+import radioAdsImage from "../../../assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png";
 
 const atlServices = [
     { name: "Unipoles", image: unipolesImage, path: "/media/ATL/unipoles" },
