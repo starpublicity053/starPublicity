@@ -4,17 +4,18 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const reelApi = createApi({
   reducerPath: "reelApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/", // Base URL for all requests
+    // CORRECTED: Use the environment variable for the base URL
+    baseUrl: process.env.VITE_API_URL, 
   }),
   tagTypes: ["Reel"], // Defines the tag for caching purposes
   endpoints: (builder) => ({
     getReels: builder.query({
-      query: () => "api/reels", // URL is now relative to the baseUrl
+      query: () => "reels", // Endpoint is relative to the base URL
       providesTags: ["Reel"],
     }),
     addReel: builder.mutation({
       query: (newReelData) => ({
-        url: "api/reels", // URL is now relative to the baseUrl
+        url: "reels", 
         method: "POST",
         body: newReelData,
       }),
@@ -22,7 +23,7 @@ export const reelApi = createApi({
     }),
     updateReel: builder.mutation({
       query: ({ id, patchData }) => ({
-        url: `api/reels/${id}`, // URL is now relative to the baseUrl
+        url: `reels/${id}`, 
         method: "PUT",
         body: patchData,
       }),
@@ -30,7 +31,7 @@ export const reelApi = createApi({
     }),
     deleteReel: builder.mutation({
       query: (id) => ({
-        url: `api/reels/${id}`, // URL is now relative to the baseUrl
+        url: `reels/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Reel"],

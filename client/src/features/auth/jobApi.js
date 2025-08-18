@@ -3,7 +3,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const jobApi = createApi({
   reducerPath: 'jobApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }), // adjust baseUrl to your backend
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: process.env.VITE_API_URL // CORRECTED: Use the environment variable
+  }), 
   tagTypes: ['Job'],
   endpoints: (builder) => ({
     getJobs: builder.query({
@@ -19,12 +21,12 @@ export const jobApi = createApi({
       invalidatesTags: ['Job'],
     }),
     deleteJob: builder.mutation({
-  query: (id) => ({
-    url: `/jobs/${id}`,
-    method: 'DELETE',
-  }),
-  invalidatesTags: ['Job'],
-}),
+      query: (id) => ({
+        url: `/jobs/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Job'],
+    }),
   }),
 });
 

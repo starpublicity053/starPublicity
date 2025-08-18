@@ -1,14 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// ✅ Define and export your backend URL in this one location.
-export const BACKEND_URL = 'http://localhost:5000';
-
 export const chatbotApi = createApi({
     reducerPath: 'chatbotApi',
-    // Use the constant to construct the base URL for API requests
-    baseQuery: fetchBaseQuery({ baseUrl: `${BACKEND_URL}/api/` }),
+    // Use the environment variable directly for the base URL
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.VITE_API_URL }),
     endpoints: (builder) => ({
         // This endpoint is for your original AI chatbot
+        // It will make a request to: [your_backend_url]/api/query
         postQuery: builder.mutation({
             query: (body) => ({
                 url: 'query',
@@ -17,7 +15,8 @@ export const chatbotApi = createApi({
             }),
         }),
 
-        // ✅ This endpoint is for initiating the WhatsApp Live Chat
+        // This endpoint is for initiating the WhatsApp Live Chat
+        // It will make a request to: [your_backend_url]/api/live-chat/initiate
         initiateLiveChat: builder.mutation({
             query: (body) => ({
                 url: 'live-chat/initiate',

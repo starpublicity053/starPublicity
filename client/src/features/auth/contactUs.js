@@ -2,8 +2,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const contactUsApi = createApi({
-  reducerPath: 'contactApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/' }),
+  reducerPath: 'contactUsApi', // CORRECTED: Gave it a unique name
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: process.env.VITE_API_URL // CORRECTED: Use the environment variable
+  }),
 
   tagTypes: ['Inquiry'],
 

@@ -1,8 +1,8 @@
 // blogApi.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// Replace with your actual backend URL
-const BASE_URL = 'http://localhost:5000/api/';
+// Use the environment variable for the base URL
+const BASE_URL = process.env.VITE_API_URL;
 
 export const blogApi = createApi({
   reducerPath: 'blogApi',

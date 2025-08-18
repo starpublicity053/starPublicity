@@ -1,8 +1,11 @@
 // src/features/api/apiSlice.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'; // ✅ Make sure this import exists
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+// Use the environment variable for the base URL
+const baseUrl = process.env.VITE_API_URL;
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: baseUrl }), // Use the variable here
   endpoints: (builder) => ({}),
 });
