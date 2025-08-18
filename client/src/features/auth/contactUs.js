@@ -2,9 +2,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const contactUsApi = createApi({
-  reducerPath: 'contactUsApi', // CORRECTED: Gave it a unique name
+  reducerPath: 'contactUsApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.VITE_API_URL // CORRECTED: Use the environment variable
+    // Use Vite's correct syntax for environment variables
+    baseUrl: import.meta.env.VITE_API_URL 
   }),
 
   tagTypes: ['Inquiry'],

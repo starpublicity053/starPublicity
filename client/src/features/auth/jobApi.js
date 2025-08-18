@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const jobApi = createApi({
   reducerPath: 'jobApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.VITE_API_URL // CORRECTED: Use the environment variable
+    baseUrl: import.meta.env.VITE_API_URL // CORRECTED: Use Vite's syntax
   }), 
   tagTypes: ['Job'],
   endpoints: (builder) => ({

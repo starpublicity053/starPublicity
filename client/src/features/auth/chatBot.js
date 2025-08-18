@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const chatbotApi = createApi({
     reducerPath: 'chatbotApi',
     // Use the environment variable directly for the base URL
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.VITE_API_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
     endpoints: (builder) => ({
         // This endpoint is for your original AI chatbot
         // It will make a request to: [your_backend_url]/api/query

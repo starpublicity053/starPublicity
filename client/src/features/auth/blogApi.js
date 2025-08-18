@@ -1,8 +1,7 @@
-// blogApi.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// Use the environment variable for the base URL
-const BASE_URL = process.env.VITE_API_URL;
+// Use Vite's syntax to access the environment variable
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const blogApi = createApi({
   reducerPath: 'blogApi',
@@ -27,10 +26,10 @@ export const blogApi = createApi({
       query: (formData) => ({
         url: 'blogs',
         method: 'POST',
-        body: formData, 
+        body: formData,  
       }),
       // Invalidates the 'Blog' tag, triggering a re-fetch of getBlogs
-      invalidatesTags: ['Blog'], 
+      invalidatesTags: ['Blog'],  
     }),
 
     // Mutation to delete a blog
@@ -46,8 +45,8 @@ export const blogApi = createApi({
     updateBlog: builder.mutation({
       // We destructure the 'id' (for the URL) and 'formData' (for the body)
       query: ({ id, formData }) => ({
-        url: `blogs/${id}`, 
-        method: 'PUT', 
+        url: `blogs/${id}`,  
+        method: 'PUT',  
         body: formData, // Send the FormData object (including new image and old imageId)
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Blog', id }], // Invalidate specific blog and all blogs
@@ -64,11 +63,11 @@ export const blogApi = createApi({
   }),
 });
 
-export const { 
-  useGetBlogsQuery, 
-  useGetBlogByIdQuery, 
-  useAddBlogMutation, 
-  useDeleteBlogMutation, 
+export const {  
+  useGetBlogsQuery,  
+  useGetBlogByIdQuery,  
+  useAddBlogMutation,  
+  useDeleteBlogMutation,  
   useUpdateBlogMutation,
   useSubmitContactFormMutation // Export the new mutation hook
 } = blogApi;

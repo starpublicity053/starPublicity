@@ -5,7 +5,7 @@ export const reelApi = createApi({
   reducerPath: "reelApi",
   baseQuery: fetchBaseQuery({
     // CORRECTED: Use the environment variable for the base URL
-    baseUrl: process.env.VITE_API_URL, 
+    baseUrl: import.meta.env.VITE_API_URL, 
   }),
   tagTypes: ["Reel"], // Defines the tag for caching purposes
   endpoints: (builder) => ({
