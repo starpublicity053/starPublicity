@@ -18,7 +18,10 @@ app.use(cors({
 app.use(express.json());
 
 // The Socket.IO connection handler (io.on(...)) has been removed.
-
+// Add this root route for a health check
+app.get('/', (req, res) => {
+  res.send('Star Publicity backend server is live and running!');
+});
 // 🔥 Route ALL requests to web.js
 app.use('/api/auth', webRoutes);
 app.use('/api', webRoutes);
