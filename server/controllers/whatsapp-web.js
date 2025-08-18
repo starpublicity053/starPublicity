@@ -1,5 +1,7 @@
 // whatsapp-web.js
-const { Client, LocalAuth } = require("whatsapp-web.js");
+const { Client } = require("whatsapp-web.js");
+const { MongoAuthStrategy } = require('wwebjs-mongo'); // <-- Import MongoAuthStrategy
+const mongoose = require('mongoose'); // <-- Import mongoose
 const qrcode = require("qrcode-terminal");
 const dotenv = require("dotenv");
 
@@ -10,6 +12,16 @@ let client = null;
 
 const initializeWhatsAppClient = async () => {
   console.log("Attempting to initialize WhatsApp client...");
+
+  // Ensure you have a mongoose connection before initializing
+  if (mongoose.connection.readyState !== 1) {
+    console.log("MongoDB not connected, waiting for connection...");
+    // In a real app, you'd handle this more robustly, but for now,
+    // we assume connectDB() is called in your main app.js before this.
+    // If it still fails, you might need to pass the mongoose connection here.
+    return;
+  }
+
   isClientReady = false;
 
   if (client) {
@@ -22,7 +34,8 @@ const initializeWhatsAppClient = async () => {
   }
 
   client = new Client({
-    authStrategy: new LocalAuth(),
+    // CORRECTED: Use MongoAuthStrategy instead of LocalAuth
+    authStrategy: new MongoAuthStrategy({ mongoose: mongoose }),
     puppeteer: {
       headless: true,
       args: [
@@ -74,7 +87,15 @@ const initializeWhatsAppClient = async () => {
   }
 };
 
-initializeWhatsAppClient();
+// The rest of your file (sendWhatsAppMessage, etc.) remains the same.
+// ... (keep all your other functions as they are)
+
+// Make sure you call this initialization from your main app.js AFTER connectDB() is successful.
+// For example:
+// connectDB().then(() => {
+//   initializeWhatsAppClient();
+//   app.listen(...);
+// });
 
 const getWhatsAppId = (phoneNumber) => {
   if (!phoneNumber) return null;
@@ -269,17 +290,6 @@ If you have urgent questions, feel free to reach out via our website or call (91
   return sendWhatsAppMessage(phone || phoneNumber, confirmationMessage); // Use 'phone' or 'phoneNumber'
 };
 
-/**
- * Send WhatsApp message for Blog Contact Inquiry
- * Accepts all fields from the BlogContactController form.
- * @param {Object} formData
- * @param {string} formData.name
- * @param {string} formData.email
- * @param {string} [formData.company]
- * @param {string} [formData.phone]
- * @param {string} [formData.serviceOfInterest]
- * @param {string} formData.message
- */
 const sendBlogContactInquiryWhatsApp = async (formData) => { 
   const {
     name,
@@ -315,6 +325,7 @@ ${message || "(No message)"}
 };
 
 module.exports = {
+  initializeWhatsAppClient, // Export the initialization function
   client,
   sendWhatsAppMessage,
   sendAtlInquiryWhatsApp,
@@ -322,5 +333,5 @@ module.exports = {
   sendBtlInquiryWhatsApp,
   sendUserConfirmationWhatsApp,
   sendContactInquiryWhatsApp,
-  sendBlogContactInquiryWhatsApp, // Export the new function
+  sendBlogContactInquiryWhatsApp,
 };
