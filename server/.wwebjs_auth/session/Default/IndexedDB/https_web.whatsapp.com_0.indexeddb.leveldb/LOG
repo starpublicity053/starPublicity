@@ -1,0 +1,4 @@
+2025/08/18-09:36:06.388 733c Reusing MANIFEST C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/08/18-09:36:06.390 733c Recovering log #7738
+2025/08/18-09:36:06.391 733c Reusing old log C:\Users\asus\OneDrive\Desktop\Star Publity version 2\Strar Publicity\starPublicity\server\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/007738.log 
+2025/08/18-09:36:08.453 6c4c Manual compaction at level-0 from ' <\x0b\x00\x00\x00' @ 72057594037927935 : 1 .. ' =\x0b\x00\x00\x00' @ 0 : 0; will stop at (end)
