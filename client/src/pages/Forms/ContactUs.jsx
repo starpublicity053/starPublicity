@@ -34,17 +34,16 @@ const ConstellationBackground = () => {
     const animationDuration = 2000; // 2 seconds for the initial animation
     let animationStartTime = Date.now();
 
-    // Easing function for smooth animation
     const easeOutQuad = (t) => t * (2 - t);
 
-    // Set canvas size and initialize stars
     const setup = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 0.7; // Adjust to roughly match hero section height
-      const numStars = window.innerWidth / 8; // Adjust density
+      // RESPONSIVENESS: Changed height to be 100% of the parent container for better scaling.
+      canvas.height = canvas.parentElement.offsetHeight;
+      const numStars = window.innerWidth / 10; // Adjust density slightly for performance
 
       stars = [];
-      animationStartTime = Date.now(); // Reset animation on resize
+      animationStartTime = Date.now();
 
       for (let i = 0; i < numStars; i++) {
         stars.push({
@@ -80,7 +79,6 @@ const ConstellationBackground = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw lines
       ctx.lineWidth = 0.4;
       stars.forEach((star1) => {
         stars.forEach((star2) => {
@@ -110,14 +108,11 @@ const ConstellationBackground = () => {
         }
       });
 
-      // Draw stars
       stars.forEach((star) => {
         if (animationProgress < 1) {
-          // Initial "big bang" animation
           star.x = star.startX + (star.targetX - star.startX) * easedProgress;
           star.y = star.startY + (star.targetY - star.startY) * easedProgress;
         } else {
-          // Normal drifting animation
           star.x += star.vx;
           star.y += star.vy;
 
@@ -125,9 +120,7 @@ const ConstellationBackground = () => {
           if (star.y < 0 || star.y > canvas.height) star.vy *= -1;
         }
 
-        // Twinkle effect
-        star.radius =
-          star.originalRadius + Math.sin(Date.now() * 0.005 + star.x) * 0.5;
+        star.radius = star.originalRadius + Math.sin(Date.now() * 0.005 + star.x) * 0.5;
 
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
@@ -149,6 +142,7 @@ const ConstellationBackground = () => {
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
 };
+
 
 // --- Constants and Configuration ---
 const formConfig = {
@@ -270,7 +264,7 @@ const FormSelect = ({
     </label>
     <div className="relative">
       {Icon && (
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 mt-2" />
+        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
       )}
       <select
         id={name}
@@ -290,7 +284,7 @@ const FormSelect = ({
           </option>
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-8">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
         <svg
           className="fill-current h-4 w-4"
           xmlns="http://www.w3.org/2000/svg"
@@ -443,19 +437,15 @@ const MapSection = () => {
             const altitude = dimensions.width < 768 ? 3.0 : 2.2;
             globeRef.current.pointOfView({ lat: 26, lng: 80, altitude }, 1000);
             
-            // Access controls to enable zoom
             const controls = globeRef.current.controls();
             controls.autoRotate = true;
             controls.autoRotateSpeed = 0.4;
-
-            // ** MODIFIED: Enable zoom and set limits **
             controls.enableZoom = true;
-            controls.minDistance = 150; // Prevents zooming in too close
-            controls.maxDistance = 600; // Prevents zooming out too far
+            controls.minDistance = 150; 
+            controls.maxDistance = 600;
         }
     }, [dimensions]);
 
-    // Function to create a glowing sprite material
     const createGlowMaterial = (color) => {
         const canvas = document.createElement('canvas');
         canvas.width = 64;
@@ -492,7 +482,6 @@ const MapSection = () => {
                         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
                         backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
                         
-                        // Arcs configuration
                         arcsData={arcsData}
                         arcColor="color"
                         arcDashLength={0.4}
@@ -500,7 +489,6 @@ const MapSection = () => {
                         arcDashAnimateTime={2000}
                         arcStroke={0.25}
                         
-                        // Points configuration
                         pointsData={pointsData}
                         pointLabel={p => `<div style="background: rgba(20, 20, 40, 0.7); border-radius: 4px; padding: 4px 8px; color: white; font-family: sans-serif;"><b>${p.name}</b></div>`}
                         pointThreeObjectExtend={true}
@@ -514,7 +502,6 @@ const MapSection = () => {
                         }}
                         onPointHover={setHoveredPoint}
                         
-                        // Globe appearance
                         atmosphereColor="#3a5fb5"
                         atmosphereAltitude={0.25}
                     />
@@ -557,12 +544,12 @@ const ContactUs = () => {
   const [sendContactInquiry, { isLoading, isSuccess, isError, error, reset }] =
     useSendContactInquiryMutation();
   const [submissionAttempted, setSubmissionAttempted] = useState(false);
-  const contactInfoRef = useRef(null);
 
   useEffect(() => {
     if (isSuccess) {
       setShowThankYouModal(true);
       setSubmissionAttempted(false);
+      setFormData(initialFormState);
       reset();
     }
   }, [isSuccess, reset]);
@@ -575,7 +562,6 @@ const ContactUs = () => {
 
   const handleCloseModal = useCallback(() => {
     setShowThankYouModal(false);
-    setFormData(initialFormState);
   }, []);
 
   const validateForm = () => {
@@ -592,7 +578,7 @@ const ContactUs = () => {
     if (!formData.phone) {
       errors.phone = "Phone number is required.";
     } else if (!phoneRegex.test(formData.phone)) {
-      errors.phone = "Invalid phone number. Please enter a 10-digit Indian number starting with 6-9.";
+      errors.phone = "Invalid phone number. Please enter a 10-digit Indian number.";
     }
     if (!formData.email) {
       errors.email = "Email is required.";
@@ -636,236 +622,215 @@ const ContactUs = () => {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700;800&family=Lato:wght@300;400;700&display=swap');
-        
-        .font-inter {
-          font-family: 'Lato', sans-serif;
-        }
-
-        .font-poppins {
-          font-family: 'Exo 2', sans-serif;
-        }
+        .font-inter { font-family: 'Lato', sans-serif; }
+        .font-poppins { font-family: 'Exo 2', sans-serif; }
       `}</style>
-      <div className="min-h-screen font-inter text-gray-900 overflow-x-hidden">
-        <div className="relative flex flex-col items-center justify-start px-4 sm:px-6 lg:px-8 bg-white">
-          <div
-            className="absolute inset-0 w-full h-full"
-            style={{ clipPath: "polygon(0% 10%, 100% 0%, 100% 50%, 0% 60%)" }}
-          >
+      <div className="min-h-screen font-inter text-gray-900 overflow-x-hidden bg-white">
+        
+        {/* RESPONSIVENESS: Revamped Hero and Form layout for all screen sizes */}
+        <div className="relative">
+          {/* Background Section */}
+          <div className="absolute inset-x-0 top-0 h-[70vh] sm:h-[80vh]">
             <div className="absolute inset-0 bg-[#1a2a80]"></div>
             <ConstellationBackground />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a2a80]/50 via-transparent to-transparent"></div>
           </div>
+          
+          {/* Hero Content Section */}
+          <div className="relative px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto text-center text-white pt-24 sm:pt-28 pb-32 sm:pb-48">
+               <motion.div
+                  initial={{ opacity: 0, y: -50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+                >
+                  <h1 className="font-poppins text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-shadow-lg mb-4 sm:mb-6">
+                    Let’s Connect for Outdoor Impact
+                  </h1>
+                  <p className="text-base sm:text-lg md:text-xl font-light opacity-90 max-w-2xl mx-auto">
+                    Reach out to Star Publicity for customized Out-of-home marketing
+                    strategies, expert guidance, and partnership opportunities that
+                    drive real results.
+                  </p>
+                  <div className="mt-8 sm:mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+                    <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
+                      <FiAward className="text-cyan-300" />
+                      <span>Expert Strategy</span>
+                    </div>
+                    <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
+                      <FiGlobe className="text-cyan-300" />
+                      <span>Nationwide Reach</span>
+                    </div>
+                    <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
+                      <FiBriefcase className="text-cyan-300" />
+                      <span>Proven Results</span>
+                    </div>
+                  </div>
+                </motion.div>
+            </div>
 
-          <div className="max-w-7xl mx-auto w-full flex flex-col items-center justify-start z-10 pt-20 pb-40">
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-              className="text-center text-white flex flex-col justify-end pb-12 pt-28"
-            >
-              <h1 className="font-poppins text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-shadow-lg mb-4 sm:mb-6">
-                Let’s Connect for Outdoor Impact
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl font-light opacity-90 max-w-xl mx-auto px-4">
-                Reach out to Star Publicity for customized Out-of-home marketing
-                strategies, expert guidance, and partnership opportunities that
-                drive real results.
-              </p>
+            {/* RESPONSIVENESS: Replaced absolute positioning with a CSS Grid layout. */}
+            {/* This new container will stack items on mobile and create columns on desktop. */}
+            <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start mt-[-100px] sm:mt-[-150px] z-10 relative">
+              
+              {/* --- Contact Info Card (Grid Item 1) --- */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-                className="mt-8 sm:mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-4"
+                className="w-full lg:col-span-2" // Takes up 2 of 5 columns on large screens
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10, delay: 0.7 }}
               >
-                <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
-                  <FiAward className="text-cyan-300" />
-                  <span>Expert Strategy</span>
-                </div>
-                <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
-                  <FiGlobe className="text-cyan-300" />
-                  <span>Nationwide Reach</span>
-                </div>
-                <div className="flex items-center gap-2 border border-white/30 rounded-full px-4 py-2 text-sm backdrop-blur-sm bg-white/10 shadow-md">
-                  <FiBriefcase className="text-cyan-300" />
-                  <span>Proven Results</span>
+                <div className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col gap-8 text-gray-900 border border-gray-100 h-full">
+                    <div className="text-center lg:text-left">
+                        <h3 className="font-poppins text-3xl md:text-4xl font-extrabold mb-4 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-cyan-600">
+                          Get in Touch With Us
+                        </h3>
+                        <p className="text-gray-600 font-light text-lg mb-8 max-w-md mx-auto lg:mx-0">
+                          Don't wait! Let’s turn every space into your brand’s
+                          stage and make your mark today.
+                        </p>
+                    </div>
+                    <div className="space-y-4 text-left">
+                      <motion.a href="mailto:info@starpublicity.co.in" className="flex items-center text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
+                        <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="mr-4 text-blue-600 text-2xl md:text-3xl"> <FiMail /> </motion.div>
+                        <motion.span whileHover={{ x: 5 }} className="text-base md:text-lg font-medium"> info@starpublicity.co.in </motion.span>
+                      </motion.a>
+                      <motion.a href="tel:0161-4668602" className="flex items-center text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
+                        <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="mr-4 text-blue-600 text-2xl md:text-3xl"> <FiPhone /> </motion.div>
+                        <motion.span whileHover={{ x: 5 }} className="text-base md:text-lg font-medium"> 0161-4668602 </motion.span>
+                      </motion.a>
+                      <motion.a href="https://maps.app.goo.gl/your-link" target="_blank" rel="noopener noreferrer" className="flex items-start text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
+                         <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="mr-4 text-blue-600 text-2xl md:text-3xl mt-1"> <FiMapPin /> </motion.div>
+                         <motion.span whileHover={{ x: 5 }} className="text-base md:text-lg font-medium text-left">
+                           SCO- 137, 1st Floor, opp. Apra Tower, Feroz Gandhi Market, Ludhiana, Punjab 141001
+                         </motion.span>
+                      </motion.a>
+                    </div>
                 </div>
               </motion.div>
-            </motion.div>
 
-            <motion.div
-              ref={contactInfoRef}
-              className="relative mt-8 mx-auto rounded-3xl w-11/12 max-w-xl md:max-w-2xl lg:absolute lg:bottom-24 lg:left-12 lg:translate-x-0 transform-gpu transition-all duration-300"
-              initial={{ opacity: 0, x: -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10, delay: 0.7 }}
-            >
-              <div className="bg-white rounded-[22px] p-8 md:p-12 flex flex-col gap-8 items-center text-gray-900 relative overflow-hidden border border-gray-100">
-                <div className="relative z-10 w-full text-center">
-                  <h3 className="font-poppins text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-cyan-600">
-                    Get in Touch With Us
-                  </h3>
-                  <p className="text-gray-600 font-light text-lg mb-8 max-w-md mx-auto">
-                    Don't wait anymore! Let’s turn every space into your brand’s
-                    stage, reach out and make your mark today.
-                  </p>
-                  <div className="space-y-4">
-                    <motion.a href="mailto:info@starpublicity.co.in" className="flex items-center text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
-                      <motion.div whileHover={{ scale: 1.1, rotate: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="mr-4 text-blue-600 text-2xl md:text-3xl transition-colors duration-300">
-                        <FiMail />
+              {/* --- Contact Form (Grid Item 2) --- */}
+              <motion.div
+                className="w-full lg:col-span-3" // Takes up 3 of 5 columns on large screens
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10, delay: 1 }}
+              >
+                <div className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl transition-all duration-300 hover:shadow-3xl">
+                  <h2 className="font-poppins text-3xl font-extrabold text-blue-800 mb-6 text-center border-b pb-4 border-gray-200">
+                    Contact Us
+                  </h2>
+                  <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                    {showSummaryError && (
+                      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 bg-red-100 text-red-700 rounded-lg border border-red-400 font-medium" role="alert">
+                        Please correct the highlighted fields and try again.
                       </motion.div>
-                      <motion.span whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="text-base md:text-lg font-medium">
-                        info@starpublicity.co.in
-                      </motion.span>
-                    </motion.a>
-                    <motion.a href="tel:0161-4668602" className="flex items-center text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
-                      <motion.div whileHover={{ scale: 1.1, rotate: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="mr-4 text-blue-600 text-2xl md:text-3xl transition-colors duration-300">
-                        <FiPhone />
-                      </motion.div>
-                      <motion.span whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="text-base md:text-lg font-medium">
-                        0161-4668602
-                      </motion.span>
-                    </motion.a>
-                    <motion.a href="https://www.google.com/maps/search/?api=1&query=B-12,+Sector+32-A,+Ludhiana,+Punjab,+India" target="_blank" rel="noopener noreferrer" className="flex items-start text-gray-700 hover:text-blue-800 transition-all duration-300 p-3 rounded-xl hover:bg-blue-50 group">
-                      <motion.div whileHover={{ scale: 1.1, rotate: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="mr-4 text-blue-600 text-2xl md:text-3xl transition-colors duration-300 mt-1">
-                        <FiMapPin />
-                      </motion.div>
-                      <motion.span whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }} className="text-base md:text-lg font-medium text-left">
-                        SCO- 137, 1st Floor, opp. Apra Tower, Feroz Gandhi Market, Jila Kacheri Area, Model Gram, Ludhiana, Punjab 141001
-                      </motion.span>
-                    </motion.a>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, x: 50 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10, delay: 1 }}
-              whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 255, 0.25)" }}
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl w-full max-w-xl lg:max-w-none lg:w-[700px] relative overflow-hidden flex-shrink-0 transition-transform duration-300 mx-auto lg:ml-auto lg:mr-0 mt-8"
-            >
-              <h2 className="font-poppins text-3xl font-extrabold text-blue-800 mb-6 tracking-wide text-center border-b pb-4 border-gray-200">
-                Contact Us
-              </h2>
-              <form onSubmit={handleSubmit} className="relative z-10 space-y-6" noValidate>
-                {showSummaryError && (
-                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-3 bg-red-100 text-red-700 rounded-lg border border-red-400 font-medium" role="alert">
-                    Please correct the highlighted fields and try again.
-                  </motion.div>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {formFields.map((field) => {
-                    const Component = field.type === "select" ? FormSelect : FormInput;
-                    return (
-                      <div key={field.name} className={`${field.gridSpan || ""}`}>
-                        <Component label={field.label} name={field.name} type={field.type} value={formData[field.name]} onChange={handleChange} options={field.options} error={validationErrors[field.name]} icon={field.icon} />
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {formFields.map((field) => {
+                        const Component = field.type === "select" ? FormSelect : FormInput;
+                        return (
+                          <div key={field.name} className={`${field.gridSpan || ""}`}>
+                            <Component label={field.label} name={field.name} type={field.type} value={formData[field.name]} onChange={handleChange} options={field.options} error={validationErrors[field.name]} icon={field.icon} />
+                          </div>
+                        );
+                      })}
+                      {formData.topic === "Other" && (
+                        <div className="col-span-1 sm:col-span-2">
+                          <FormInput label="Specify Topic" name="otherTopic" value={formData.otherTopic} onChange={handleChange} error={validationErrors.otherTopic} icon={FiTag} />
+                        </div>
+                      )}
+                      {formData.media === "Other" && (
+                        <div className="col-span-1 sm:col-span-2">
+                          <FormInput label="Specify Media" name="otherMedia" value={formData.otherMedia} onChange={handleChange} error={validationErrors.otherMedia} icon={FiFileText} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label htmlFor="message" className="block mb-2 text-sm font-semibold text-gray-700">Message</label>
+                      <div className="relative">
+                        <textarea id="message" name="message" rows={4} value={formData.message} onChange={handleChange} placeholder="Your message..." className={`w-full rounded-xl border ${validationErrors.message ? "border-red-500" : "border-gray-300"} bg-white px-4 py-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 resize-none transition duration-200`} />
                       </div>
-                    );
-                  })}
-                  {formData.topic === "Other" && (
-                    <div className="col-span-1">
-                      <FormInput label="Specify Topic" name="otherTopic" value={formData.otherTopic} onChange={handleChange} error={validationErrors.otherTopic} icon={FiTag} />
+                      {validationErrors.message && (<p className="mt-1 text-sm text-red-600">{validationErrors.message}</p>)}
                     </div>
-                  )}
-                  {formData.media === "Other" && (
-                    <div className="col-span-1">
-                      <FormInput label="Specify Media" name="otherMedia" value={formData.otherMedia} onChange={handleChange} error={validationErrors.otherMedia} icon={FiFileText} />
-                    </div>
-                  )}
+                    {isError && (
+                      <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-800 font-semibold text-center bg-red-100 p-3 rounded-lg border border-red-400">
+                        Failed to send message:{" "}{error?.data?.message || "Unknown error."}
+                      </motion.p>
+                    )}
+                    <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-900 transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-[1.01] hover:shadow-xl hover:-translate-y-0.5">
+                      {isLoading ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Sending...
+                        </>
+                      ) : (
+                        <>Send Message <FiSend /></>
+                      )}
+                    </button>
+                  </form>
                 </div>
-                <div className="col-span-1 sm:col-span-2">
-                  <label htmlFor="message" className="block mb-2 text-sm font-semibold text-gray-700">Message</label>
-                  <div className="relative">
-                    <textarea id="message" name="message" rows={4} value={formData.message} onChange={handleChange} placeholder="Your message..." className={`w-full rounded-xl border ${validationErrors.message ? "border-red-500" : "border-gray-300"} bg-white px-4 py-3 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 resize-none transition duration-200`} />
-                  </div>
-                  {validationErrors.message && (<p className="mt-1 text-sm text-red-600">{validationErrors.message}</p>)}
-                </div>
-                {isError && (
-                  <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-red-800 font-semibold text-center bg-red-100 p-3 rounded-lg border border-red-400">
-                    Failed to send message:{" "}{error?.data?.message || "Unknown error occurred."}
-                  </motion.p>
-                )}
-                <button type="submit" disabled={isLoading || showSummaryError} className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-900 transition duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-[1.01] hover:shadow-xl hover:-translate-y-0.5">
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Sending...
-                    </>
-                  ) : (
-                    <>Send Message <FiSend /></>
-                  )}
-                </button>
-              </form>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
         </div>
 
+        {/* Map Section */}
         <MapSection />
 
+        {/* 'Expand Your Reach' Section */}
         <motion.section
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={{ hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 20, delay: 0.2, }, }, }}
-          className="relative py-16 sm:py-20 px-4 sm:px-6 md:px-20 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden rounded-tl-[60px] rounded-tr-[60px] sm:rounded-tl-[90px] sm:rounded-tr-[90px] mt-8 sm:mt-16"
+          className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100"
         >
-          <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16 relative z-10">
-            <h2 className="font-poppins text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-900 mb-2 sm:mb-4 leading-tight">
-              Expand Your Reach: Specialized Outdoor Advertising Solutions
+          <div className="max-w-7xl mx-auto text-center mb-12 sm:mb-16">
+            <h2 className="font-poppins text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-900 mb-4 leading-tight">
+              Expand Your Reach
             </h2>
-            <p className="text-base sm:text-lg text-blue-700 max-w-2xl mx-auto opacity-90 font-medium px-2">
-              Explore how our tailored outdoor media strategies can elevate your
-              brand. Connect with our experts for insights into market trends,
-              innovative ad formats, and maximizing your campaign's impact.
+            <p className="text-base sm:text-lg text-blue-700 max-w-3xl mx-auto opacity-90 font-medium">
+              Explore how our tailored outdoor media strategies can elevate your brand. Connect with our experts for insights into market trends and innovative ad formats.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto relative z-10">
-            <motion.div variants={cardVariants} custom={0} className="group bg-white rounded-3xl p-6 sm:p-8 shadow-2xl transition-all duration-300 hover:shadow-3xl hover:-translate-y-3 flex flex-col items-center text-center relative overflow-hidden border border-blue-100 transform-gpu">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10 bg-blue-500 text-white p-4 sm:p-5 rounded-full text-3xl sm:text-4xl shadow-lg mb-4 sm:mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:bg-blue-600">
-                <FiFeather />
-              </div>
-              <h3 className="font-poppins relative z-10 text-xl sm:text-2xl font-bold mb-2 text-blue-800">
-                Dedicated Campaign Success Support
-              </h3>
-              <p className="relative z-10 text-gray-700 text-sm sm:text-base mb-4 flex-grow">
-                From initial concept to post-campaign analysis, our team provides
-                comprehensive support to ensure your outdoor advertising achieves
-                its full potential.
-              </p>
-            </motion.div>
-            <motion.div variants={cardVariants} custom={1} className="group bg-white rounded-3xl p-6 sm:p-8 shadow-2xl transition-all duration-300 hover:shadow-3xl hover:-translate-y-3 flex flex-col items-center text-center relative overflow-hidden border border-blue-100 transform-gpu">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 to-indigo-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10 bg-indigo-500 text-white p-4 sm:p-5 rounded-full text-3xl sm:text-4xl shadow-lg mb-4 sm:mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:bg-indigo-600">
-                <FiAward />
-              </div>
-              <h3 className="font-poppins relative z-10 text-xl sm:text-2xl font-bold mb-2 text-blue-800">
-                Strategic Media & Location Partnerships
-              </h3>
-              <p className="relative z-10 text-gray-700 text-sm sm:text-base mb-4 flex-grow">
-                Leverage our extensive network of premium outdoor sites and media
-                channels. We forge powerful partnerships to secure the best
-                locations for your brand's visibility.
-              </p>
-            </motion.div>
-            <motion.div variants={cardVariants} custom={2} className="group bg-white rounded-3xl p-6 sm:p-8 shadow-2xl transition-all duration-300 hover:shadow-3xl hover:-translate-y-3 flex flex-col items-center text-center relative overflow-hidden border border-blue-100 transform-gpu">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-purple-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10 bg-purple-500 text-white p-4 sm:p-5 rounded-full text-3xl sm:text-4xl shadow-lg mb-4 sm:mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:bg-purple-600">
-                <FiBriefcase />
-              </div>
-              <h3 className="font-poppins relative z-10 text-xl sm:text-2xl font-bold mb-2 text-blue-800">
-                Innovate with Us: OOH Career Paths
-              </h3>
-              <p className="relative z-10 text-gray-700 text-sm sm:text-base mb-4 flex-grow">
-                Join a team at the forefront of outdoor advertising innovation.
-                Discover roles in media planning, creative design, site
-                management, and more.
-              </p>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+             <motion.div variants={cardVariants} custom={0} className="group bg-white rounded-3xl p-8 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center border border-transparent hover:border-blue-200">
+               <div className="bg-blue-500 text-white p-5 rounded-full text-4xl shadow-md mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:bg-blue-600">
+                 <FiFeather />
+               </div>
+               <h3 className="font-poppins text-xl sm:text-2xl font-bold mb-2 text-blue-800">
+                 Campaign Success Support
+               </h3>
+               <p className="text-gray-700 text-sm sm:text-base flex-grow">
+                 From concept to post-campaign analysis, our team provides comprehensive support to ensure your advertising achieves its full potential.
+               </p>
+             </motion.div>
+             <motion.div variants={cardVariants} custom={1} className="group bg-white rounded-3xl p-8 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center border border-transparent hover:border-indigo-200">
+                <div className="bg-indigo-500 text-white p-5 rounded-full text-4xl shadow-md mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:bg-indigo-600">
+                  <FiAward />
+                </div>
+                <h3 className="font-poppins text-xl sm:text-2xl font-bold mb-2 text-blue-800">
+                  Strategic Media Partnerships
+                </h3>
+                <p className="text-gray-700 text-sm sm:text-base flex-grow">
+                  Leverage our extensive network of premium outdoor sites. We forge powerful partnerships to secure the best locations for your brand.
+                </p>
+             </motion.div>
+             <motion.div variants={cardVariants} custom={2} className="group bg-white rounded-3xl p-8 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center border border-transparent hover:border-purple-200">
+                <div className="bg-purple-500 text-white p-5 rounded-full text-4xl shadow-md mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:bg-purple-600">
+                  <FiBriefcase />
+                </div>
+                <h3 className="font-poppins text-xl sm:text-2xl font-bold mb-2 text-blue-800">
+                  Innovate with Us: OOH Careers
+                </h3>
+                <p className="text-gray-700 text-sm sm:text-base flex-grow">
+                  Join a team at the forefront of advertising innovation. Discover roles in media planning, creative design, and site management.
+                </p>
+             </motion.div>
           </div>
         </motion.section>
 
