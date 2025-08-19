@@ -7,14 +7,14 @@ import {
   useTransform,
   useSpring,
 } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Assuming this path is correct for your Button component
+import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, X } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useGetBlogsQuery } from "../../features/auth/blogApi"; // Import the RTK Query hook for fetching all blogs
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import Link, useNavigate, and useLocation for navigation and URL params
+import { useGetBlogsQuery } from "../../features/auth/blogApi";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // ===============================================
-// MODAL COMPONENT (InternalModal) - Remains unchanged
+// MODAL COMPONENT (InternalModal)
 // ===============================================
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9, y: 50 },
@@ -127,8 +127,9 @@ const InternalModal = ({
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* ✅ UPDATED: Increased z-index for the backdrop */}
           <motion.div
-            className={`fixed inset-0 ${backdropColor} z-40`}
+            className={`fixed inset-0 ${backdropColor} z-[1000]`}
             variants={backdropVariants}
             initial="hidden"
             animate="visible"
@@ -137,11 +138,12 @@ const InternalModal = ({
             aria-hidden="true"
           />
 
+          {/* ✅ UPDATED: Increased z-index for the modal content */}
           <motion.div
             ref={modalRef}
-            className={`fixed inset-0 m-auto h-auto max-h-[90vh] rounded-2xl shadow-2xl z-50 p-8 md:p-10 flex flex-col font-sans overflow-hidden
-                         ${modalSizeClasses[size]} bg-gradient-to-br from-blue-700 to-blue-900 text-white border-2 border-blue-500
-                         ${className}`}
+            className={`fixed inset-0 m-auto h-auto max-h-[90vh] rounded-2xl shadow-2xl z-[1001] p-8 md:p-10 flex flex-col font-sans overflow-hidden
+                                  ${modalSizeClasses[size]} bg-gradient-to-br from-blue-700 to-blue-900 text-white border-2 border-blue-500
+                                  ${className}`}
             aria-modal="true"
             role="dialog"
             aria-labelledby="modal-title"
@@ -164,7 +166,7 @@ const InternalModal = ({
                 onClick={onClose}
                 type="button"
                 className="relative p-2 rounded-full bg-blue-600/50 hover:bg-red-500/80 transition-all duration-300
-                               focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-700 group"
+                                       focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-700 group"
                 aria-label="Close filter modal"
                 ref={(el) => {
                   if (!firstFocusableElement.current)
@@ -227,7 +229,7 @@ const useGlobalTilt = (
 };
 
 // ===============================================
-// WorkCard Component - Now uses dynamic data from blogPosts
+// WorkCard Component
 // ===============================================
 const WorkCard = ({ item, index }) => {
   const cardRef = useRef(null);
@@ -261,7 +263,6 @@ const WorkCard = ({ item, index }) => {
   const imageParallaxY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    // Link to the dynamic blog detail page using item._id
     <Link to={`/resources/blogs/${item._id}`} className="block">
       <motion.div
         ref={cardRef}
@@ -310,7 +311,7 @@ const WorkCard = ({ item, index }) => {
 
         <div className="w-full aspect-[4/5] overflow-hidden relative z-0">
           <motion.img
-            src={item.imageUrl} // Dynamic image URL from the blog post
+            src={item.imageUrl}
             alt={item.title}
             className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-125 group-hover:brightness-105"
             style={{ y: imageParallaxY }}
@@ -323,7 +324,7 @@ const WorkCard = ({ item, index }) => {
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            {item.title} {/* Dynamic blog title */}
+            {item.title}
           </motion.h3>
           <motion.p
             className="text-blue-600 text-sm md:text-base font-normal"
@@ -332,7 +333,6 @@ const WorkCard = ({ item, index }) => {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             By: {item.author || item.category}{" "}
-            {/* Dynamic author or category */}
           </motion.p>
         </div>
       </motion.div>
@@ -349,24 +349,20 @@ const Blogs = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const initialVisibleCards = 3; // Changed to 3 as per instruction
+  const initialVisibleCards = 3;
   const cardsPerLoad = 6;
   const [visibleCards, setVisibleCards] = useState(initialVisibleCards);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // State to hold selected tags for filtering
   const [selectedTagsFilter, setSelectedTagsFilter] = useState([]);
-  // State to hold temporary selected tags in the modal before applying
   const [tempSelectedTags, setTempSelectedTags] = useState([]);
 
-  // Fetch all blog posts using the RTK Query hook
   const {
-    data: blogPosts = [], // Default to empty array if data is not yet available
+    data: blogPosts = [],
     isLoading,
     isError,
     error,
   } = useGetBlogsQuery();
 
-  // Effect to read tags from URL on initial load or URL change
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tagParam = params.get("tag");
@@ -375,26 +371,22 @@ const Blogs = () => {
         .split(",")
         .map((tag) => decodeURIComponent(tag.trim()));
       setSelectedTagsFilter(tagsFromUrl);
-      setTempSelectedTags(tagsFromUrl); // Initialize temp with URL tags
+      setTempSelectedTags(tagsFromUrl);
     } else {
       setSelectedTagsFilter([]);
       setTempSelectedTags([]);
     }
   }, [location.search]);
 
-  // Filter blogs based on selectedTagsFilter
   const filteredWorkImages = blogPosts.filter((blog) => {
     if (selectedTagsFilter.length === 0) {
-      return true; // Show all blogs if no tags are selected
+      return true;
     }
-    // Check if the blog has any of the selected tags
     return selectedTagsFilter.some(
       (selectedTag) => blog.tags && blog.tags.includes(selectedTag)
     );
   });
 
-  // The "Load More" button should be visible only when there are more blog posts to show.
-  // It will be hidden once all available blog posts are displayed.
   const shouldShowLoadMoreButton = filteredWorkImages.length > visibleCards;
 
   const handleLoadMore = () => {
@@ -405,16 +397,14 @@ const Blogs = () => {
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
-    // Reset temporary selections if modal is closed without applying
     setTempSelectedTags(selectedTagsFilter);
   }, [selectedTagsFilter]);
 
   const handleApplyFilters = () => {
     setSelectedTagsFilter(tempSelectedTags);
-    setVisibleCards(initialVisibleCards); // Reset visible cards on filter apply
+    setVisibleCards(initialVisibleCards);
     setIsModalOpen(false);
 
-    // Update URL with selected tags
     const params = new URLSearchParams();
     if (tempSelectedTags.length > 0) {
       params.set(
@@ -426,26 +416,24 @@ const Blogs = () => {
   };
 
   const handleResetFilters = () => {
-    setSelectedTagsFilter([]); // Reset to no tags selected
-    setTempSelectedTags([]); // Clear temporary selections
+    setSelectedTagsFilter([]);
+    setTempSelectedTags([]);
     setVisibleCards(initialVisibleCards);
     setIsModalOpen(false);
-    navigate({ search: "" }); // Clear URL parameters
+    navigate({ search: "" });
   };
 
-  // Handle change for tag filter (checkboxes)
   const handleTagFilterChange = (tagValue) => {
     setTempSelectedTags((prevTags) => {
       if (prevTags.includes(tagValue)) {
-        return prevTags.filter((tag) => tag !== tagValue); // Remove tag if already selected
+        return prevTags.filter((tag) => tag !== tagValue);
       } else {
-        return [...prevTags, tagValue]; // Add tag if not selected
+        return [...prevTags, tagValue];
       }
     });
   };
 
-  // Hero image remains static as per original design
-  const heroImage = "../../../../public/assets/blog.jpg"; // Adjust path as necessary
+  const heroImage = "../../../../public/assets/blog.jpg";
 
   const heroRef = useRef(null);
   const { scrollYProgress: heroScrollProgress } = useScroll({
@@ -525,24 +513,9 @@ const Blogs = () => {
     };
   }, [filterRef, showAllWorkRef]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen font-sans bg-gray-50 text-gray-900">
-        <p>Loading blog posts...</p>
-      </div>
-    );
-  }
+  // ✅ UPDATED: The early returns for isLoading and isError have been removed.
+  // The logic is now handled directly inside the JSX below.
 
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center min-h-screen font-sans bg-gray-50 text-red-600">
-        <p>Error loading posts: {error.message || "Unknown error"}</p>
-      </div>
-    );
-  }
-
-  // Get unique tags for the filter modal
-  // Ensure tags are an array, flatmap to handle cases where blog.tags might be undefined or not an array
   const uniqueTags = [
     ...new Set(blogPosts.flatMap((blog) => blog.tags || [])),
   ].filter(Boolean);
@@ -641,8 +614,8 @@ const Blogs = () => {
                   onClick={() => setIsModalOpen(true)}
                   type="button"
                   className="relative inline-flex items-center mt-6 group cursor-pointer
-                                         text-blue-600 hover:text-blue-800 transition-colors duration-200 ease-in-out
-                                         focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md"
+                                                   text-blue-600 hover:text-blue-800 transition-colors duration-200 ease-in-out
+                                                   focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 rounded-md"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.5 }}
@@ -701,7 +674,18 @@ const Blogs = () => {
             </motion.svg>
 
             <div className="pt-20 pb-0">
-              {filteredWorkImages.length > 0 ? (
+              {/* ✅ UPDATED: Conditional rendering for loading and error states */}
+              {isLoading ? (
+                <div className="text-center py-20 text-gray-600">
+                  <p>Loading blog posts...</p>
+                </div>
+              ) : isError ? (
+                <div className="text-center py-20 text-red-600">
+                  <p>
+                    Error loading posts: {error.message || "Could not connect to the server."}
+                  </p>
+                </div>
+              ) : filteredWorkImages.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 max-w-[1200px] mx-auto">
                   {filteredWorkImages
                     .slice(0, visibleCards)
@@ -775,7 +759,7 @@ const Blogs = () => {
       <InternalModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="FILTER BY TAGS" // Changed title to reflect tag filter
+        title="FILTER BY TAGS"
         size="md"
         backdropColor="bg-black/80"
       >
@@ -786,40 +770,39 @@ const Blogs = () => {
             <div key="All Blogs">
               <label
                 className="relative inline-flex items-center cursor-pointer text-white text-lg md:text-xl font-medium w-full
-                                         p-3 md:p-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 ease-in-out"
+                                             p-3 md:p-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 ease-in-out"
               >
                 <input
-                  type="checkbox" // Changed to checkbox
+                  type="checkbox"
                   className="absolute h-0 w-0 opacity-0 peer"
                   name="blogTagFilter"
                   value="All Blogs"
-                  checked={tempSelectedTags.length === 0} // Checked if no tags are selected
-                  onChange={() => setTempSelectedTags([])} // Selecting "All Blogs" clears all other tags
+                  checked={tempSelectedTags.length === 0}
+                  onChange={() => setTempSelectedTags([])}
                 />
                 <span
                   className="relative flex-shrink-0 w-5 h-5 mr-3 md:w-6 md:h-6 md:mr-4
-                                         border-2 border-white rounded-md transition-all duration-200
-                                         peer-checked:bg-white peer-checked:border-blue-300
-                                         peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-blue-700 peer-focus-visible:ring-white"
+                                           border-2 border-white rounded-md transition-all duration-200
+                                           peer-checked:bg-white peer-checked:border-blue-300
+                                           peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-blue-700 peer-focus-visible:ring-white"
                 >
                   <span
                     className="absolute inset-1 rounded-sm bg-blue-700 opacity-0
-                                             peer-checked:opacity-100 transition-opacity duration-200"
+                                                   peer-checked:opacity-100 transition-opacity duration-200"
                   ></span>
                 </span>
                 <span className="select-none">All Blogs</span>
               </label>
             </div>
 
-            {/* Dynamically generate filter options from unique tags */}
             {uniqueTags.map((tag) => (
               <div key={tag}>
                 <label
                   className="relative inline-flex items-center cursor-pointer text-white text-lg md:text-xl font-medium w-full
-                                         p-3 md:p-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 ease-in-out"
+                                               p-3 md:p-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 ease-in-out"
                 >
                   <input
-                    type="checkbox" // Changed to checkbox
+                    type="checkbox"
                     className="absolute h-0 w-0 opacity-0 peer"
                     name="blogTagFilter"
                     value={tag}
@@ -828,13 +811,13 @@ const Blogs = () => {
                   />
                   <span
                     className="relative flex-shrink-0 w-5 h-5 mr-3 md:w-6 md:h-6 md:mr-4
-                                         border-2 border-white rounded-md transition-all duration-200
-                                         peer-checked:bg-white peer-checked:border-blue-300
-                                         peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-blue-700 peer-focus-visible:ring-white"
+                                             border-2 border-white rounded-md transition-all duration-200
+                                             peer-checked:bg-white peer-checked:border-blue-300
+                                             peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-blue-700 peer-focus-visible:ring-white"
                   >
                     <span
                       className="absolute inset-1 rounded-sm bg-blue-700 opacity-0
-                                                 peer-checked:opacity-100 transition-opacity duration-200"
+                                                       peer-checked:opacity-100 transition-opacity duration-200"
                     ></span>
                   </span>
                   <span className="select-none">{tag}</span>
@@ -849,8 +832,8 @@ const Blogs = () => {
             onClick={handleResetFilters}
             type="button"
             className="flex-1 border-2 border-white text-white px-6 py-3 bg-transparent rounded-full uppercase
-                                 hover:bg-white hover:text-blue-700 transition-colors duration-200
-                                 focus:outline-none focus:ring-2 focus:ring-white font-semibold text-base md:text-lg"
+                                       hover:bg-white hover:text-blue-700 transition-colors duration-200
+                                       focus:outline-none focus:ring-2 focus:ring-white font-semibold text-base md:text-lg"
           >
             Reset
           </Button>
@@ -858,7 +841,7 @@ const Blogs = () => {
             onClick={handleApplyFilters}
             type="button"
             className="flex-1 bg-white text-blue-700 px-6 py-3 rounded-full hover:bg-gray-200 transition-colors duration-200 uppercase
-                                 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 font-semibold text-base md:text-lg"
+                                       focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 font-semibold text-base md:text-lg"
           >
             Apply
           </Button>
