@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const contactApi = createApi({
   reducerPath: "contactApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/", // Base URL for your API server
+    // CORRECTED: Use the environment variable for the base URL
+    baseUrl: import.meta.env.VITE_API_URL, 
   }),
   endpoints: (builder) => ({
     // This mutation is used by your ATL marketing page popup
