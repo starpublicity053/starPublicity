@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import Lottie from "lottie-react";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { setCredentials } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
-// CORRECTED: The import statement has been removed.
-// The Lottie component will now load the animation directly from the public folder.
+// The import statement is no longer needed as we are loading from a URL.
 
 function AuthForm() {
   const [email, setEmail] = useState("");
@@ -58,9 +57,14 @@ function AuthForm() {
       <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row shadow-2xl bg-white/30 backdrop-blur-lg border border-white/30 rounded-3xl overflow-hidden">
         <div className="hidden md:flex flex-col justify-center items-center p-10 w-1/2 bg-gradient-to-br from-blue-500 via-blue-500 to-blue-400 text-white">
           
-          {/* CORRECTED: Using the 'src' prop to load directly from the public folder. */}
-          {/* Make sure 'Login-animation.json' is in your 'public/assets/' directory. */}
-          <Lottie src="/assets/Login-animation.json" className="w-72 h-72" loop autoPlay />
+          {/* CORRECTED: Using the DotLottieReact component */}
+          <div className="w-72 h-72">
+            <DotLottieReact
+              src="https://lottie.host/cc3ad891-4a40-4725-ad66-c14c3d6ddab5/2ys17iqfyM.lottie"
+              loop
+              autoplay
+            />
+          </div>
           
           <h2 className="text-3xl font-bold mt-6 text-center leading-tight">Welcome Admin</h2>
           <p className="text-center mt-2 text-white/90 text-sm">
