@@ -1,6 +1,7 @@
 import AnnouncementBanner from "@/pages/AnnouncementBanner";
 import Footer from "@/pages/Footer";
 import Navbar from "@/pages/Navbar";
+import ScrollToTop from "@/pages/ScrollToTop";
 import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
@@ -13,6 +14,8 @@ function MainLayout() {
 
   return (
     <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
+      <ScrollToTop /> {/* ✅ 2. ADD THE COMPONENT HERE */}
+
       {!isAdminPage && showBanner && (
         <AnnouncementBanner
           onClose={() => setShowBanner(false)}
