@@ -6,9 +6,8 @@ import { useLoginMutation } from "../../features/auth/authApi";
 import { setCredentials } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
-// CORRECTED: Import the Lottie JSON file using a relative path from within the 'src' folder.
-// This assumes your AuthForm.jsx is in 'src/pages/Forms/' and your animation is in 'src/assets/'.
-import adminAnimationData from "../../assets/Login-animation.json"; 
+// CORRECTED: The import statement has been removed.
+// The Lottie component will now load the animation directly from the public folder.
 
 function AuthForm() {
   const [email, setEmail] = useState("");
@@ -59,7 +58,9 @@ function AuthForm() {
       <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row shadow-2xl bg-white/30 backdrop-blur-lg border border-white/30 rounded-3xl overflow-hidden">
         <div className="hidden md:flex flex-col justify-center items-center p-10 w-1/2 bg-gradient-to-br from-blue-500 via-blue-500 to-blue-400 text-white">
           
-          <Lottie animationData={adminAnimationData} className="w-72 h-72" loop autoPlay />
+          {/* CORRECTED: Using the 'src' prop to load directly from the public folder. */}
+          {/* Make sure 'Login-animation.json' is in your 'public/assets/' directory. */}
+          <Lottie src="/assets/Login-animation.json" className="w-72 h-72" loop autoPlay />
           
           <h2 className="text-3xl font-bold mt-6 text-center leading-tight">Welcome Admin</h2>
           <p className="text-center mt-2 text-white/90 text-sm">
