@@ -1,14 +1,10 @@
 // controllers/BtlController.js
 
 const { sendBtlInquiryEmail } = require("../service/MailService");
-const {
-  sendBtlInquiryWhatsApp,
-  sendUserConfirmationWhatsApp,
-} = require("./whatsapp-web");
 
 /**
  * Handles inquiries from the BTL page modal form.
- * Validates required fields and triggers email and WhatsApp notifications.
+ * Validates required fields and triggers email notifications.
  */
 const sendBtlInquiry = async (req, res) => {
   // Destructure the expected fields from the new modal form
@@ -30,28 +26,6 @@ const sendBtlInquiry = async (req, res) => {
     // Send Email to Admin
     await sendBtlInquiryEmail(formData);
     console.log("✅ BTL Email sent successfully.");
-
-    // Send WhatsApp to Admin
-    try {
-      await sendBtlInquiryWhatsApp(formData);
-      console.log("✅ Admin WhatsApp for BTL sent successfully.");
-    } catch (whatsAppError) {
-      console.warn(
-        "⚠️ Failed to send WhatsApp to admin:",
-        whatsAppError.message
-      );
-    }
-
-    // Send Confirmation WhatsApp to User
-    try {
-      await sendUserConfirmationWhatsApp(formData);
-      console.log("✅ User WhatsApp confirmation for BTL sent.");
-    } catch (userWhatsAppError) {
-      console.warn(
-        "⚠️ Failed to send WhatsApp to user:",
-        userWhatsAppError.message
-      );
-    }
 
     // Return a clear success response
     return res.status(200).json({

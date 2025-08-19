@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./db/connectDB.js');
 const webRoutes = require('./routes/web.js');
-
 // Socket.IO and http imports have been removed as they are no longer needed.
 
 dotenv.config();

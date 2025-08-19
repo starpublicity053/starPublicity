@@ -1,12 +1,8 @@
 const { sendTtlInquiryEmail } = require("../service/MailService");
-const {
-  sendTtlInquiryWhatsApp,
-  sendUserConfirmationWhatsApp,
-} = require("./whatsapp-web");
 
 /**
  * Handles inquiries from the TTL page modal form.
- * Validates required fields and triggers email and WhatsApp notifications.
+ * Validates required fields and triggers email notifications.
  */
 const sendTtlInquiry = async (req, res) => {
   // Destructure the expected fields from the new modal form
@@ -28,28 +24,6 @@ const sendTtlInquiry = async (req, res) => {
     // Send Email to admin
     await sendTtlInquiryEmail(formData);
     console.log("✅ Email sent successfully.");
-
-    // Attempt to send WhatsApp notification to Admin
-    try {
-      await sendTtlInquiryWhatsApp(formData);
-      console.log("✅ Admin WhatsApp sent successfully.");
-    } catch (whatsAppError) {
-      console.warn(
-        "⚠️ Could not send WhatsApp to admin:",
-        whatsAppError.message
-      );
-    }
-
-    // Attempt to send a confirmation WhatsApp to the user
-    try {
-      await sendUserConfirmationWhatsApp(formData);
-      console.log("✅ User WhatsApp confirmation sent.");
-    } catch (userWhatsAppError) {
-      console.warn(
-        "⚠️ Could not send WhatsApp to user:",
-        userWhatsAppError.message
-      );
-    }
 
     return res.status(200).json({
       message:

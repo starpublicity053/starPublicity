@@ -1,14 +1,10 @@
 // controllers/AtlController.js
 
 const { sendAtlInquiryEmail } = require("../service/MailService");
-const {
-  sendAtlInquiryWhatsApp,
-  sendUserConfirmationWhatsApp,
-} = require("./whatsapp-web");
 
 /**
  * Handles inquiries from the ATL page modal form.
- * Validates required fields and triggers email and WhatsApp notifications.
+ * Validates required fields and triggers email notifications.
  */
 const sendAtlInquiry = async (req, res) => {
   // Destructure the expected fields from the new modal form
@@ -29,28 +25,6 @@ const sendAtlInquiry = async (req, res) => {
     // Send Email to Admin
     await sendAtlInquiryEmail(formData);
     console.log("✅ ATL Email sent successfully.");
-
-    // Send WhatsApp to Admin
-    try {
-      await sendAtlInquiryWhatsApp(formData);
-      console.log("✅ Admin WhatsApp for ATL sent successfully.");
-    } catch (whatsAppError) {
-      console.warn(
-        "⚠️ Failed to send WhatsApp to admin:",
-        whatsAppError.message
-      );
-    }
-
-    // Send Confirmation WhatsApp to User
-    try {
-      await sendUserConfirmationWhatsApp(formData);
-      console.log("✅ User WhatsApp confirmation for ATL sent.");
-    } catch (userWhatsAppError) {
-      console.warn(
-        "⚠️ Failed to send WhatsApp to user:",
-        userWhatsAppError.message
-      );
-    }
 
     // Return a clear success response
     return res.status(200).json({

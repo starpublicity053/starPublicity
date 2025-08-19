@@ -1,14 +1,11 @@
 const ContactInquiry = require('../models/BlogContactInquiry');
 const { 
-  sendBlogContactInquiryWhatsApp 
-} = require('./whatsapp-web'); // Import the correct WhatsApp sender
-const { 
   sendBlogContactInquiryEmail 
 } = require('../service/MailService'); // Import the email sender
 
-// @desc    Handle blog contact form submission
-// @route   POST /api/contact/inquiries
-// @access  Public
+// @desc      Handle blog contact form submission
+// @route     POST /api/contact/inquiries
+// @access    Public
 exports.submitContactForm = async (req, res) => {
   try {
     const {
@@ -48,23 +45,6 @@ exports.submitContactForm = async (req, res) => {
       message,
       submittedAt: inquiry.submittedAt,
     };
-
-    // Send WhatsApp to admin
-    try {
-      await sendBlogContactInquiryWhatsApp(formData);
-    } catch (waErr) {
-      console.error('Failed to send WhatsApp to admin:', waErr.message);
-    }
-
-    // WhatsApp confirmation to user (if phone provided)
-    if (phone) {
-      const { sendUserConfirmationWhatsApp } = require('./whatsapp-web');
-      try {
-        await sendUserConfirmationWhatsApp({ firstName: name, phone });
-      } catch (waUserErr) {
-        console.error('Failed to send WhatsApp confirmation to user:', waUserErr.message);
-      }
-    }
 
     // Send email to HR
     try {

@@ -1,8 +1,6 @@
 // controllers/ContactController.js
 const ContactInquiry = require('../models/Contact');
 const { sendContactInquiryEmail, sendForwardedInquiryEmail } = require('../service/MailService');
-// Import the specific function for general contact inquiries
-const { sendContactInquiryWhatsApp, sendUserConfirmationWhatsApp } = require('../controllers/whatsapp-web'); // Corrected path to whatsapp-web.js
 
 // Handles submission from your contact form
 const submitContactInquiry = async (req, res) => {
@@ -12,15 +10,6 @@ const submitContactInquiry = async (req, res) => {
     
     // Send email notification with the correct data
     await sendContactInquiryEmail(savedInquiry);
-
-    // Pass the entire savedInquiry object to WhatsApp functions,
-    // as they are designed to destructure 'phone' or 'phoneNumber' from it.
-    if (savedInquiry.phone) { // Check if the phone number exists in the saved inquiry
-      await sendContactInquiryWhatsApp(savedInquiry); 
-      await sendUserConfirmationWhatsApp(savedInquiry);
-    } else {
-      console.warn('Phone number not found in saved inquiry. Skipping WhatsApp notifications.');
-    }
 
     res.status(201).json({ success: true, message: 'Inquiry submitted successfully!', data: savedInquiry });
   } catch (error) {
