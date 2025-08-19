@@ -7,8 +7,8 @@ import { setCredentials } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
 // CORRECTED: Import the Lottie JSON file using a relative path from within the 'src' folder.
-// This assumes your AuthForm.jsx is inside a 'pages' or similar folder. Adjust if needed.
-import adminAnimationData from "../../../public/assets/Login-animation.json"; 
+// This assumes your AuthForm.jsx is in 'src/pages/Forms/' and your animation is in 'src/assets/'.
+import adminAnimationData from "../../assets/Login-animation.json"; 
 
 function AuthForm() {
   const [email, setEmail] = useState("");
