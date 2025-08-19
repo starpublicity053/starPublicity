@@ -25,9 +25,9 @@ app.get('/', (req, res) => {
 app.use('/api/auth', webRoutes);
 app.use('/api', webRoutes);
 app.use('/api/blogs', webRoutes); // Specific route for blogs
-app.use('/atl', webRoutes);
-app.use('/btl', webRoutes);
-app.use('/ttl', webRoutes);
+app.use('/api/atl', webRoutes);
+app.use('/api/btl', webRoutes);
+app.use('/api/ttl', webRoutes);
 
 const PORT = process.env.PORT || 5000;
 
