@@ -26,7 +26,7 @@ const Footer = () => {
       { name: "ATL Marketing", path: "/media/ATL" },
       { name: "BTL Marketing", path: "/media/BTL" },
       { name: "TTL Marketing", path: "/media/TTL" },
-      { name: "Digital Marketing", path: "/media/TTL/google-ads" },
+      { name: "Production", path: "/resources/products" },
     ],
     resources: [
       { name: "Blogs", path: "/resources/blogs" },
