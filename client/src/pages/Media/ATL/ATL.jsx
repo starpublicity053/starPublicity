@@ -87,7 +87,7 @@ function ATLMarketing() {
             <AnimatePresence>
                 {isModalOpen && (
                     // MODAL: Ensured padding works on small screens and content is centered.
-                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-[9999] p-4">
                         <motion.div
                             initial={{ opacity: 0, y: -40, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
