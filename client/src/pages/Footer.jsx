@@ -10,8 +10,7 @@ import {
   FaPhone,
   FaEnvelope,
 } from "react-icons/fa6";
-import { FaMapMarkerAlt } from "react-icons/fa"; // Importing from 'fa' for MapMarkerAlt
-
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -22,14 +21,12 @@ const Footer = () => {
       { name: "Career", path: "/career" },
       { name: "Campaigns", path: "/campaigns" },
       { name: "Contact", path: "/contact" },
-      { name: "Printing & Production", path: "/resources/products" },
     ],
     mediaServices: [
       { name: "ATL Marketing", path: "/media/ATL" },
       { name: "BTL Marketing", path: "/media/BTL" },
       { name: "TTL Marketing", path: "/media/TTL" },
       { name: "Digital Marketing", path: "/media/TTL/google-ads" },
-      { name: "Social Media", path: "/media/TTL/social-media-ads" },
     ],
     resources: [
       { name: "Blogs", path: "/resources/blogs" },
@@ -39,184 +36,108 @@ const Footer = () => {
     ],
   };
 
-  return (
-    <footer className="relative bg-gradient-to-br from-gray-900 via-[#0f1729] to-black text-white">
-      {/* Decorative Top Border - Using #1A2A80 and a slightly lighter blue variant for a consistent blue gradient */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1A2A80] to-[#2A3A90]"></div>
+  // Reusable component for footer link columns
+  const LinkColumn = ({ title, links }) => (
+    <div>
+      <h4 className="text-sm font-semibold tracking-wider uppercase text-gray-400 mb-6">{title}</h4>
+      <ul className="space-y-4">
+        {links.map((link) => (
+          <li key={link.name}>
+            <Link
+              to={link.path}
+              className="text-gray-300 hover:text-white transition-colors duration-300 hover:underline underline-offset-4"
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
-      <div className="max-w-7xl mx-auto px-6 pt-20 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
-          {/* Brand Section */}
-          <div className="lg:col-span-4 space-y-6">
-            <Link to="/" className="block">
-              <h1 className="text-4xl font-black tracking-wider">
-                {/* Brand name STAR gradient changed to blue variants */}
-                <span className="bg-gradient-to-r from-[#1A2A80] via-[#2A3A90] to-[#3A4AA0] bg-clip-text text-transparent">
-                  STAR
-                </span>
-                <span className="text-white"> PUBLICITY</span>
+  return (
+    <footer className="relative bg-slate-900 text-white overflow-hidden border-t border-slate-800">
+      {/* Aurora Background Effect */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-40">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-900 rounded-full mix-blend-lighten filter blur-3xl animate-blob"></div>
+        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-indigo-900 rounded-full mix-blend-lighten filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-purple-900 rounded-full mix-blend-lighten filter blur-3xl animate-blob animation-delay-4000"></div>
+      </div>
+      
+      {/* Add keyframes for the blob animation */}
+      <style>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+      `}</style>
+
+      <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-10 z-10">
+        {/* Top Section: Brand and Newsletter */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 border-b border-slate-800 pb-12">
+          {/* Brand Info */}
+          <div className="space-y-4">
+             <Link to="/" className="block">
+              <h1 className="text-3xl font-bold tracking-wide">
+                <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">STAR</span>
+                <span className="text-gray-200"> PUBLICITY</span>
               </h1>
             </Link>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Your premier partner for comprehensive marketing solutions. From
-              traditional to digital, we transform your brand presence across all
-              media channels.
+            <p className="text-slate-400 max-w-md">
+              Elevating brands with impactful advertising. Your vision, amplified.
             </p>
-            <div className="flex flex-col space-y-3">
-              <a
-                href="tel:+1234567890"
-                className="text-gray-400 hover:text-white flex items-center gap-3"
-              >
-                {/* Phone icon color changed */}
-                <FaPhone className="text-[#1A2A80]" /> +1 234 567 890
-              </a>
-              <a
-                href="mailto:info@starpublicity.com"
-                className="text-gray-400 hover:text-white flex items-center gap-3"
-              >
-                {/* Envelope icon color changed */}
-                <FaEnvelope className="text-[#1A2A80]" />{" "}
-                info@starpublicity.com
-              </a>
-              <p className="text-gray-400 flex items-center gap-3">
-                {/* Map marker icon color changed */}
-                <FaMapMarkerAlt className="text-[#1A2A80]" />{" "}
-                123 Marketing Street, Digital City
-              </p>
+            <div className="flex space-x-4">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors"><FaLinkedinIn size={20}/></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-500 transition-colors"><FaInstagram size={20}/></a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 transition-colors"><FaYoutube size={20}/></a>
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><FaXTwitter size={20}/></a>
             </div>
           </div>
-
-          {/* Quick Links */}
-          <div className="lg:col-span-2">
-            <h4 className="text-lg font-bold mb-6 relative inline-block">
-              Quick Links
-              {/* Underline gradient changed to blue variants */}
-              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-gradient-to-r from-[#1A2A80] to-[#2A3A90]"></span>
-            </h4>
-            <ul className="space-y-4">
-              {footerLinks.quickLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-gray-400 hover:text-white flex items-center group"
-                  >
-                    <FaArrowRight className="mr-2 text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2" />
-                    <span className="transform transition-transform duration-300 group-hover:translate-x-2">
-                      {link.name}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Media Services */}
-          <div className="lg:col-span-3">
-            <h4 className="text-lg font-bold mb-6 relative inline-block">
-              Media Services
-              {/* Underline gradient changed to blue variants */}
-              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-gradient-to-r from-[#1A2A80] to-[#2A3A90]"></span>
-            </h4>
-            <ul className="space-y-4">
-              {footerLinks.mediaServices.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-gray-400 hover:text-white flex items-center group"
-                  >
-                    <FaArrowRight className="mr-2 text-xs opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2" />
-                    <span className="transform transition-transform duration-300 group-hover:translate-x-2">
-                      {link.name}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter Section */}
-          <div className="lg:col-span-3">
-            <h4 className="text-lg font-bold mb-6 relative inline-block">
-              Stay Connected
-              {/* Underline gradient changed to blue variants */}
-              <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-gradient-to-r from-[#1A2A80] to-[#2A3A90]"></span>
-            </h4>
-            <p className="text-sm text-gray-400 mb-4">
-              Subscribe for industry insights and updates.
+          {/* Newsletter */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wider uppercase text-gray-400 mb-4">Subscribe for Insights</h4>
+            <p className="text-slate-400 mb-4">
+              Receive the latest marketing trends and case studies directly in your inbox.
             </p>
-            <form className="space-y-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full px-4 py-3 bg-gray-800/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A2A80] text-gray-200 placeholder-gray-400" // Focus ring changed
-                />
-                <button
-                  type="submit"
-                  // Submit button gradient changed to blue variants
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#1A2A80] to-[#2A3A90] p-2 rounded-md hover:shadow-lg hover:shadow-[#1A2A80]/30 transition-all duration-300"
-                >
-                  <FaRegPaperPlane className="text-white" />
-                </button>
-              </div>
+            <form className="flex items-center max-w-sm">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full h-12 px-4 bg-slate-800/60 border border-slate-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 placeholder-gray-500 text-sm"
+              />
+              <button
+                type="submit"
+                aria-label="Subscribe to newsletter"
+                className="h-12 w-12 flex items-center justify-center bg-blue-600 rounded-r-lg hover:bg-blue-500 transition-colors"
+              >
+                <FaArrowRight />
+              </button>
             </form>
-            <div className="flex gap-4 mt-6">
-              {[
-                {
-                  Icon: FaLinkedinIn,
-                  color: "hover:bg-blue-600", // This will still use Tailwind's default blue-600 on hover
-                  url: "https://www.linkedin.com/company/yourcompany/",
-                },
-                {
-                  Icon: FaInstagram,
-                  color: "hover:bg-pink-600", // This will still use Tailwind's default pink-600 on hover
-                  url: "https://www.instagram.com/yourcompany/",
-                },
-                {
-                  Icon: FaYoutube,
-                  color: "hover:bg-red-600", // This will still use Tailwind's default red-600 on hover
-                  url: "https://www.youtube.com/yourchannel/",
-                },
-                {
-                  Icon: FaXTwitter,
-                  color: "hover:bg-blue-400", // This will still use Tailwind's default blue-400 on hover
-                  url: "https://twitter.com/yourcompany",
-                },
-              ].map((social, i) => (
-                <a
-                  key={i}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${social.color} bg-gray-800/50 p-2.5 rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/10`}
-                >
-                  <social.Icon className="text-xl" />
-                </a>
-              ))}
+          </div>
+        </div>
+
+        {/* Middle Section: Links */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12">
+          <LinkColumn title="Company" links={footerLinks.quickLinks} />
+          <LinkColumn title="Services" links={footerLinks.mediaServices} />
+          <LinkColumn title="Resources" links={footerLinks.resources} />
+          <div>
+             <h4 className="text-sm font-semibold tracking-wider uppercase text-gray-400 mb-6">Contact Us</h4>
+             <div className="space-y-4 text-gray-300">
+                <a href="tel:+911234567890" className="flex items-center gap-3 hover:text-white transition-colors"><FaPhone size={14} /> +91 123-456-7890</a>
+                <a href="mailto:info@starpublicity.com" className="flex items-center gap-3 hover:text-white transition-colors"><FaEnvelope size={14} /> info@starpublicity.com</a>
+                <p className="flex items-start gap-3"><FaMapMarkerAlt className="mt-1" size={14} /> 123 Marketing St, Digital City, 141001</p>
             </div>
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} Star Publicity. All rights reserved.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
-                (item) => (
-                  <Link
-                    key={item}
-                    to={`/${item.toLowerCase().replace(/\s/g, "-")}`}
-                    className="text-gray-400 hover:text-white transition-colors duration-300"
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
-            </div>
-          </div>
+        {/* Bottom Section: Copyright */}
+        <div className="pt-8 text-sm text-slate-500 text-center">
+          <p>&copy; {currentYear} Star Publicity. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
