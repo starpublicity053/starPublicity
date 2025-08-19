@@ -5,12 +5,12 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { setCredentials } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
-
-// The import statement is no longer needed as we are loading from a URL.
+import { Eye, EyeOff } from "lucide-react"; // Import icons for the toggle
 
 function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,8 +56,6 @@ function AuthForm() {
 
       <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row shadow-2xl bg-white/30 backdrop-blur-lg border border-white/30 rounded-3xl overflow-hidden">
         <div className="hidden md:flex flex-col justify-center items-center p-10 w-1/2 bg-gradient-to-br from-blue-500 via-blue-500 to-blue-400 text-white">
-          
-          {/* CORRECTED: Using the DotLottieReact component */}
           <div className="w-72 h-72">
             <DotLottieReact
               src="https://lottie.host/cc3ad891-4a40-4725-ad66-c14c3d6ddab5/2ys17iqfyM.lottie"
@@ -65,7 +63,6 @@ function AuthForm() {
               autoplay
             />
           </div>
-          
           <h2 className="text-3xl font-bold mt-6 text-center leading-tight">Welcome Admin</h2>
           <p className="text-center mt-2 text-white/90 text-sm">
             Manage and monitor your platform efficiently.
@@ -90,15 +87,30 @@ function AuthForm() {
 
             <div>
               <label className="block text-sm font-medium mb-1 text-gray-700">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                minLength={6}
-                className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
-              />
+              {/* Added a relative container for the password input and toggle button */}
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"} // Dynamically change the input type
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  minLength={6}
+                  className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-400 transition pr-12" // Added padding for the icon
+                />
+                <button
+                  type="button" // Prevents the button from submitting the form
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {message && (
