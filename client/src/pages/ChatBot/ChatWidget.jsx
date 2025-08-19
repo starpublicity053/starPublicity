@@ -9,27 +9,17 @@ import {
     FaCommentDots, FaPhone, FaQuestionCircle // Icons
 } from 'react-icons/fa';
 import io from 'socket.io-client';
-import { useInitiateLiveChatMutation } from '../../features/auth/chatBot'; // This hook will be repurposed to send the lead email
+import { useInitiateLiveChatMutation } from '../../features/auth/chatBot';
 
 // ===================================================================
-// 1. Styles for the UI (UNCHANGED)
+// 1. Styles for the UI
 // ===================================================================
 const styles = {
-    // Keyframes for the pulsing animation
-    pulse: {
-        '0%': { transform: 'scale(1)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-        '50%': { transform: 'scale(1.02)', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)' },
-        '100%': { transform: 'scale(1)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' },
-    },
-    // Keyframes for the confetti animation
-    confettiFall: {
-        '0%': { transform: 'translateY(-100px) rotate(0deg)', opacity: '1' },
-        '100%': { transform: 'translateY(650px) rotate(360deg)', opacity: '0.5' },
-    },
-
-    // Chat Opener Container
+    // Keyframes are now injected directly in the component style tag for clarity
+    
+    // --- UPDATED: Sized down for the new, smaller opener ---
     chatOpenerContainer: (isOpen) => ({
-        position: 'fixed', bottom: '25px', right: '25px', width: '120px', height: '120px',
+        position: 'fixed', bottom: '25px', right: '25px', width: '64px', height: '64px',
         cursor: 'pointer', zIndex: '9999',
         transform: isOpen ? 'scale(0)' : 'scale(1)',
         transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -38,7 +28,7 @@ const styles = {
         justifyContent: 'center',
     }),
     
-    // Main Chat Window
+    // Main Chat Window (UNCHANGED)
     chatWindow: (isVisible) => ({
         position: 'fixed', bottom: '20px', right: '20px', width: '380px', maxHeight: 'min(650px, 90vh)',
         backgroundColor: '#FFFFFF', borderRadius: '16px', color: '#1F2937', zIndex: '10000',
@@ -48,7 +38,7 @@ const styles = {
         transition: 'opacity 0.3s ease-out, transform 0.3s ease-out',
     }),
 
-    // Header
+    // Header (UNCHANGED)
     chatHeader: {
         padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between',
         alignItems: 'center', borderBottom: '1px solid #E5E7EB', flexShrink: 0,
@@ -73,7 +63,8 @@ const styles = {
         transition: 'color 0.2s ease',
     },
 
-    // Quick Replies
+    // (The rest of the styles object is unchanged...)
+    // ...
     quickRepliesContainer: {
         padding: '1rem 1.5rem', borderTop: '1px solid #E5E7EB',
         flexShrink: 0, display: 'flex', justifyContent: 'center',
@@ -89,15 +80,10 @@ const styles = {
         gap: '0.6rem', transition: 'all 0.3s ease-out',
         boxShadow: isHovered ? '0 4px 12px rgba(79, 70, 229, 0.3)' : '0 1px 3px rgba(0,0,0,0.05)',
         transform: isHovered ? 'scale(1.03)' : 'scale(1)',
-        animation: isHovered ? 'none' : 'pulse 2s infinite ease-in-out',
     }),
-
-    // Greeting Area
     greetingArea: { padding: '1.5rem 1.5rem 0.5rem 1.5rem', flexShrink: 0 },
     greetingTitle: { margin: '0 0 0.5rem 0', fontSize: '1.5rem', fontWeight: 'bold', color: '#111827' },
     greetingText: { margin: 0, color: '#4B5563', lineHeight: '1.5' },
-    
-    // Accordion Menu
     contentArea: { flexGrow: 1, overflowY: 'auto', padding: '0 1.5rem 1rem', },
     accordionMenu: { marginTop: '1.5rem' },
     accordionSection: { borderBottom: '1px solid #E5E7EB' },
@@ -126,8 +112,6 @@ const styles = {
     },
     gridButtonIcon: (color) => ({ color: color || '#6C63FF', fontSize: '2rem' }),
     gridButtonText: { fontSize: '0.8rem', color: '#374151', fontWeight: '500', lineHeight: '1.2' },
-
-    // Offers View
     offersView: { flexGrow: 1, overflowY: 'auto', padding: '1.5rem 1.5rem', },
     offersHeader: { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', },
     backButton: {
@@ -141,8 +125,6 @@ const styles = {
     },
     offerItemTitle: { margin: '0 0 0.5rem 0', fontWeight: '600', color: '#4F46E5', },
     offerItemDesc: { margin: 0, color: '#4B5563', fontSize: '0.9rem', lineHeight: '1.4' },
-
-    // Input Area
     inputArea: {
         display: 'flex', alignItems: 'center', padding: '1rem 1.5rem',
         borderTop: '1px solid #E5E7EB', gap: '0.75rem', flexShrink: 0,
@@ -157,8 +139,6 @@ const styles = {
         background: 'none', border: 'none', color: '#6C63FF', fontSize: '1.75rem',
         cursor: 'pointer', padding: '0', transition: 'color 0.2s ease',
     },
-    
-    // Chat Conversation
     chatConversation: {
         flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '1rem',
         padding: '1.5rem 1.5rem 1rem', overflowY: 'auto',
@@ -177,108 +157,92 @@ const styles = {
     },
 };
 
-const AssistantIcon = () => (
-    <svg viewBox="0 0 500 500" width="80%" height="80%" style={{ objectFit: 'contain' }}>
-        <path fill="#6C63FF" d="M250 50c-110.5 0-200 89.5-200 200s89.5 200 200 200 200-89.5 200-200S360.5 50 250 50z" />
-        <path fill="#FFF" d="M340 180c-16.6 0-30 13.4-30 30s13.4 30 30 30 30-13.4 30-30-13.4-30-30-30zm-180 0c-16.6 0-30 13.4-30 30s13.4 30 30 30 30-13.4 30-30-13.4-30-30-30z" />
-        <path fill="#FFF" d="M250 380c-55.2 0-100-44.8-100-100h200c0 55.2-44.8 100-100 100z" />
-    </svg>
-);
-
-const HoloRingOpener = ({ isHovered }) => {
+// ===================================================================
+// 2. NEW Chat Opener Component
+// ===================================================================
+const RippleChatOpener = ({ isHovered }) => {
     const keyframes = `
-        @keyframes rotate-text {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes subtle-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes ripple-effect {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
         }
     `;
 
-    const openerContainerStyle = {
+    const containerStyle = {
         position: 'relative',
-        width: '120px',
-        height: '120px',
+        width: '64px',
+        height: '64px',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: isHovered ? 'rgba(79, 70, 229, 0.1)' : 'transparent',
+    };
+
+    const rippleBaseStyle = {
+        position: 'absolute',
         borderRadius: '50%',
-        border: 'none',
-        transition: 'transform 0.4s ease-in-out, background 0.4s ease-in-out',
+        border: '2px solid rgba(79, 70, 229, 0.4)',
+        animation: `ripple-effect 2s infinite cubic-bezier(0, 0, 0.2, 1)`,
+        pointerEvents: 'none',
+    };
+
+    const iconButtonStyle = {
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: '1.75rem',
+        backgroundImage: 'linear-gradient(45deg, #4F46E5, #8B5CF6)',
+        boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(0,0,0,0.1)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         transform: isHovered ? 'scale(1.1)' : 'scale(1)',
     };
     
-    const centralContentStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 2,
-    };
-
-    const cartoonStyle = {
-        width: '60px',
-        height: '60px',
-        borderRadius: '50%',
-        marginBottom: '5px',
-        backgroundColor: 'white',
-        boxShadow: isHovered ? '0 0 15px rgba(79, 70, 229, 0.7)' : '0 0 8px rgba(0,0,0,0.2)',
-        animation: isHovered ? 'subtle-pulse 2s infinite' : 'none',
-        transition: 'all 0.4s ease-in-out',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
-
-    const primaryTextStyle = {
-        margin: '0',
-        fontSize: '1rem',
-        fontWeight: '600',
-        color: '#111827',
-        textShadow: '0 1px 2px rgba(255,255,255,0.5)',
-    };
-    
-    const circularTextStyle = {
+    const hoverTextStyle = {
         position: 'absolute',
-        width: '100%',
-        height: '100%',
-        animation: 'rotate-text 15s linear infinite',
+        right: 'calc(100% + 16px)',
+        padding: '8px 16px',
+        backgroundColor: 'white',
+        color: '#4F46E5',
+        borderRadius: '20px',
+        fontSize: '0.9rem',
+        fontWeight: '600',
+        boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
+        whiteSpace: 'nowrap',
         pointerEvents: 'none',
-        transition: 'opacity 0.4s ease-in-out',
-        opacity: isHovered ? 1 : 0.7,
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
+        opacity: isHovered ? 1 : 0,
+        transform: isHovered ? 'translateX(0)' : 'translateX(10px)',
     };
 
     return (
         <>
             <style>{keyframes}</style>
-            <div style={openerContainerStyle}>
-                <div style={centralContentStyle}>
-                    <div style={cartoonStyle}>
-                        <AssistantIcon />
-                    </div>
-                    <p style={primaryTextStyle}>Ask Tiva</p>
+            <div style={containerStyle}>
+                {/* Ripples for attention */}
+                <div style={{ ...rippleBaseStyle, width: '100%', height: '100%' }} />
+                <div style={{ ...rippleBaseStyle, width: '100%', height: '100%', animationDelay: '1s' }} />
+
+                {/* The main button */}
+                <div style={iconButtonStyle}>
+                    <FaCommentDots style={{ transform: isHovered ? 'scale(1.1) rotate(5deg)' : 'scale(1) rotate(0deg)', transition: 'transform 0.3s ease' }} />
                 </div>
-                <div style={circularTextStyle}>
-                    <svg viewBox="0 0 100 100" width="100%" height="100%">
-                        <defs>
-                            <path id="circle" d="M 50, 50 m -42, 0 a 42,42 0 1,1 84,0 a 42,42 0 1,1 -84,0" />
-                        </defs>
-                        <text fill="#6B7280" style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2.5px' }}>
-                            <textPath href="#circle">
-                                STAR PUBLICITY • STAR PUBLICITY •
-                            </textPath>
-                        </text>
-                    </svg>
+                
+                {/* Text that appears on hover */}
+                <div style={hoverTextStyle}>
+                    Chat with us!
                 </div>
             </div>
         </>
     );
 };
 
+
+// ===================================================================
+// 3. Unchanged Logic Components
+// ===================================================================
 const ConfettiEffect = () => {
     const confettiColors = ['#F59E0B', '#10B981', '#4F46E5', '#EF4444', '#E53E3E'];
     const confettiPieces = Array.from({ length: 50 }, (_, i) => {
@@ -300,7 +264,6 @@ const ConfettiEffect = () => {
         </div>
     );
 };
-
 const QuickReplies = ({ onOffersClick }) => {
     const [isOffersHovered, setIsOffersHovered] = useState(false);
     return (
@@ -318,13 +281,11 @@ const QuickReplies = ({ onOffersClick }) => {
         </div>
     );
 };
-
 const getGreeting = () => { const hour = new Date().getHours(); if (hour < 12) return "Good Morning"; if (hour < 18) return "Good Afternoon"; return "Good Evening"; };
 const GridButton = ({ item }) => { const navigate = useNavigate(); const [isHovered, setIsHovered] = useState(false); const hoverStyle = { transform: 'scale(1.05)', boxShadow: '0 4px 10px rgba(0,0,0,0.08)' }; return (<button style={isHovered ? {...styles.gridButton, ...hoverStyle} : styles.gridButton} onClick={() => navigate(item.link)} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}><span style={styles.gridButtonIcon(item.color)}>{item.icon}</span><span style={styles.gridButtonText}>{item.text}</span></button>); };
 const AccordionSection = ({ section, isOpen, onToggle }) => ( <div style={styles.accordionSection}> <button style={styles.accordionHeader} onClick={onToggle}> <span style={styles.accordionTitleContainer}> <span style={styles.accordionIcon}>{section.icon}</span> <span style={styles.accordionTitle}>{section.title}</span> </span> <FaChevronDown style={styles.accordionChevron(isOpen)} /> </button> {isOpen && ( <div style={styles.accordionContent}> <div style={styles.accordionGrid}> {section.items.map(item => <GridButton key={item.text} item={item} />)} </div> </div> )} </div> );
 const AccordionMenu = () => { const [openSection, setOpenSection] = useState('formats'); const ADVERTISING_DATA = [{ id: 'formats', title: 'Explore Ad Formats', icon: <FaPencilRuler size={20} />, items: [ { text: 'Billboards', icon: <FaTachometerAlt />, link: '/formats/billboards', color: '#3B82F6' }, { text: 'Digital Screens', icon: <FaDesktop />, link: '/formats/digital-ooh', color: '#10B981' }, { text: 'Transit Ads', icon: <FaBus />, link: '/formats/transit', color: '#F59E0B' }, { text: 'Mall Branding', icon: <FaBuilding />, link: '/formats/malls', color: '#8B5CF6' }, { text: 'Airport Ads', icon: <FaPlaneDeparture />, link: '/formats/airports', color: '#EF4444' }, { text: 'Custom Solutions', icon: <FaStar />, link: '/formats/custom', color: '#14B8A6' }, { text: 'Cinema Advertising', icon: <FaFilm />, link: '/formats/cinema', color: '#E53E3E' }, { text: 'Bus Shelter Ads', icon: <FaBus />, link: '/formats/bus-shelter', color: '#6B46C1' }, { text: 'Stadium Branding', icon: <FaBriefcase />, link: '/formats/stadium', color: '#E53E3E' } ] }, { id: 'locations', title: 'View Our Locations', icon: <FaMapMarkedAlt size={20} />, items: [ { text: 'Punjab', icon: <FaMapMarkerAlt/>, link: '/locations/punjab' }, { text: 'Haryana', icon: <FaMapMarkerAlt/>, link: '/locations/haryana' }, { text: 'Himachal Pradesh', icon: <FaMapMarkerAlt/>, link: '/locations/himachal' }, { text: 'Delhi', icon: <FaMapMarkerAlt/>, link: '/locations/delhi' }, { text: 'Chandigarh', icon: <FaMapMarkerAlt/>, link: '/locations/chandigarh' }, { text: 'Jammu & Kashmir', icon: <FaMapMarkerAlt/>, link: '/locations/jammu-kashmir' }, ] }, { id: 'services', title: 'Products & Services', icon: <FaCalculator size={20} />, items: [ { text: 'Request a Custom Plan', icon: <FaCalculator/>, link: '/quote' }, { text: 'View Our Portfolio', icon: <FaBookOpen/>, link: '/case-studies' }, { text: 'Consult with a Specialist', icon: <FaMicrophone/>, link: '/consult' }, { text: 'Creative & Design Services', icon: <FaPaintBrush />, link: '/design-services' }, { text: 'Event Sponsorship', icon: <FaHandshake />, link: '/sponsorship' }, { text: 'Digital Campaign Management', icon: <FaBullhorn />, link: '/digital-campaigns' }, { text: 'Outdoor Media Buying', icon: <FaTags />, link: '/media-buying' }, { text: 'Market Research & Analytics', icon: <FaChartLine />, link: '/research' }, { text: 'Branding & Activation', icon: <FaLightbulb />, link: '/branding-activation' } ] }, ]; const handleToggle = (id) => setOpenSection(prev => (prev === id ? null : id)); return <div style={styles.accordionMenu}>{ADVERTISING_DATA.map(section => <AccordionSection key={section.id} section={section} isOpen={openSection === section.id} onToggle={() => handleToggle(section.id)} />)}</div>; };
 const OffersView = ({ onBack }) => { const offers = [ { title: "Monsoon Bonanza", description: "Get 20% OFF on your first billboard campaign this season. Limited time offer!" }, { title: "Digital Debut", description: "Book 2 digital screens and get a 3rd screen at 50% OFF for the first month." }, { title: "Long-Term Partner", description: "Enjoy 1 month of advertising absolutely FREE when you book any site for 6 consecutive months." }, { title: "Startup Special", description: "Are you a new business? Get special discounted rates on mall and transit advertising. Contact us to learn more." }, ]; return ( <div style={styles.offersView}> <div style={styles.offersHeader}> <button style={styles.backButton} onClick={onBack} title="Go Back"><FaArrowLeft /></button> <h2 style={styles.offersTitle}>Current Offers</h2> </div> {offers.map((offer, index) => ( <div key={index} style={styles.offerItem}> <h3 style={styles.offerItemTitle}>{offer.title}</h3> <p style={styles.offerItemDesc}>{offer.description}</p> </div> ))} </div> ); };
-
 const ChatConversation = ({ messages }) => {
     const chatContainerRef = useRef(null);
     useEffect(() => {
@@ -332,7 +293,6 @@ const ChatConversation = ({ messages }) => {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     }, [messages]);
-
     return (
         <div ref={chatContainerRef} style={styles.chatConversation}>
             {messages.map((msg, index) => (
@@ -343,7 +303,6 @@ const ChatConversation = ({ messages }) => {
         </div>
     );
 };
-
 const ChatInput = ({ onSendMessage, placeholder, disabled }) => {
     const [input, setInput] = useState('');
     const handleSubmit = (e) => {
@@ -370,6 +329,9 @@ const ChatInput = ({ onSendMessage, placeholder, disabled }) => {
     );
 };
 
+// ===================================================================
+// 4. Main ChatWidget Component
+// ===================================================================
 const ChatWidget = () => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
@@ -378,16 +340,11 @@ const ChatWidget = () => {
     const [currentView, setCurrentView] = useState('main');
     const [showCelebration, setShowCelebration] = useState(false);
     const [messages, setMessages] = useState([]);
-    
-    // States for the new lead generation flow
     const [conversationState, setConversationState] = useState('AWAITING_INITIAL_MESSAGE');
     const [initialUserMessage, setInitialUserMessage] = useState('');
     const [userPhoneNumber, setUserPhoneNumber] = useState('');
-
-    // Repurposing the existing mutation hook to send lead details to your backend/email service
     const [sendLeadEmail, { isLoading, isSuccess, isError, error }] = useInitiateLiveChatMutation();
 
-    // This effect handles the result of the API call
     useEffect(() => {
         if (isError) {
             console.error("Failed to send lead email:", error);
@@ -396,11 +353,9 @@ const ChatWidget = () => {
         }
     }, [isSuccess, isError, error]);
 
-    // This is the core logic for the lead generation chatbot
     const handleSendMessage = (text) => {
         const userMessage = { text, sender: 'user' };
         setMessages(prev => [...prev, userMessage]);
-
         switch (conversationState) {
             case 'AWAITING_INITIAL_MESSAGE':
                 setInitialUserMessage(text);
@@ -408,19 +363,12 @@ const ChatWidget = () => {
                 setMessages(prev => [...prev, askForPhoneMsg]);
                 setConversationState('AWAITING_PHONE_NUMBER');
                 break;
-
             case 'AWAITING_PHONE_NUMBER':
-                const phoneRegex = /^\d{10}$/; // Validates a 10-digit number
+                const phoneRegex = /^\d{10}$/;
                 if (phoneRegex.test(text.trim())) {
                     const capturedPhoneNumber = text.trim();
                     setUserPhoneNumber(capturedPhoneNumber);
-
-                    // Call the backend API to send the email with the lead details
-                    sendLeadEmail({
-                        message: initialUserMessage,
-                        phoneNumber: capturedPhoneNumber
-                    });
-
+                    sendLeadEmail({ message: initialUserMessage, phoneNumber: capturedPhoneNumber });
                     const thankYouMsg = { text: "Thank you! We've received your details and will be in touch shortly.", sender: 'bot' };
                     setMessages(prev => [...prev, thankYouMsg]);
                     setConversationState('LEAD_CAPTURED');
@@ -429,14 +377,11 @@ const ChatWidget = () => {
                     setMessages(prev => [...prev, askAgainMsg]);
                 }
                 break;
-            
             case 'LEAD_CAPTURED':
                 const alreadyCapturedMsg = { text: "Our team will be in touch soon. For a new inquiry, you can refresh the page.", sender: 'bot' };
                 setMessages(prev => [...prev, alreadyCapturedMsg]);
                 break;
-            
-            default:
-                break;
+            default: break;
         }
     };
     
@@ -457,14 +402,10 @@ const ChatWidget = () => {
 
     const getPlaceholderText = () => {
         switch (conversationState) {
-            case 'AWAITING_INITIAL_MESSAGE':
-                return "How can we help you today?";
-            case 'AWAITING_PHONE_NUMBER':
-                return "Enter your 10-digit phone number...";
-            case 'LEAD_CAPTURED':
-                return "Our team will contact you soon.";
-            default:
-                return "Type your message...";
+            case 'AWAITING_INITIAL_MESSAGE': return "How can we help you today?";
+            case 'AWAITING_PHONE_NUMBER': return "Enter your 10-digit phone number...";
+            case 'LEAD_CAPTURED': return "Our team will contact you soon.";
+            default: return "Type your message...";
         }
     };
 
@@ -475,30 +416,27 @@ const ChatWidget = () => {
     return (
         <>
             <style>{`
-                @keyframes pulse {
-                    0% { transform: scale(1); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-                    50% { transform: scale(1.02); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
-                    100% { transform: scale(1); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-                }
                 @keyframes confettiFall {
                     0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
                     100% { transform: translateY(650px) rotate(360deg); opacity: 0.5; }
                 }
             `}</style>
             
+            {/* --- UPDATED: Using the new RippleChatOpener --- */}
             <div 
                 style={styles.chatOpenerContainer(isOpen)} 
                 onClick={() => setIsOpen(true)} 
                 onMouseEnter={() => setIsOpenerHovered(true)} 
                 onMouseLeave={() => setIsOpenerHovered(false)}
+                aria-label="Open chat"
+                role="button"
             >
-                <HoloRingOpener isHovered={isOpenerHovered} />
+                <RippleChatOpener isHovered={isOpenerHovered} />
             </div>
             
             {isOpen && (
                 <div style={styles.chatWindow(isVisible)}>
                     {showCelebration && <ConfettiEffect />}
-                    
                     <div style={styles.chatHeader}>
                         <div style={styles.headerBranding}>
                             <div style={styles.avatar}>SP</div>
@@ -509,7 +447,6 @@ const ChatWidget = () => {
                         </div>
                         <button style={styles.closeButton} title="Close Chat" onClick={() => setIsOpen(false)}>✖</button>
                     </div>
-
                     <div style={{...styles.contentArea, flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
                         {messages.length > 0 ? (
                              <ChatConversation messages={messages} />
@@ -530,11 +467,9 @@ const ChatWidget = () => {
                             </>
                         )}
                     </div>
-                    
                     {conversationState === 'AWAITING_INITIAL_MESSAGE' && currentView === 'main' && (
                         <QuickReplies onOffersClick={handleOffersClick} />
                     )}
-                    
                     <ChatInput 
                         onSendMessage={handleSendMessage} 
                         placeholder={getPlaceholderText()}
