@@ -59,7 +59,7 @@ const AdSpotSection = () => {
           className="w-[90%] md:w-[80%] lg:w-[70%]"
         >
           <img
-            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d"
+            src="/assets/HomePageImages/media finder.png"
             alt="Ad Spot"
             className="rounded-2xl shadow-2xl"
           />

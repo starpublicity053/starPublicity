@@ -7,21 +7,21 @@ const ServicesSection = () => {
       title: "ATL MARKETING ",
       description:
         "From dynamic bus branding to eye-catching wall wraps, we help your brand stand out in high-traffic spots, making a notable impact across the market.",
-      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
+      image: "/assets/HomePageImages/ATL marketing.png",
       link: "/media/atl",
     },
     {
       title: "BTL MARKETING",
       description:
         "We create direct, targeted campaigns using event branding and seminar promotions to engage your audience and drive quick results.",
-      image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
+      image: "/assets/HomePageImages/BTL marketing.png",
       link: "/media/btl",
     },
     {
       title: "TTL MARKETING",
       description:
         "Integrates social media ads, email campaigns, and more to deliver an impactful brand message to engage specific audiences.",
-      image: "https://images.unsplash.com/photo-1556740749-887f6717d7e4",
+      image: "/assets/HomePageImages/TTL marketing.png",
       link: "/media/ttl",
     },
   ];

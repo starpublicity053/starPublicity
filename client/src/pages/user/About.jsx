@@ -95,7 +95,7 @@ const AboutUs = () => {
     <>
       {/* === Top Hero Section (UNCHANGED) === */}
       <section className="relative w-full min-h-[900px] lg:min-h-[100vh] overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('https://images.pexels.com/photos/6804580/pexels-photo-6804580.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=1600&w=1200')`}}/>
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url('/assets/AboutpageImages/bg.png')`}}/>
         <div className="absolute inset-0 bg-black opacity-50" />
         <div className="absolute top-1/3 left-0 w-full z-0 pointer-events-none overflow-hidden">
             <div className="whitespace-nowrap font-black opacity-10 text-white select-none flex" style={{ fontSize: "20vw", animation: "slideStarInfinite 30s linear infinite", width: "max-content" }}>
@@ -168,7 +168,7 @@ const AboutUs = () => {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="flex justify-center lg:justify-start">
-              <img src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="People working in a creative studio" className="w-full max-w-lg lg:max-w-none h-auto rounded-lg shadow-xl"/>
+              <img src="/assets/AboutpageImages/creativeengineroom.png" alt="People working in a creative studio" className="w-full max-w-lg lg:max-w-none h-auto rounded-lg shadow-xl"/>
             </div>
             <div className="text-gray-800">
               <h3 className="font-bold text-3xl text-[#1A2A80] md:text-4xl mb-6">CREATIVE ENGINE ROOM </h3>

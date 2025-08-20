@@ -10,7 +10,7 @@ function App() {
     who: {
       label: "Who we are?",
       // CORRECTED: Using a direct path string
-      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Bus Shelter Advertisement.png",
+      thumbnailImage: "/assets/HomePageImages/abouthome1.png",
       infoBoxHeading: "Created For You",
       infoBoxText1: (
         <>
@@ -35,7 +35,7 @@ function App() {
     solutions: {
       label: "AUDIENCE",
       // CORRECTED: Using a direct path string
-      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Unipole.png",
+      thumbnailImage: "/assets/HomePageImages/abouthome2.png",
       infoBoxHeading: "Know Your Crowd",
       infoBoxText1: (
         <>
@@ -57,7 +57,7 @@ function App() {
     tools: {
       label: "CREATIVITY",
       // CORRECTED: Using a direct path string
-      thumbnailImage: "/assets/ATL_BTL_TTL/ATL Media/Unipols 2.png",
+      thumbnailImage: "/assets/HomePageImages/abouthome3.png",
       infoBoxHeading: "Ideas That Spark",
       infoBoxText1: (
         <>
@@ -170,7 +170,7 @@ function App() {
           >
             <img
               // CORRECTED: Using a direct path string
-              src="/assets/ATL_BTL_TTL/ATL Media/Newspaper Ad.png"
+              src="/assets/HomePageImages/hero section.png"
               alt="Phone Screen"
               className="w-full h-full object-cover"
             />

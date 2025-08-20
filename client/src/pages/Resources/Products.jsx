@@ -83,7 +83,7 @@ const Products = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url('https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')",
+              "url('/assets/ProductionpageImages/bg.png')",
             scale: heroScale,
             opacity: heroOpacity,
             zIndex: 0,
@@ -147,7 +147,7 @@ const Products = () => {
           >
             <div className="p-4">
               <img
-                src="https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                src="/assets/ProductionpageImages/review card.png"
                 alt="Industrial Team"
                 className="object-cover w-full h-64 rounded-md mb-4"
               />
@@ -476,7 +476,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/robotic%20arm%20in%20modern%20factory,blue%20lighting"
+                    "/assets/ProductionpageImages/robotics & ai.png"
                   }
                   alt="Robotics & AI"
                 />
@@ -507,7 +507,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/engineers%20working%20on%20blueprint,industrial%20setting"
+                    "/assets/ProductionpageImages/expert engineering.png"
                   }
                   alt="Expert Engineering"
                 />
@@ -538,7 +538,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/circuit%20board%20manufacturing,microelectronics"
+                    "/assets/ProductionpageImages/precision manufacturing.png"
                   }
                   alt="Precision Manufacturing"
                 />
@@ -569,7 +569,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/solar%20panels%20on%20factory%20roof,renewable%20energy"
+                    "/assets/ProductionpageImages/sustainable solutions.png"
                   }
                   alt="Sustainable Solutions"
                 />
@@ -600,7 +600,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/heavy%20industrial%20machinery,factory%20floor"
+                    "/assets/ProductionpageImages/advanced machinery.png"
                   }
                   alt="Advanced Machinery"
                 />
@@ -631,7 +631,7 @@ const Products = () => {
               <div className="flip-card-front">
                 <img
                   src={
-                    "https://image.pollinations.ai/prompt/factory%20worker%20inspecting%20product%20quality"
+                    "/assets/ProductionpageImages/Quality Assurance.png"
                   }
                   alt="Quality Assurance"
                 />
@@ -670,7 +670,7 @@ const Products = () => {
             variants={slideInLeft}
           >
             <img
-              src="https://image.pollinations.ai/prompt/industrial%20workers%20collaborating%20in%20modern%20factory,blue%20tones"
+              src="/assets/ProductionpageImages/3-tier process.png"
               alt="Industrial workers collaborating in a modern factory"
               className="w-full h-auto object-cover rounded-lg shadow-xl"
             />
