@@ -91,10 +91,10 @@ const Footer = () => {
               Elevating brands with impactful advertising. Your vision, amplified.
             </p>
             <div className="flex space-x-4">
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors"><FaLinkedinIn size={20}/></a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-500 transition-colors"><FaInstagram size={20}/></a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 transition-colors"><FaYoutube size={20}/></a>
-              <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><FaXTwitter size={20}/></a>
+              <a href="https://www.linkedin.com/in/shivam-kumar-0b17342a8/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors"><FaLinkedinIn size={20}/></a>
+              <a href="https://www.instagram.com/starpublicityldh/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-pink-500 transition-colors"><FaInstagram size={20}/></a>
+              <a href="https://www.youtube.com/@StarPublicity" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-red-500 transition-colors"><FaYoutube size={20}/></a>
+              <a href="https://x.com/starpublicityld" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors"><FaXTwitter size={20}/></a>
             </div>
           </div>
           {/* Newsletter */}
