@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, memo } from 'react';
-// Updated import to include Instagram, Facebook, and the new X logo
-import { FaLinkedin, FaInstagram, FaFacebook, FaXTwitter } from 'react-icons/fa6';
+// Re-added FaEnvelope for the email link
+import { FaEnvelope, FaLinkedin, FaInstagram, FaFacebook, FaXTwitter } from 'react-icons/fa6';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,8 +13,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 // 1. DATA, HOOKS, and STATIC COMPONENTS
 //==============================================================================
 
-// Updated social links data with your specific URLs
+// Updated social links data to include your email address
 const socialLinksData = [
+    { name: 'Email', icon: FaEnvelope, href: 'mailto:info@starpublicity.co.in' },
     { name: 'LinkedIn', icon: FaLinkedin, href: 'https://www.linkedin.com/in/shivam-kumar-0b17342a8/' },
     { name: 'Instagram', icon: FaInstagram, href: 'https://www.instagram.com/starpublicityldh/' },
     { name: 'Facebook', icon: FaFacebook, href: 'https://www.facebook.com/starpublicity' },

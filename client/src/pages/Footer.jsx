@@ -128,9 +128,9 @@ const Footer = () => {
           <div>
              <h4 className="text-sm font-semibold tracking-wider uppercase text-gray-400 mb-6">Contact Us</h4>
              <div className="space-y-4 text-gray-300">
-                <a href="tel:+911234567890" className="flex items-center gap-3 hover:text-white transition-colors"><FaPhone size={14} /> +91 123-456-7890</a>
-                <a href="mailto:info@starpublicity.com" className="flex items-center gap-3 hover:text-white transition-colors"><FaEnvelope size={14} /> info@starpublicity.com</a>
-                <p className="flex items-start gap-3"><FaMapMarkerAlt className="mt-1" size={14} /> 123 Marketing St, Digital City, 141001</p>
+                <a href="tel:+911234567890" className="flex items-center gap-3 hover:text-white transition-colors"><FaPhone size={14} /> +91 01614668602</a>
+                <a href="mailto:info@starpublicity.com" className="flex items-center gap-3 hover:text-white transition-colors"><FaEnvelope size={14} /> info@starpublicity.co.in</a>
+                <p className="flex items-start gap-3"><FaMapMarkerAlt className="mt-1" size={14} />SCO-137, Feroze Gandhi market, ludhiana Punjab, 141001</p>
             </div>
           </div>
         </div>
