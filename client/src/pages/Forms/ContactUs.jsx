@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, memo } from 'react';
-import { FaLinkedin, FaGithub, FaTwitter, FaEnvelope } from 'react-icons/fa';
+// Updated import to include Instagram, Facebook, and the new X logo
+import { FaLinkedin, FaInstagram, FaFacebook, FaXTwitter } from 'react-icons/fa6';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,12 +13,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 // 1. DATA, HOOKS, and STATIC COMPONENTS
 //==============================================================================
 
+// Updated social links data with your specific URLs
 const socialLinksData = [
-    { name: 'Email', icon: FaEnvelope, href: 'mailto:your_email@example.com' },
-    { name: 'LinkedIn', icon: FaLinkedin, href: 'https://linkedin.com/yourprofile' },
-    { name: 'GitHub', icon: FaGithub, href: 'https://github.com/yourprofile' },
-    { name: 'Twitter', icon: FaTwitter, href: 'https://twitter.com/yourprofile' },
+    { name: 'LinkedIn', icon: FaLinkedin, href: 'https://www.linkedin.com/in/shivam-kumar-0b17342a8/' },
+    { name: 'Instagram', icon: FaInstagram, href: 'https://www.instagram.com/starpublicityldh/' },
+    { name: 'Facebook', icon: FaFacebook, href: 'https://www.facebook.com/starpublicity' },
+    { name: 'X', icon: FaXTwitter, href: 'https://x.com/starpublicityld' },
 ];
+
 
 // Canvas animation hook remains the same
 const useParticleAnimation = () => {
