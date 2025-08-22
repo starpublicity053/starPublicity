@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Send, MessageCircle, Smile, MessageSquareText, Clock, Headset, Globe as LucideGlobe } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import Lottie from "lottie-react";
 
 // Defines the styles for the orbit and float animations
 const animationStyles = `
@@ -101,6 +101,22 @@ const PromiseFeatureCard = ({ icon: Icon, title, description }) => {
 const ContactUsPage = () => {
     const sectionRef = useRef(null);
     const inView = useInView(sectionRef, { once: true, amount: 0.3 });
+
+    const [animationData, setAnimationData] = useState(null);
+
+    useEffect(() => {
+        const fetchAnimation = async () => {
+            try {
+                const response = await fetch("https://lottie.host/a12f93b1-0872-4cb7-acb3-6b00363d7509/40tCm2hisF.json");
+                const data = await response.json();
+                setAnimationData(data);
+            } catch (error) {
+                console.error("Error fetching Lottie animation data:", error);
+            }
+        };
+
+        fetchAnimation();
+    }, []);
 
     // Icons for the two different orbital paths
     const outerNodes = [
@@ -333,11 +349,13 @@ const ContactUsPage = () => {
                                 transition={{ duration: 0.6 }}
                                 className="relative z-10 w-80 h-80 flex justify-center items-center rounded-full overflow-hidden"
                             >
-                                <DotLottieReact
-                                    src="https://lottie.host/a5d44e48-8708-4c6b-b81d-88c500e538ef/3HxB5ls5yb.lottie"
-                                    loop
-                                    autoplay
-                                />
+                                {animationData && (
+                                    <Lottie
+                                        animationData={animationData}
+                                        loop={true}
+                                        autoplay={true}
+                                    />
+                                )}
                             </motion.div>
                         </motion.div>
                     </motion.div>
