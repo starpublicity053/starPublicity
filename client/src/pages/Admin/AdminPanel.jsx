@@ -1,4 +1,3 @@
-// AdminPanel.jsx
 import React, {
   useEffect,
   useState,
@@ -28,6 +27,7 @@ import {
   FaSpinner,
   FaExclamationCircle,
   FaTimesCircle,
+  FaSyncAlt,
   FaArrowUp,
   FaArrowDown,
   FaReply,
@@ -293,7 +293,7 @@ const AddNoteModal = ({ isOpen, onClose, onConfirm, isLoading, inquiryId }) => {
   );
 };
 
-// New InquiryDetailModal component (modified to show notes and enhanced UI)
+// Updated InquiryDetailModal component to match the new backend model
 const InquiryDetailModal = ({
   isOpen,
   onClose,
@@ -343,50 +343,11 @@ const InquiryDetailModal = ({
 
         {/* Inquiry Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <DetailItem
-            icon={<FaUserIcon />}
-            label="Name"
-            value={`${inquiry.firstName} ${inquiry.lastName}`}
-          />
+          <DetailItem icon={<FaUserIcon />} label="Name" value={inquiry.name} />
           <DetailItem
             icon={<FaEnvelopeIcon />}
             label="Email"
             value={inquiry.email}
-          />
-          <DetailItem
-            icon={<FaPhoneIcon />}
-            label="Phone"
-            value={inquiry.phone || "N/A"}
-          />
-          <DetailItem
-            icon={<FaLocationIcon />}
-            label="Location"
-            value={`${inquiry.city}, ${inquiry.advertisingState}`}
-          />
-          <DetailItem
-            icon={<FaTopicIcon />}
-            label="Topic"
-            value={inquiry.topic}
-          />
-          <DetailItem
-            icon={<FaBriefcase />}
-            label="Media Type"
-            value={inquiry.media}
-          />
-          <DetailItem
-            icon={<FaMarketIcon />}
-            label="Market"
-            value={inquiry.advertisingMarket || "N/A"}
-          />
-          <DetailItem
-            icon={<FaCalendarIcon />}
-            label="Received Date"
-            value={new Date(inquiry.createdAt).toLocaleString()}
-          />
-          <DetailItem
-            icon={<FaForwardIcon />}
-            label="Forwarded"
-            value={inquiry.isForwarded ? "Yes" : "No"}
           />
           <DetailItem
             icon={<FaStatusIcon />}
@@ -395,6 +356,11 @@ const InquiryDetailModal = ({
             className={`font-semibold ${
               inquiry.status === "read" ? "text-green-800" : "text-yellow-800"
             }`}
+          />
+          <DetailItem
+            icon={<FaCalendarIcon />}
+            label="Received Date"
+            value={new Date(inquiry.createdAt).toLocaleString()}
           />
         </div>
 
@@ -552,6 +518,7 @@ const AdminPanel = () => {
     message: "",
     type: "success",
   });
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // --- Responsive Sidebar State ---
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -611,6 +578,7 @@ const AdminPanel = () => {
     data: jobs = [],
     isLoading: isJobsLoading,
     isError: isJobsError,
+    refetch: refetchJobs,
   } = useGetJobsQuery();
   const [addJob, { isLoading: isAddingJob }] = useAddJobMutation();
   const [deleteJob, { isLoading: isDeletingJob }] = useDeleteJobMutation();
@@ -619,6 +587,7 @@ const AdminPanel = () => {
     data: blogPosts = [],
     isLoading: isBlogsLoading,
     isError: isBlogsError,
+    refetch: refetchBlogs,
   } = useGetBlogsQuery();
 
   const [addBlogMutation, { isLoading: isAddingBlog }] = useAddBlogMutation();
@@ -632,6 +601,7 @@ const AdminPanel = () => {
     data: reels = [],
     isLoading: isReelsLoading,
     isError: isReelsError,
+    refetch: refetchReels,
   } = useGetReelsQuery();
   const [addReel, { isLoading: isAddingReel }] = useAddReelMutation();
   const [deleteReel, { isLoading: isDeletingReel }] = useDeleteReelMutation();
@@ -642,6 +612,7 @@ const AdminPanel = () => {
     data: inquiries = [],
     isLoading: isInquiriesLoading,
     isError: isInquiriesError,
+    refetch: refetchInquiries,
   } = useGetContactInquiriesQuery();
 
   const [forwardContactInquiry, { isLoading: isForwardingInquiry }] =
@@ -671,6 +642,43 @@ const AdminPanel = () => {
   const showToast = useCallback((message, type = "success") => {
     setToast({ show: true, message, type });
   }, []);
+
+  const handleRefresh = useCallback(async () => {
+    if (isRefreshing) return;
+
+    setIsRefreshing(true);
+    showToast("Refreshing data...");
+
+    try {
+      switch (activeTab) {
+        case "jobs":
+          await refetchJobs();
+          break;
+        case "blogs":
+          await refetchBlogs();
+          break;
+        case "reels":
+          await refetchReels();
+          break;
+        case "contact":
+          await refetchInquiries();
+          break;
+        case "welcome":
+          // Refresh all data for the dashboard
+          await Promise.all([refetchJobs(), refetchBlogs(), refetchInquiries()]);
+          break;
+        default:
+          // No data to refresh for 'products' tab yet
+          break;
+      }
+      showToast("Data refreshed!", "success");
+    } catch (error) {
+      console.error("Failed to refresh data:", error);
+      showToast("Failed to refresh data.", "error");
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [activeTab, refetchJobs, refetchBlogs, refetchReels, refetchInquiries, showToast, isRefreshing]);
 
   const getAvatarUrl = useCallback(
     (name, size) => {
@@ -728,16 +736,9 @@ const AdminPanel = () => {
       const lowerSearch = contactSearchTerm.toLowerCase();
       filtered = filtered.filter(
         (inquiry) =>
-          (inquiry.firstName + " " + inquiry.lastName)
-            .toLowerCase()
-            .includes(lowerSearch) ||
+          inquiry.name.toLowerCase().includes(lowerSearch) ||
           inquiry.email.toLowerCase().includes(lowerSearch) ||
-          inquiry.topic.toLowerCase().includes(lowerSearch) ||
-          inquiry.message.toLowerCase().includes(lowerSearch) ||
-          inquiry.advertisingState.toLowerCase().includes(lowerSearch) ||
-          inquiry.city.toLowerCase().includes(lowerSearch) ||
-          inquiry.media.toLowerCase().includes(lowerSearch) ||
-          inquiry.advertisingMarket.toLowerCase().includes(lowerSearch)
+          inquiry.message.toLowerCase().includes(lowerSearch)
       );
     }
     return filtered;
@@ -752,8 +753,8 @@ const AdminPanel = () => {
       sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (inquirySortBy === "name") {
       sorted.sort((a, b) => {
-        const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
-        const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
         return nameA.localeCompare(nameB);
       });
     }
@@ -930,15 +931,18 @@ const AdminPanel = () => {
     }));
   }, []);
 
-  // Handler for adding a key highlight
+  // Modified handler for adding a key highlight
   const handleAddHighlight = useCallback((e) => {
-    if (e.key === "Enter" && e.target.value.trim() !== "") {
-      const newHighlight = e.target.value.trim();
-      setBlogData((prev) => ({
-        ...prev,
-        keyHighlights: [...prev.keyHighlights, newHighlight],
-      }));
-      e.target.value = ""; // Clear input
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevents form submission
+      if (e.target.value.trim() !== "") {
+        const newHighlight = e.target.value.trim();
+        setBlogData((prev) => ({
+          ...prev,
+          keyHighlights: [...prev.keyHighlights, newHighlight],
+        }));
+        e.target.value = ""; // Clear input
+      }
     }
   }, []);
 
@@ -1259,10 +1263,28 @@ const AdminPanel = () => {
   };
 
   // --- Contact Management Handlers ---
-  const handleViewInquiry = useCallback((inquiry) => {
-    setSelectedInquiry(inquiry);
-    setIsInquiryDetailModalOpen(true);
-  }, []);
+  const handleViewInquiry = useCallback(
+    async (inquiry) => {
+      // Set the selected inquiry first so the modal can open
+      setSelectedInquiry(inquiry);
+      setIsInquiryDetailModalOpen(true);
+      // If the inquiry is 'unread', dispatch an update to mark it as 'read'
+      if (inquiry.status === "unread") {
+        try {
+          await updateContactInquiryStatus({
+            id: inquiry._id,
+            status: "read",
+          }).unwrap();
+          // Since RTK Query automatically refetches and updates the cache,
+          // the UI will update on its own. We just need to show a success toast.
+          showToast("Inquiry marked as read.");
+        } catch (error) {
+          console.error("Failed to update inquiry status to read:", error);
+        }
+      }
+    },
+    [updateContactInquiryStatus, showToast]
+  );
 
   const handleForwardInquiryClick = useCallback((inquiry) => {
     setSelectedInquiry(inquiry);
@@ -1327,13 +1349,15 @@ const AdminPanel = () => {
   // New: Confirm adding a note
   const confirmAddNote = async (inquiryId, content) => {
     try {
-      await addContactInquiryNote({ id: inquiryId, content }).unwrap();
+      const result = await addContactInquiryNote({
+        id: inquiryId,
+        content,
+      }).unwrap();
       showToast("Note added successfully!");
       setIsAddNoteModalOpen(false);
       setSelectedInquiryForNote(null);
-      if (selectedInquiry && selectedInquiry._id === inquiryId) {
-        setIsInquiryDetailModalOpen(false); // Close to force re-render with new data
-      }
+      // Update the selected inquiry state with the new notes array from the response
+      setSelectedInquiry(result.data);
     } catch (error) {
       console.error("Failed to add note:", error);
       showToast(
@@ -1362,18 +1386,10 @@ const AdminPanel = () => {
               .join("\n")
           : "No notes";
       return {
-        "First Name": inquiry.firstName,
-        "Last Name": inquiry.lastName,
+        "Full Name": inquiry.name, // Use the 'name' field
         Email: inquiry.email,
-        Phone: inquiry.phone,
-        State: inquiry.advertisingState,
-        City: inquiry.city,
-        Topic: inquiry.topic,
-        "Media Type": inquiry.media,
-        Market: inquiry.advertisingMarket,
         Message: inquiry.message,
         Status: inquiry.status,
-        Forwarded: inquiry.isForwarded ? "Yes" : "No",
         "Received Date": new Date(inquiry.createdAt).toLocaleString(),
         Notes: notes,
       };
@@ -1507,6 +1523,15 @@ const AdminPanel = () => {
             </div>
             <button className="text-gray-600 hover:text-blue-600 md:hidden">
               <FaSearch size={20} />
+            </button>
+
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="relative text-gray-600 hover:text-blue-600 transition-transform hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50"
+              title="Refresh Data"
+            >
+              <FaSyncAlt size={20} className={isRefreshing ? "animate-spin" : ""} />
             </button>
 
             <button className="relative text-gray-600 hover:text-blue-600 transition-transform hover:scale-110">
@@ -2457,7 +2482,7 @@ const AdminPanel = () => {
                         {isAddingBlog || isUpdatingBlog ? (
                           <FaSpinner className="animate-spin inline-block mr-2" />
                         ) : isEditingBlog ? (
-                          "Updating..."
+                          "Update Blog"
                         ) : (
                           "Publish Blog"
                         )}
@@ -2695,7 +2720,7 @@ const AdminPanel = () => {
                           <div className="flex justify-between items-start gap-2">
                             <div>
                               <h4 className="font-bold text-lg text-gray-900">
-                                {inquiry.firstName} {inquiry.lastName}
+                                {inquiry.name}
                               </h4>
                               <p className="text-sm text-gray-600 break-all">
                                 {inquiry.email}
@@ -2711,10 +2736,6 @@ const AdminPanel = () => {
                               {inquiry.status}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-700 mt-2">
-                            <strong className="font-medium">Topic:</strong>{" "}
-                            {inquiry.topic}
-                          </p>
                           <p className="text-xs text-gray-500 mt-1">
                             {new Date(inquiry.createdAt).toLocaleString()}
                           </p>
@@ -2733,7 +2754,7 @@ const AdminPanel = () => {
                                   inquiry.status
                                 )
                               }
-                              className={`${
+                              className={`ml-4 ${
                                 inquiry.status === "read"
                                   ? "text-yellow-500 hover:text-yellow-700"
                                   : "text-green-600 hover:text-green-800"
@@ -2752,7 +2773,7 @@ const AdminPanel = () => {
                             </button>
                             <button
                               onClick={() => handleForwardInquiryClick(inquiry)}
-                              className="text-purple-600 hover:text-purple-900 transition-colors duration-200"
+                              className="text-purple-600 hover:text-purple-900 transition-colors duration-200 ml-4"
                               title="Forward Inquiry"
                             >
                               <FaReply size={18} />
@@ -2783,7 +2804,7 @@ const AdminPanel = () => {
                               scope="col"
                               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
-                              Topic
+                              Message
                             </th>
                             <th
                               scope="col"
@@ -2809,13 +2830,15 @@ const AdminPanel = () => {
                           {sortedInquiries.map((inquiry) => (
                             <tr key={inquiry._id}>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {inquiry.firstName} {inquiry.lastName}
+                                {inquiry.name}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                 {inquiry.email}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                {inquiry.topic}
+                                {inquiry.message.length > 50
+                                  ? `${inquiry.message.substring(0, 50)}...`
+                                  : inquiry.message}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                 {new Date(
@@ -3166,4 +3189,4 @@ export default AdminPanel;
 }
 `}
 </style>
-*/ 
+*/

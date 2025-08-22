@@ -8,6 +8,8 @@ const {
   submitContactInquiry,
   getAllContactInquiries,
   forwardContactInquiry,
+  updateContactInquiryStatus, // ✅ New Import
+  addContactInquiryNote, // ✅ New Import
 } = require("../controllers/ContactController");
 const {
   getJobs,
@@ -25,7 +27,6 @@ const {
   deleteReel,
 } = require("../controllers/ReelController");
 
-// --- ✅ UPDATED: Import only the function needed for the lead generation chatbot ---
 const { initiateChat } = require("../controllers/ChatbotController");
 
 const storage = multer.memoryStorage();
@@ -43,9 +44,20 @@ router.get("/blogs/:id", blogController.getBlogPostById);
 router.delete("/blogs/:id", blogController.deleteBlogPost);
 router.put("/blogs/:id", upload.any(), blogController.updateBlogPost);
 router.post("/contact/inquiries", blogContactController.submitContactForm);
+
+// --- ✅ UPDATED CONTACT INQUIRY ROUTES ---
+// This is the route for your main contact form submission.
 router.post("/contact/inquiry", submitContactInquiry);
+// This route fetches all inquiries for the admin panel.
 router.get("/contact/inquiries", getAllContactInquiries);
+// This route forwards an inquiry to another email.
 router.post("/contact/inquiries/:id/forward", forwardContactInquiry);
+// ✅ NEW ROUTE: Update the status of an inquiry.
+router.patch("/contact/inquiries/:id/status", updateContactInquiryStatus);
+// ✅ NEW ROUTE: Add a new note to an inquiry.
+router.post("/contact/inquiries/:id/notes", addContactInquiryNote);
+
+// --- Other Existing Routes ---
 router.post("/ATL-inquiry", sendAtlInquiry);
 router.post("/BTL-inquiry", sendBtlInquiry);
 router.post("/TTL-inquiry", sendTtlInquiry);
@@ -53,12 +65,8 @@ router.get("/reels", getReels);
 router.post("/reels", upload.single("reel"), addReel);
 router.put("/reels/:id", upload.single("reel"), updateReel);
 router.delete("/reels/:id", deleteReel);
- 
 
 // --- ✅ UPDATED: Simplified Chatbot Route ---
-// This single route now receives the lead details from the frontend to be sent via email.
-// The old webhook routes have been removed as they are no longer needed.
 router.post('/live-chat/initiate', initiateChat);
-
 
 module.exports = router;

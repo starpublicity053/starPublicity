@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Mail, Phone, MapPin, Send, MessageCircle, Smile, MessageSquareText, Clock, Headset, Globe as LucideGlobe } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import Lottie from "lottie-react";
+import { useSendContactInquiryMutation } from "../../features/auth/contactUs";
 
 // Defines the styles for the orbit and float animations
 const animationStyles = `
@@ -108,6 +109,9 @@ const ContactUsPage = () => {
     const inView = useInView(sectionRef, { once: true, amount: 0.3 });
 
     const [animationData, setAnimationData] = useState(null);
+    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [submitStatus, setSubmitStatus] = useState({ message: '', type: '' });
+    const [sendInquiry, { isLoading }] = useSendContactInquiryMutation();
 
     useEffect(() => {
         const fetchAnimation = async () => {
@@ -122,6 +126,25 @@ const ContactUsPage = () => {
 
         fetchAnimation();
     }, []);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prevData => ({ ...prevData, [id]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSubmitStatus({ message: '', type: '' });
+
+        try {
+            await sendInquiry(formData).unwrap();
+            setSubmitStatus({ message: 'Message sent successfully!', type: 'success' });
+            setFormData({ name: '', email: '', message: '' });
+        } catch (err) {
+            console.error('Failed to send message:', err);
+            setSubmitStatus({ message: 'Failed to send message. Please try again.', type: 'error' });
+        }
+    };
 
     // Icons for the two different orbital paths
     const outerNodes = [
@@ -203,7 +226,7 @@ const ContactUsPage = () => {
                                     <div>
                                         <h3 className="font-semibold">Location</h3>
                                         <p className="text-gray-300">
-                                            Feroze gandhi market  <br /> ludhiana, punjab
+                                            Feroze gandhi market <br /> ludhiana, punjab
                                         </p>
                                     </div>
                                 </div>
@@ -214,7 +237,7 @@ const ContactUsPage = () => {
                         <div className="p-10 lg:p-16 bg-gray-50 flex items-center">
                             <div className="w-full">
                                 <h2 className="text-3xl font-bold text-gray-900 mb-8">Send Us a Message</h2>
-                                <form className="space-y-6">
+                                <form className="space-y-6" onSubmit={handleSubmit}>
                                     <div>
                                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                                             Full Name
@@ -223,6 +246,8 @@ const ContactUsPage = () => {
                                             type="text"
                                             id="name"
                                             placeholder="Enter your name"
+                                            value={formData.name}
+                                            onChange={handleChange}
                                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-[#1a2a80] focus:border-[#1a2a80] shadow-sm outline-none"
                                         />
                                     </div>
@@ -235,6 +260,8 @@ const ContactUsPage = () => {
                                             type="email"
                                             id="email"
                                             placeholder="Enter your email"
+                                            value={formData.email}
+                                            onChange={handleChange}
                                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-[#1a2a80] focus:border-[#1a2a80] shadow-sm outline-none"
                                         />
                                     </div>
@@ -247,6 +274,8 @@ const ContactUsPage = () => {
                                             id="message"
                                             rows="4"
                                             placeholder="How can we help you?"
+                                            value={formData.message}
+                                            onChange={handleChange}
                                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-[#1a2a80] focus:border-[#1a2a80] shadow-sm outline-none"
                                         />
                                     </div>
@@ -255,11 +284,24 @@ const ContactUsPage = () => {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        className="w-full flex items-center justify-center space-x-2 bg-[#1a2a80] text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:bg-[#152063] transition"
+                                        disabled={isLoading}
+                                        className="w-full flex items-center justify-center space-x-2 bg-[#1a2a80] text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:bg-[#152063] transition disabled:opacity-50"
                                     >
-                                        <Send className="w-5 h-5" />
-                                        <span>Submit</span>
+                                        {isLoading ? (
+                                            'Sending...'
+                                        ) : (
+                                            <>
+                                                <Send className="w-5 h-5" />
+                                                <span>Submit</span>
+                                            </>
+                                        )}
                                     </motion.button>
+                                    
+                                    {submitStatus.message && (
+                                        <p className={`mt-4 text-center ${submitStatus.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                                            {submitStatus.message}
+                                        </p>
+                                    )}
                                 </form>
                             </div>
                         </div>
