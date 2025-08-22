@@ -7,7 +7,7 @@ import { useSendATLInquiryMutation } from "../../../features/auth/contactApi";
 // The atlServices array now uses direct string paths.
 
 const atlServices = [
-    { name: "Unipoles", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/unipoles" },
+    { name: "Unipoles", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/unipoles" },
     { name: "Bus Branding", image: "/assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png", path: "/media/ATL/bus-branding" },
     { name: "Bus Stands", image: "/assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png", path: "/media/ATL/bus-stands" },
     { name: "Auto Branding", image: "/assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png", path: "/media/ATL/auto-branding" },
@@ -16,12 +16,12 @@ const atlServices = [
     { name: "City Mall Advertisements", image: "/assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png", path: "/media/ATL/mall-ads" },
     { name: "Van Activity", image: "/assets/ATL_BTL_TTL/Van activity/Van activity 1.png", path: "/media/ATL/van-activity" },
     { name: "Petrol Pumps", image: "/assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png", path: "/media/ATL/petrol-pumps" },
-    { name: "Wall Wraps", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/wall-wraps" },
+    { name: "Wall Wraps", image: "/assets/ATL marketing images/Wall Wraps.png", path: "/media/ATL/wall-wraps" },
     { name: "Wall Paintings", image: "/assets/ATL_BTL_TTL/wall painting/wall painting 1.png", path: "/media/ATL/wall-paintings" },
     { name: "Indian Railway Trains/Stations", image: "/assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png", path: "/media/ATL/railway-ads" },
     { name: "Metro Trains/Stations", image: "/assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png", path: "/media/ATL/metro-ads" },
-    { name: "Airports Advertisements", image: "/assets/ATL_BTL_TTL/ATL Media/unipole.png", path: "/media/ATL/airport-ads" },
-    { name: "Newspaper Advertisements", image: "/assets/ATL_BTL_TTL/ATL Media/newspaper Ad.png", path: "/media/ATL/newspaper-ads" },
+    { name: "Airports Advertisements", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/airport-ads" },
+    { name: "Newspaper Advertisements", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/newspaper-ads" },
     { name: "News Channels Advertisements", image: "/assets/ATL_BTL_TTL/Metro/Television/Television 1.png", path: "/media/ATL/tv-ads" },
     { name: "FM Radio Advertisements", image: "/assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png", path: "/media/ATL/radio-ads" },
 ];

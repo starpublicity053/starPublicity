@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 import { useSendBTLInquiryMutation } from "../../../features/auth/contactApi";
 
 const btlServices = [
-    { name: "Cinema Advertising", image: "https://images.pexels.com/photos/1036808/pexels-photo-1036808.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/cinema-advertising", description: "Target your audience where they are most engaged." },
-    { name: "Dhaba Advertising", image: "https://images.pexels.com/photos/4065614/pexels-photo-4065614.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/dhaba-advertising", description: "Reach local communities and travelers with high-impact ads." },
-    { name: "Event Branding", image: "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/event-branding", description: "Make your events unforgettable with comprehensive branding." },
-    { name: "Look Walker", image: "https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/look-walker", description: "Mobile and direct advertising to capture attention on the go." },
-    { name: "Pole Sunpacks", image: "https://images.pexels.com/photos/3807693/pexels-photo-3807693.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/pole-sunpacks", description: "Effective outdoor advertising on busy streets and public areas." },
-    { name: "Retail Branding", image: "https://images.pexels.com/photos/3771092/pexels-photo-3771092.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/retail-branding", description: "Enhance your in-store presence and customer experience." },
-    { name: "Seminars Branding", image: "https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/seminars-branding", description: "Professional branding for seminars to create a lasting impression." },
-    { name: "Traffic Barricades", image: "https://images.pexels.com/photos/3888362/pexels-photo-3888362.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", path: "/media/BTL/traffic-barricades", description: "Utilize traffic barricades for widespread brand exposure." },
+    { name: "Cinema Advertising", image: "/assets/BTL marketing images/Cinema advertising.png", path: "/media/BTL/cinema-advertising", description: "Target your audience where they are most engaged." },
+    { name: "Dhaba Advertising", image: "/assets/BTL marketing images/dhaba branding.png", path: "/media/BTL/dhaba-advertising", description: "Reach local communities and travelers with high-impact ads." },
+    { name: "Event Branding", image: "/assets/BTL marketing images/Events Branding.png", path: "/media/BTL/event-branding", description: "Make your events unforgettable with comprehensive branding." },
+    { name: "Look Walker", image: "/assets/BTL marketing images/Look Walker ads.png", path: "/media/BTL/look-walker", description: "Mobile and direct advertising to capture attention on the go." },
+    { name: "Pole Sunpacks", image: "/assets/BTL marketing images/Pole Sunpack ads.png", path: "/media/BTL/pole-sunpacks", description: "Effective outdoor advertising on busy streets and public areas." },
+    { name: "Retail Branding", image: "/assets/BTL marketing images/retail branding.png", path: "/media/BTL/retail-branding", description: "Enhance your in-store presence and customer experience." },
+    { name: "Seminars Branding", image: "/assets/BTL marketing images/seminar branding.png", path: "/media/BTL/seminars-branding", description: "Professional branding for seminars to create a lasting impression." },
+    { name: "Traffic Barricades", image: "/assets/BTL marketing images/traffic barricades ads.png", path: "/media/BTL/traffic-barricades", description: "Utilize traffic barricades for widespread brand exposure." },
 ];
 
 const differentiators = [
@@ -137,30 +137,30 @@ function BTLMarketing() {
             
             <style>
                 {`
-                  @keyframes glow {
-                      0% { box-shadow: 0 0 5px rgba(178, 176, 232, 0.4), 0 0 15px rgba(122, 133, 193, 0.2); }
-                      50% { box-shadow: 0 0 10px rgba(59, 56, 160, 0.7), 0 0 25px rgba(26, 42, 128, 0.4); }
-                      100% { box-shadow: 0 0 5px rgba(178, 176, 232, 0.4), 0 0 15px rgba(122, 133, 193, 0.2); }
-                  }
-                  .feature-card-glow:hover {
-                      animation: glow 1.5s infinite alternate;
-                  }
-                  @keyframes blob {
-                      0% { transform: translate(0px, 0px) scale(1); }
-                      33% { transform: translate(30px, -50px) scale(1.1); }
-                      66% { transform: translate(-20px, 20px) scale(0.9); }
-                      100% { transform: translate(0px, 0px) scale(1); }
-                  }
-                  .animate-blob { animation: blob 7s infinite cubic-bezier(0.6, 0.2, 0.2, 0.8); }
-                  .animation-delay-2000 { animation-delay: 2s; }
-                  .animation-delay-4000 { animation-delay: 4s; }
-                  .flip-card { perspective: 1000px; }
-                  .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; }
-                  .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-                  .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 20px; overflow: hidden; }
-                  .flip-card-front { background-color: #bbb; color: black; }
-                  .flip-card-back { background: linear-gradient(145deg, #1D4ED8, #1A2A80); color: white; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; }
-                  .flip-card-front img { width: 100%; height: 100%; object-fit: cover; }
+                    @keyframes glow {
+                        0% { box-shadow: 0 0 5px rgba(178, 176, 232, 0.4), 0 0 15px rgba(122, 133, 193, 0.2); }
+                        50% { box-shadow: 0 0 10px rgba(59, 56, 160, 0.7), 0 0 25px rgba(26, 42, 128, 0.4); }
+                        100% { box-shadow: 0 0 5px rgba(178, 176, 232, 0.4), 0 0 15px rgba(122, 133, 193, 0.2); }
+                    }
+                    .feature-card-glow:hover {
+                        animation: glow 1.5s infinite alternate;
+                    }
+                    @keyframes blob {
+                        0% { transform: translate(0px, 0px) scale(1); }
+                        33% { transform: translate(30px, -50px) scale(1.1); }
+                        66% { transform: translate(-20px, 20px) scale(0.9); }
+                        100% { transform: translate(0px, 0px) scale(1); }
+                    }
+                    .animate-blob { animation: blob 7s infinite cubic-bezier(0.6, 0.2, 0.2, 0.8); }
+                    .animation-delay-2000 { animation-delay: 2s; }
+                    .animation-delay-4000 { animation-delay: 4s; }
+                    .flip-card { perspective: 1000px; }
+                    .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; }
+                    .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+                    .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 20px; overflow: hidden; }
+                    .flip-card-front { background-color: #bbb; color: black; }
+                    .flip-card-back { background: linear-gradient(145deg, #1D4ED8, #1A2A80); color: white; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; }
+                    .flip-card-front img { width: 100%; height: 100%; object-fit: cover; }
                 `}
             </style>
 
