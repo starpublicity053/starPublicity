@@ -467,23 +467,23 @@ const NewCampaignShowcaseSection = () => {
   const campaigns = [
     {
       title: "CityPulse Urban Campaign",
-      img: "https://images.pexels.com/photos/1036848/pexels-photo-1036848.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      img: "/assets/Featured campaigns/Capture 1.PNG",
     },
     {
       title: "Bus Wrap Initiative",
-      img: "https://images.pexels.com/photos/1181283/pexels-photo-1181283.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      img: "/assets/Featured campaigns/Capture 2.PNG",
     },
     {
       title: "Airport Experience",
-      img: "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      img: "/assets/Featured campaigns/Capture.PNG",
     },
     {
       title: "Metro Branding Takeover",
-      img: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
+      img: "/assets/Featured campaigns/Capture 3.PNG",
     },
     {
       title: "Digital Billboard Network",
-      img: "https://images.pexels.com/photos/17235288/pexels-photo-17235288/free-photo-of-two-models-posing-by-a-fountain.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      img: "/assets/Featured campaigns/Capture 4.PNG",
     },
   ];
   const [activeIndex, setActiveIndex] = useState(

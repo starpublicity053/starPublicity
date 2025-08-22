@@ -64,6 +64,11 @@ const animationStyles = `
     }
 `;
 
+// The JSON data for your Lottie animation
+const lottieAnimationData = {
+    src: "https://lottie.host/a12f93b1-0872-4cb7-acb3-6b00363d7509/40tCm2hisF.json"
+};
+
 // Variants for staggered entrance animation
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -159,7 +164,7 @@ const ContactUsPage = () => {
                         {/* Left Section */}
                         <div className="bg-[#1a2a80] text-white p-10 lg:p-16 flex flex-col justify-center">
                             <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight mb-6">
-                                Let’s Build <span className="text-yellow-400">Something Great</span>
+                                Let’s Advertise <span className="text-yellow-400">Something Great</span>
                             </h1>
                             <p className="text-lg text-gray-200 mb-12">
                                 Reach out to us and we’ll get back to you as soon as possible.
@@ -185,8 +190,8 @@ const ContactUsPage = () => {
                                     </div>
                                     <div>
                                         <h3 className="font-semibold">Phone</h3>
-                                        <a href="tel:+15551234567" className="text-gray-300 hover:text-yellow-400 transition">
-                                            +1 (555) 123-4567
+                                        <a href="tel: 01614668602" className="text-gray-300 hover:text-yellow-400 transition">
+                                            0161-4668602
                                         </a>
                                     </div>
                                 </div>
@@ -198,7 +203,7 @@ const ContactUsPage = () => {
                                     <div>
                                         <h3 className="font-semibold">Location</h3>
                                         <p className="text-gray-300">
-                                            123 Modern Street, Suite 456 <br /> Innovate City, CA 90210
+                                            Feroze gandhi market  <br /> ludhiana, punjab
                                         </p>
                                     </div>
                                 </div>
@@ -217,7 +222,7 @@ const ContactUsPage = () => {
                                         <input
                                             type="text"
                                             id="name"
-                                            placeholder="John Doe"
+                                            placeholder="Enter your name"
                                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-[#1a2a80] focus:border-[#1a2a80] shadow-sm outline-none"
                                         />
                                     </div>
@@ -229,7 +234,7 @@ const ContactUsPage = () => {
                                         <input
                                             type="email"
                                             id="email"
-                                            placeholder="john.doe@example.com"
+                                            placeholder="Enter your email"
                                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-300 focus:ring-2 focus:ring-[#1a2a80] focus:border-[#1a2a80] shadow-sm outline-none"
                                         />
                                     </div>
@@ -286,12 +291,13 @@ const ContactUsPage = () => {
                             </p>
                         </motion.div>
 
+                        {/* This is the newly made responsive section */}
                         <motion.div
                             variants={itemVariants}
-                            className="relative w-[500px] h-[500px] flex justify-center items-center mt-12 md:mt-16"
+                            className="relative w-full aspect-square max-w-[500px] flex justify-center items-center mt-12 md:mt-16"
                         >
-                            {/* Outer Orbit with perfect circle */}
-                            <div className="absolute w-[700px] h-[700px] rounded-full border border-purple-400/20 z-0 animate-[orbit-outer_60s_linear_infinite]">
+                            {/* Outer Orbit with responsive sizing */}
+                            <div className="absolute w-full h-full md:w-[700px] md:h-[700px] rounded-full border border-purple-400/20 z-0 animate-[orbit-outer_60s_linear_infinite]">
                                 {outerNodes.map((node, index) => (
                                     <motion.div
                                         key={`outer-${index}`}
@@ -316,8 +322,8 @@ const ContactUsPage = () => {
                                 ))}
                             </div>
 
-                            {/* Inner Orbit with perfect circle */}
-                            <div className="absolute w-[500px] h-[500px] rounded-full border border-purple-400/20 z-0 animate-[orbit-inner_40s_linear_infinite]">
+                            {/* Inner Orbit with responsive sizing */}
+                            <div className="absolute w-[80%] h-[80%] md:w-[500px] md:h-[500px] rounded-full border border-purple-400/20 z-0 animate-[orbit-inner_40s_linear_infinite]">
                                 {innerNodes.map((node, index) => (
                                     <motion.div
                                         key={`inner-${index}`}
@@ -342,18 +348,19 @@ const ContactUsPage = () => {
                                 ))}
                             </div>
                             
-                            {/* Central Lottie animation */}
+                            {/* Central Lottie animation with responsive sizing */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.6 }}
-                                className="relative z-10 w-80 h-80 flex justify-center items-center rounded-full overflow-hidden"
+                                className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 flex justify-center items-center rounded-full overflow-hidden"
                             >
                                 {animationData && (
                                     <Lottie
                                         animationData={animationData}
                                         loop={true}
                                         autoplay={true}
+                                        className="w-full h-full"
                                     />
                                 )}
                             </motion.div>
