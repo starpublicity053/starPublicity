@@ -8,6 +8,8 @@ import { contactApi } from "../features/auth/contactApi"; // Adjust path
 import { contactUsApi } from "../features/auth/contactUs"; // Your contact API
 import { reelApi } from "../features/auth/reelApi"; // Import reelApi
 import { chatbotApi } from "../features/auth/chatBot"; // Import chatbotApi if needed
+import { userApi } from '../features/auth/userApi'; // Adjust path if needed
+
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,7 @@ export const store = configureStore({
     [blogApi.reducerPath]: blogApi.reducer, // Add blogApi reducer
     [contactApi.reducerPath]: contactApi.reducer,
     [contactUsApi.reducerPath]: contactUsApi.reducer,
+     [userApi.reducerPath]: userApi.reducer,
     [chatbotApi.reducerPath]: chatbotApi.reducer,
     // Make sure this is present
     [reelApi.reducerPath]: reelApi.reducer, // Add reelApi reducer
@@ -31,5 +34,6 @@ export const store = configureStore({
       .concat(contactApi.middleware)
       .concat(chatbotApi.middleware)
       .concat(contactUsApi.middleware)
-      .concat(reelApi.middleware), // Add reelApi middleware
+      .concat(reelApi.middleware)
+      .concat(userApi.middleware), // Add reelApi middleware
 });

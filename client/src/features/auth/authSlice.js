@@ -1,4 +1,3 @@
-// src/features/auth/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -11,16 +10,15 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.token = action.payload.token;
-      state.userInfo = {
-        email: action.payload.email,
-        role: action.payload.role,
-      };
+      const { user, token } = action.payload;
+      state.token = token;
+      state.userInfo = user; // Store the entire user object
+      localStorage.setItem('adminToken', token); // Also save token to localStorage
     },
     logout: (state) => {
       state.token = null;
       state.userInfo = null;
-      localStorage.removeItem("adminToken");
+      localStorage.removeItem('adminToken');
     },
   },
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./index.css";
 import {
   createBrowserRouter,
@@ -6,6 +6,12 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+
+// We assume your auth slice has a `setCredentials` action. Adjust path if needed.
+import { setCredentials } from "./features/auth/authSlice";
 
 import MainLayout from "./layout/MainLayout";
 import Markets from "./pages/user/Markets";
@@ -52,6 +58,8 @@ import SocialMediaAdvertising from "./pages/Media/TTL/SocialMediaAdvertising";
 import TTLMarketing from "./pages/Media/TTL/TTL";
 import AutoBranding from "./pages/Media/ATL/AutoBranding";
 import Blogs from "./pages/Resources/Blogs";
+import RegisterForm from "./pages/Forms/RegisterForm";
+import ResetPasswordForm from "./pages/Forms/ResetPasswordForm";
 import AuthForm from "./pages/Forms/AuthForm";
 import ContactUs from "./pages/Forms/ContactUs";
 import AdminPanel from "./pages/Admin/AdminPanel";
@@ -67,12 +75,48 @@ import TalkToExperts from "./pages/TalkToExperts";
 import ChatWidget from "./pages/ChatBot/ChatWidget";
 
 // --- ADMIN AUTH PROTECTION ---
-const isAdminLoggedIn = () => {
-  return localStorage.getItem("adminToken") !== null;
-};
 
 const AdminRoute = () => {
-  return isAdminLoggedIn() ? <AdminPanel /> : <Navigate to="/login" replace />;
+  const token = localStorage.getItem("adminToken");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  try {
+    const decodedUser = jwtDecode(token);
+    if (decodedUser.role === "admin" || decodedUser.role === "superAdmin") {
+      return <AdminPanel />;
+    }
+    // User has a token but is not an admin.
+    return <Navigate to="/" replace />;
+  } catch (error) {
+    // Token is invalid, clear it and redirect.
+    localStorage.removeItem("adminToken");
+    return <Navigate to="/login" replace />;
+  }
+};
+
+// Prevent logged-in admins from seeing auth pages
+const GuestRoute = ({ children }) => {
+  const token = localStorage.getItem("adminToken");
+
+  if (!token) {
+    return children; // Not logged in, show the page.
+  }
+
+  try {
+    const decodedUser = jwtDecode(token);
+    // If they are an admin, redirect away from login/register.
+    if (decodedUser.role === "admin" || decodedUser.role === "superAdmin") {
+      return <Navigate to="/admin" replace />;
+    }
+    // They have a token, but are not an admin. Let them see the login page.
+    return children;
+  } catch (error) {
+    // Token is invalid, so they are a guest.
+    return children;
+  }
 };
 
 const AppRouter = createBrowserRouter([
@@ -83,6 +127,7 @@ const AppRouter = createBrowserRouter([
     element: (
       <>
         <MainLayout />
+        <ToastContainer theme="colored" />
         <ChatWidget />
       </>
     ),
@@ -102,11 +147,11 @@ const AppRouter = createBrowserRouter([
         ),
       },
       { path: "about", element: <AboutUs /> },
-      { path: "media", element: <Media /> },
 
       {
         path: "media",
         children: [
+          { index: true, element: <Media /> },
           { path: "ATL", element: <ATLMarketing /> },
           { path: "ATL/unipoles", element: <Unipoles /> },
           { path: "ATL/bus-branding", element: <BusBranding /> },
@@ -157,7 +202,19 @@ const AppRouter = createBrowserRouter([
       { path: "campaigns", element: <Compaigns /> },
       { path: "career", element: <Career /> },
       { path: "JobPosition", element: <JobPosition /> },
-      { path: "login", element: <AuthForm /> },
+      {
+        path: "login",
+        element: <GuestRoute><AuthForm /></GuestRoute>,
+      },
+      {
+        path: "register",
+        element: <GuestRoute><RegisterForm /></GuestRoute>,
+      },
+      {
+        path: "forgot-password",
+        // This now points to the unified ResetPasswordForm
+        element: <GuestRoute><ResetPasswordForm /></GuestRoute>,
+      },
       { path: "admin", element: <AdminRoute /> },
       { path: "contact", element: <ContactUs /> },
     ],
@@ -165,6 +222,26 @@ const AppRouter = createBrowserRouter([
 ]);
 
 function App() {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    // If a token exists but we don't have user info in our state (e.g., after a page refresh),
+    // we decode the token and restore the user's session.
+    if (token && !userInfo) {
+      try {
+        const user = jwtDecode(token);
+        // The decoded token payload is the user object. We dispatch it to our store.
+        dispatch(setCredentials({ user, token }));
+      } catch (error) {
+        console.error("Failed to decode token, logging out:", error);
+        // If token is invalid, clear it to prevent loops and log the user out.
+        localStorage.removeItem("adminToken");
+      }
+    }
+  }, [dispatch, userInfo]);
+
   return <RouterProvider router={AppRouter} />;
 }
 

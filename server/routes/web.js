@@ -1,7 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const {
+  loginUser,
+  registerUser,
+  forgotPassword,
+  resetPassword,
+  getAdmins,
+  inviteAdmin,
+  updateAdminRole,
+  updateAdminStatus,
+  deleteAdmin,
+} = require("../controllers/AdminController"); // Adjust path if needed
+
+// --- You need to create these middleware functions ---
+// This middleware should verify the JWT and attach the user to req.user
+const protect = require("../middleware/authMiddleware");
+// This middleware should check if req.user.isSuperAdmin === 1
+const restrictToSuperAdmin = require("../middleware/superAdminMiddleware");
+
 const multer = require("multer");
-const { loginUser } = require("../controllers/AdminController");
 const blogController = require("../controllers/BlogController");
 const blogContactController = require("../controllers/BlogContactController");
 const {
@@ -32,8 +49,24 @@ const { initiateChat } = require("../controllers/ChatbotController");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// --- Existing Routes (No Changes) ---
+// --- Authentication Routes ---
+router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+
+// --- Admin Management Routes (Protected) ---
+router.get("/admins", protect, restrictToSuperAdmin, getAdmins);
+router.post("/admins/invite", protect, restrictToSuperAdmin, inviteAdmin);
+router.put("/admins/:id/role", protect, restrictToSuperAdmin, updateAdminRole);
+router.put(
+  "/admins/:id/status",
+  protect,
+  restrictToSuperAdmin,
+  updateAdminStatus
+);
+router.delete("/admins/:id", protect, restrictToSuperAdmin, deleteAdmin);
+
 router.get("/jobs", getJobs);
 router.post("/jobs", createJob);
 router.delete("/jobs/:id", deleteJob);
@@ -67,6 +100,6 @@ router.put("/reels/:id", upload.single("reel"), updateReel);
 router.delete("/reels/:id", deleteReel);
 
 // --- ✅ UPDATED: Simplified Chatbot Route ---
-router.post('/live-chat/initiate', initiateChat);
+router.post("/live-chat/initiate", initiateChat);
 
 module.exports = router;

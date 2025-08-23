@@ -1,136 +1,139 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../../features/auth/authApi";
-import { setCredentials } from "../../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react"; // Import icons for the toggle
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../../features/auth/userApi";
 
-function AuthForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
-  const [message, setMessage] = useState("");
-  const dispatch = useDispatch();
+// Define the validation schema with Zod
+const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
+const AuthForm = () => {
   const navigate = useNavigate();
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, isSuccess, error }] = useLoginMutation();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-    try {
-      const res = await login({ email, password }).unwrap();
-
-      // Save in Redux
-      dispatch(setCredentials(res));
-
-      // Save token to localStorage
-      localStorage.setItem("adminToken", res.token);
-
-      // Role check
-      if (res.role === "admin" || res.role === "superAdmin") {
-        navigate("/admin");
-      } else {
-        setMessage("Access denied: You are not authorized.");
-        localStorage.removeItem("adminToken"); // Clean up if not admin
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setMessage(err?.data?.message || "Login failed. Please try again.");
-    }
+  // Handle form submission by calling the login mutation
+  const onSubmit = async (data) => {
+    await login(data);
   };
 
+  // This effect runs when the login mutation status changes.
+  // On success, it redirects the user to the admin panel.
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/admin", { replace: true });
+    }
+  }, [isSuccess, navigate]);
+
+  // Extract a user-friendly error message from the RTK Query error object
+  const apiError = error?.data?.message || (error ? "Login failed. Please check your credentials." : null);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-teal-100 font-serif relative overflow-hidden mt-14">
-      <motion.div
-        className="absolute w-[500px] h-[500px] bg-indigo-300 rounded-full opacity-20 blur-3xl -top-40 -left-40 z-0"
-        animate={{ y: [0, 40, 0] }}
-        transition={{ duration: 12, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-[400px] h-[400px] bg-teal-300 rounded-full opacity-20 blur-3xl -bottom-40 -right-40 z-0"
-        animate={{ y: [0, -40, 0] }}
-        transition={{ duration: 10, repeat: Infinity }}
-      />
-
-      <div className="relative z-10 w-full max-w-4xl flex flex-col md:flex-row shadow-2xl bg-white/30 backdrop-blur-lg border border-white/30 rounded-3xl overflow-hidden">
-        <div className="hidden md:flex flex-col justify-center items-center p-10 w-1/2 bg-gradient-to-br from-blue-500 via-blue-500 to-blue-400 text-white">
-          <div className="w-72 h-72">
-            <DotLottieReact
-              src="https://lottie.host/cc3ad891-4a40-4725-ad66-c14c3d6ddab5/2ys17iqfyM.lottie"
-              loop
-              autoplay
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-gray-900">
+          Sign in to your account
+        </h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email address
+            </label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              {...register("email")}
+              className={`w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
+                errors.email
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500"
+              }`}
             />
-          </div>
-          <h2 className="text-3xl font-bold mt-6 text-center leading-tight">Welcome Admin</h2>
-          <p className="text-center mt-2 text-white/90 text-sm">
-            Manage and monitor your platform efficiently.
-          </p>
-        </div>
-
-        <div className="flex-1 p-10 bg-white rounded-3xl md:rounded-none">
-          <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-8">Admin Login</h2>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
-                className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">Password</label>
-              {/* Added a relative container for the password input and toggle button */}
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"} // Dynamically change the input type
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  minLength={6}
-                  className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-400 transition pr-12" // Added padding for the icon
-                />
-                <button
-                  type="button" // Prevents the button from submitting the form
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-700"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {message && (
-              <div className="text-center font-medium text-red-600">
-                {message}
-              </div>
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-600">
+                {errors.email.message}
+              </p>
             )}
+          </div>
 
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              {...register("password")}
+              className={`w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
+                errors.password
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500"
+              }`}
+            />
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-600">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {apiError && (
+            <p className="text-sm text-center text-red-600">{apiError}</p>
+          )}
+
+          <div className="flex items-center justify-between">
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
+
+          <div>
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold py-3 rounded-xl shadow-lg hover:from-blue-600 hover:to-blue-600 transition"
+              className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Logging in..." : "Log In"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
+
+        <p className="text-sm text-center text-gray-600">
+          Not a member?{" "}
+          <Link
+            to="/register"
+            className="font-medium text-indigo-600 hover:underline"
+          >
+            Create new account
+          </Link>
+        </p>
       </div>
     </div>
   );
-}
+};
 
 export default AuthForm;
