@@ -433,7 +433,7 @@ const Blogs = () => {
     });
   };
 
-  const heroImage = "../../../../public/assets/blog.jpg";
+  const heroImage = "/assets/blog.jpg";
 
   const heroRef = useRef(null);
   const { scrollYProgress: heroScrollProgress } = useScroll({
