@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import chatbotAnimationData from '../../assets/chatbot.json'; // Import your Lottie animation
 import { 
     FaTachometerAlt, FaDesktop, FaBus, FaBuilding, FaMapMarkedAlt, 
     FaCalculator, FaBookOpen, FaPencilRuler, FaPlaneDeparture, FaStar, 
@@ -9,6 +10,7 @@ import {
     FaCommentDots, FaPhone, FaQuestionCircle // Icons
 } from 'react-icons/fa';
 import io from 'socket.io-client';
+import Lottie from "lottie-react";
 import { useInitiateLiveChatMutation } from '../../features/auth/chatBot';
 
 // ===================================================================
@@ -19,7 +21,7 @@ const styles = {
     
     // --- UPDATED: Sized down for the new, smaller opener ---
     chatOpenerContainer: (isOpen) => ({
-        position: 'fixed', bottom: '25px', right: '25px', width: '64px', height: '64px',
+        position: 'fixed', bottom: '25px', right: '25px', width: '100px', height: '100px',
         cursor: 'pointer', zIndex: '9999',
         transform: isOpen ? 'scale(0)' : 'scale(1)',
         transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -159,87 +161,6 @@ const styles = {
 
 // ===================================================================
 // 2. NEW Chat Opener Component
-// ===================================================================
-const RippleChatOpener = ({ isHovered }) => {
-    const keyframes = `
-        @keyframes ripple-effect {
-            0% { transform: scale(0.9); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-    `;
-
-    const containerStyle = {
-        position: 'relative',
-        width: '64px',
-        height: '64px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
-
-    const rippleBaseStyle = {
-        position: 'absolute',
-        borderRadius: '50%',
-        border: '2px solid rgba(79, 70, 229, 0.4)',
-        animation: `ripple-effect 2s infinite cubic-bezier(0, 0, 0.2, 1)`,
-        pointerEvents: 'none',
-    };
-
-    const iconButtonStyle = {
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white',
-        fontSize: '1.75rem',
-        backgroundImage: 'linear-gradient(45deg, #4F46E5, #8B5CF6)',
-        boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(0,0,0,0.1)',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-    };
-    
-    const hoverTextStyle = {
-        position: 'absolute',
-        right: 'calc(100% + 16px)',
-        padding: '8px 16px',
-        backgroundColor: 'white',
-        color: '#4F46E5',
-        borderRadius: '20px',
-        fontSize: '0.9rem',
-        fontWeight: '600',
-        boxShadow: '0 3px 10px rgba(0,0,0,0.1)',
-        whiteSpace: 'nowrap',
-        pointerEvents: 'none',
-        transition: 'opacity 0.3s ease, transform 0.3s ease',
-        opacity: isHovered ? 1 : 0,
-        transform: isHovered ? 'translateX(0)' : 'translateX(10px)',
-    };
-
-    return (
-        <>
-            <style>{keyframes}</style>
-            <div style={containerStyle}>
-                {/* Ripples for attention */}
-                <div style={{ ...rippleBaseStyle, width: '100%', height: '100%' }} />
-                <div style={{ ...rippleBaseStyle, width: '100%', height: '100%', animationDelay: '1s' }} />
-
-                {/* The main button */}
-                <div style={iconButtonStyle}>
-                    <FaCommentDots style={{ transform: isHovered ? 'scale(1.1) rotate(5deg)' : 'scale(1) rotate(0deg)', transition: 'transform 0.3s ease' }} />
-                </div>
-                
-                {/* Text that appears on hover */}
-                <div style={hoverTextStyle}>
-                    Chat with us!
-                </div>
-            </div>
-        </>
-    );
-};
-
-
 // ===================================================================
 // 3. Unchanged Logic Components
 // ===================================================================
@@ -431,7 +352,16 @@ const ChatWidget = () => {
                 aria-label="Open chat"
                 role="button"
             >
-                <RippleChatOpener isHovered={isOpenerHovered} />
+                <Lottie 
+                    animationData={chatbotAnimationData} 
+                    loop={true} 
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        transition: 'transform 0.3s ease',
+                        transform: isOpenerHovered ? 'scale(1.1)' : 'scale(1)',
+                    }}
+                />
             </div>
             
             {isOpen && (

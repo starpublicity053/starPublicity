@@ -52,6 +52,8 @@ import {
   FaLightbulb as FaStatusIcon,
   FaExternalLinkAlt as FaForwardIcon,
 } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa"; // New: For theme toggle
+
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../features/auth/authSlice"; // Import the logout action
 import { useNavigate } from "react-router-dom";
@@ -74,14 +76,6 @@ import {
   useAddContactInquiryNoteMutation, // New mutation
 } from "../../features/auth/contactUs"; // Assuming contactUs.js is in auth feature folder
 
-// Import the new reel API hooks - NOW INCLUDING useUpdateReelMutation
-import {
-  useGetReelsQuery,
-  useAddReelMutation,
-  useDeleteReelMutation,
-  useUpdateReelMutation, // <-- ADDED
-} from "../../features/auth/reelApi";
-
 // New: Import user management API hooks (assuming they exist)
 import {
   useLoginMutation,
@@ -102,14 +96,16 @@ import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
+  LabelList,
 } from "recharts";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -117,11 +113,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 const menuItems = [
   { key: "blogs", label: "Blogs", icon: <FaBlog /> },
   { key: "products", label: "Products", icon: <FaBoxOpen /> },
-  { key: "reels", label: "Reels", icon: <FaVideo /> },
   { key: "jobs", label: "Jobs", icon: <FaBriefcase /> },
   { key: "contact", label: "Contact", icon: <FaEnvelope /> },
   { key: "users", label: "Users", icon: <FaUsers /> },
 ];
+
+// New: Define which tabs are searchable
+const searchableTabs = ["jobs", "blogs", "contact", "users"];
 
 // UPDATED: Initial state for job form with new structured fields
 const initialJobFormData = {
@@ -208,6 +206,35 @@ const ConfirmationModal = ({
       </div>
     </div>
   );
+};
+
+// New: Custom hook to calculate the average inquiries for the ReferenceLine
+const useAverageInquiries = (inquiryDataOverTime) => {
+  return useMemo(() => {
+    if (!inquiryDataOverTime || inquiryDataOverTime.length === 0) {
+      return 0;
+    }
+    const totalInquiries = inquiryDataOverTime.reduce(
+      (sum, entry) => sum + entry.Inquiries,
+      0
+    );
+    // Average over the full 12-month period for a more stable metric.
+    // This gives a clear view of average monthly performance over the year.
+    return totalInquiries / 12;
+  }, [inquiryDataOverTime]);
+};
+
+// Custom Tooltip for Recharts
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-4 bg-white/90 backdrop-blur-sm shadow-lg rounded-xl border border-slate-200">
+        <p className="label font-bold text-slate-800">{`${label}`}</p>
+        <p className="intro text-teal-600">{`Inquiries : ${payload[0].value}`}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 // New AddNoteModal Component
@@ -548,6 +575,48 @@ const AdminPanel = () => {
   // --- Responsive Sidebar State ---
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isSidebarOpen, setIsSidebarOpen] = useState(isDesktop);
+  const [isMobileSearchVisible, setIsMobileSearchVisible] = useState(false);
+
+  // New: Theme and Quick Actions state
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+  const quickActionsRef = useRef(null);
+  const quickActionsButtonRef = useRef(null);
+
+  // --- Theme Management ---
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
+  // --- Quick Actions Dropdown ---
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        quickActionsRef.current &&
+        !quickActionsRef.current.contains(event.target) &&
+        quickActionsButtonRef.current &&
+        !quickActionsButtonRef.current.contains(event.target)
+      ) {
+        setIsQuickActionsOpen(false);
+      }
+    };
+    if (isQuickActionsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isQuickActionsOpen]);
 
   useEffect(() => {
     setIsSidebarOpen(isDesktop);
@@ -572,10 +641,6 @@ const AdminPanel = () => {
   const [blogData, setBlogData] = useState(initialBlogFormData);
   const [heroImageFile, setHeroImageFile] = useState(null); // For hero image file
   const [heroImagePreview, setHeroImagePreview] = useState(null); // For hero image preview
-  const [reelFile, setReelFile] = useState(null); // New: for reel file
-  const [reelPreview, setReelPreview] = useState(null); // New: for reel preview
-  const [editingReelId, setEditingReelId] = useState(null); // New: for reel editing
-  const [editingReelPreview, setEditingReelPreview] = useState(null); // New: preview for reel being edited
 
   // New state for the current tag input field
   const [currentTagInput, setCurrentTagInput] = useState("");
@@ -619,7 +684,6 @@ const AdminPanel = () => {
 
   // Helper derived state
   const isEditingBlog = useMemo(() => editingBlogId !== null, [editingBlogId]);
-  const isEditingReel = useMemo(() => editingReelId !== null, [editingReelId]); // New: derived state for reel editing
 
   // --- RTK Query Hooks ---
 
@@ -644,17 +708,6 @@ const AdminPanel = () => {
     useDeleteBlogMutation();
   const [updateBlogMutation, { isLoading: isUpdatingBlog }] =
     useUpdateBlogMutation();
-
-  // New: RTK Query hooks for Reels
-  const {
-    data: reels = [],
-    isLoading: isReelsLoading,
-    isError: isReelsError,
-    refetch: refetchReels,
-  } = useGetReelsQuery();
-  const [addReel, { isLoading: isAddingReel }] = useAddReelMutation();
-  const [deleteReel, { isLoading: isDeletingReel }] = useDeleteReelMutation();
-  const [updateReel, { isLoading: isUpdatingReel }] = useUpdateReelMutation(); // <-- ADDED
 
   // New: RTK Query hooks for Contact Inquiries
   const {
@@ -796,9 +849,6 @@ const AdminPanel = () => {
         case "blogs":
           await refetchBlogs();
           break;
-        case "reels":
-          await refetchReels();
-          break;
         case "contact":
           await refetchInquiries();
           break;
@@ -820,7 +870,7 @@ const AdminPanel = () => {
     } finally {
       setIsRefreshing(false);
     }
-  }, [activeTab, refetchJobs, refetchBlogs, refetchReels, refetchInquiries, isRefreshing]);
+  }, [activeTab, refetchJobs, refetchBlogs, refetchInquiries, isRefreshing]);
 
   const getAvatarUrl = useCallback(
     (name, size) => {
@@ -837,14 +887,52 @@ const AdminPanel = () => {
 
   // --- Search and Filtering Logic ---
 
+  const handleSearchChange = (e) => {
+    const { value } = e.target;
+    switch (activeTab) {
+      case "jobs":
+        setJobSearchTerm(value);
+        break;
+      case "blogs":
+        setBlogSearchTerm(value);
+        break;
+      case "contact":
+        setContactSearchTerm(value);
+        break;
+      case "users":
+        setUserSearchTerm(value);
+        break;
+      default:
+        // No search for welcome or products tab
+        break;
+    }
+  };
+
+  const getCurrentSearchTerm = () => {
+    switch (activeTab) {
+      case "jobs":
+        return jobSearchTerm;
+      case "blogs":
+        return blogSearchTerm;
+      case "contact":
+        return contactSearchTerm;
+      case "users":
+        return userSearchTerm;
+      default:
+        return "";
+    }
+  };
+
+  // --- Search and Filtering Logic ---
+
   const filteredJobs = useMemo(() => {
     if (!jobSearchTerm) return jobs;
     const lowerSearch = jobSearchTerm.toLowerCase();
     return jobs.filter(
       (job) =>
-        job.title.toLowerCase().includes(lowerSearch) ||
-        job.location.toLowerCase().includes(lowerSearch) ||
-        job.timeType.toLowerCase().includes(lowerSearch)
+        (job.title || "").toLowerCase().includes(lowerSearch) ||
+        (job.location || "").toLowerCase().includes(lowerSearch) ||
+        (job.timeType || "").toLowerCase().includes(lowerSearch)
     );
   }, [jobs, jobSearchTerm]);
 
@@ -853,12 +941,12 @@ const AdminPanel = () => {
     const lowerSearch = blogSearchTerm.toLowerCase();
     return blogPosts.filter(
       (blog) =>
-        blog.title.toLowerCase().includes(lowerSearch) ||
-        blog.author.toLowerCase().includes(lowerSearch) ||
+        (blog.title || "").toLowerCase().includes(lowerSearch) ||
+        (blog.author || "").toLowerCase().includes(lowerSearch) ||
         (blog.content &&
           typeof blog.content === "string" &&
           blog.content.toLowerCase().includes(lowerSearch)) ||
-        blog.tags?.some((tag) => tag.toLowerCase().includes(lowerSearch))
+        blog.tags?.some((tag) => (tag || "").toLowerCase().includes(lowerSearch))
     );
   }, [blogPosts, blogSearchTerm]);
 
@@ -878,9 +966,9 @@ const AdminPanel = () => {
       const lowerSearch = contactSearchTerm.toLowerCase();
       filtered = filtered.filter(
         (inquiry) =>
-          inquiry.name.toLowerCase().includes(lowerSearch) ||
-          inquiry.email.toLowerCase().includes(lowerSearch) ||
-          inquiry.message.toLowerCase().includes(lowerSearch)
+          (inquiry.name || "").toLowerCase().includes(lowerSearch) ||
+          (inquiry.email || "").toLowerCase().includes(lowerSearch) ||
+          (inquiry.message || "").toLowerCase().includes(lowerSearch)
       );
     }
     return filtered;
@@ -895,8 +983,8 @@ const AdminPanel = () => {
       sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (inquirySortBy === "name") {
       sorted.sort((a, b) => {
-        const nameA = a.name.toLowerCase();
-        const nameB = b.name.toLowerCase();
+        const nameA = (a.name || "").toLowerCase();
+        const nameB = (b.name || "").toLowerCase();
         return nameA.localeCompare(nameB);
       });
     }
@@ -909,8 +997,8 @@ const AdminPanel = () => {
     const lowerSearch = userSearchTerm.toLowerCase();
     return admins.filter(
       (admin) =>
-        admin.name?.toLowerCase().includes(lowerSearch) ||
-        admin.email.toLowerCase().includes(lowerSearch)
+        (admin.name || "").toLowerCase().includes(lowerSearch) ||
+        (admin.email || "").toLowerCase().includes(lowerSearch)
     );
   }, [admins, userSearchTerm]);
   // --- Job Management Handlers ---
@@ -994,7 +1082,6 @@ const AdminPanel = () => {
     try {
       if (modalType === "job") await deleteJob(modalId).unwrap();
       else if (modalType === "blog") await deleteBlogMutation(modalId).unwrap();
-      else if (modalType === "reel") await deleteReel(modalId).unwrap();
       else if (modalType === "user") await deleteAdmin(modalId).unwrap();
 
       toast.success(
@@ -1055,6 +1142,8 @@ const AdminPanel = () => {
 
     return Object.values(monthlyData);
   }, [inquiries, isInquiriesLoading]);
+
+  const averageInquiries = useAverageInquiries(inquiryDataOverTime);
 
   // --- Blog Management Handlers ---
 
@@ -1374,76 +1463,6 @@ const AdminPanel = () => {
       .slice(0, 5);
   }, [blogPosts]);
 
-  // --- Reel Management Handlers ---
-
-  const handleReelFileChange = useCallback((e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setReelFile(file);
-      setReelPreview(URL.createObjectURL(file));
-    }
-  }, []);
-
-  const resetReelForm = useCallback(() => {
-    setReelFile(null);
-    setReelPreview(null);
-    setEditingReelId(null);
-    setEditingReelPreview(null);
-    const fileInput = document.getElementById("reel-upload-input");
-    if (fileInput) {
-      fileInput.value = "";
-    }
-  }, []);
-
-  const handleEditReel = useCallback((reel) => {
-    setEditingReelId(reel._id);
-    setEditingReelPreview(reel.url); // Show the current reel being replaced
-    setReelFile(null); // Clear any selected file
-    setReelPreview(null); // Clear the new file preview
-    // Scroll to the form for better UX
-    const formElement = document.getElementById("reel-form");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
-
-  const handleReelSubmit = async (e) => {
-    e.preventDefault();
-    if (!reelFile) {
-      toast.error(
-        `Please select a new ${
-          isEditingReel ? "replacement" : ""
-        } file to upload.`,
-        "error"
-      );
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("reel", reelFile);
-
-    try {
-      if (isEditingReel) {
-        await updateReel({ id: editingReelId, patchData: formData }).unwrap();
-        toast.success("Reel updated successfully!");
-      } else {
-        await addReel(formData).unwrap();
-        toast.success("Reel uploaded successfully!");
-      }
-      resetReelForm();
-    } catch (error) {
-      console.error(
-        `Failed to ${isEditingReel ? "update" : "upload"} reel:`,
-        error
-      );
-      toast.error(
-        `Failed to ${isEditingReel ? "update" : "upload"} reel: ${
-          error?.data?.message || "Server error"
-        }`,
-      );
-    }
-  };
-
   // --- Contact Management Handlers ---
   const handleViewInquiry = useCallback(
     async (inquiry) => {
@@ -1651,22 +1670,22 @@ const AdminPanel = () => {
   // --- Rendered Component (JSX) ---
   return (
     <div
-      className="flex h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden relative isolate"
+      className="flex h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200 overflow-hidden relative isolate"
       style={{ backgroundImage: `radial-gradient(at 20% 80%, hsla(212,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 20%, hsla(289,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 80%, hsla(180,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(26, 42, 128, 0.07) 0px, transparent 50%)` }}
     >
       {/* Sidebar Navigation */}
       <aside
         className={`
           fixed top-0 left-0 h-full z-50
-          bg-white/80 backdrop-blur-xl border-r border-slate-200 flex flex-col shadow-2xl
+          bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-2xl
           w-64 transform transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
         `}
       >
-        <div className="flex items-center h-20 px-6 border-b border-slate-200">
+        <div className="flex items-center h-20 px-6 border-b border-slate-200 dark:border-slate-700">
           <FaUserCircle className="text-blue-400 text-3xl mr-3" />
-          <h2 className="text-xl font-black tracking-wider text-slate-900">
+          <h2 className="text-xl font-black tracking-wider text-slate-900 dark:text-white">
             Star<span className="font-light">Publicity</span>
           </h2>
         </div>
@@ -1676,10 +1695,10 @@ const AdminPanel = () => {
               setActiveTab("welcome");
               if (!isDesktop) setIsSidebarOpen(false);
             }}
-            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 ${
+            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
               activeTab === "welcome"
                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                : "text-slate-500 hover:bg-blue-50 hover:text-blue-600"
+                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
             }`}
           >
             <span className="w-6 text-center text-lg"><FaTachometerAlt /></span>
@@ -1692,10 +1711,10 @@ const AdminPanel = () => {
                 setActiveTab(key);
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
-              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 ${
+              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
                 activeTab === key
                   ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                  : "text-slate-500 hover:bg-blue-50 hover:text-blue-600"
+                  : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
               }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
@@ -1717,151 +1736,239 @@ const AdminPanel = () => {
         className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${
           isDesktop ? "md:ml-64" : ""
         }`}
-      >
-        <header className="h-20 bg-white/80 backdrop-blur-lg flex items-center justify-between px-4 md:px-8 border-b border-slate-200 sticky top-0 z-30">
-          <div className="flex items-center">
+    >
+      <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
+        {isMobileSearchVisible && !isDesktop ? (
+          <div className="relative w-full flex items-center">
+            <FaSearch className="absolute left-3.5 text-slate-500 text-base" />
+            <input
+              type="search"
+              placeholder={`Search in ${activeTab}...`}
+              className="pl-10 pr-10 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full text-sm"
+              value={getCurrentSearchTerm()}
+              onChange={handleSearchChange}
+              autoFocus
+            />
             <button
-              className="text-slate-500 hover:text-slate-900 md:hidden mr-2"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              onClick={() => setIsMobileSearchVisible(false)}
+              className="absolute right-2 text-slate-500 hover:text-slate-900"
             >
-              <FaBars size={24} />
+              <FaTimesCircle size={20} />
             </button>
-            <h1 className="text-lg md:text-2xl font-bold text-slate-900 tracking-tight capitalize truncate">
-              {activeTab === "welcome"
-                ? "Dashboard"
-                : `${activeTab} Management`}
-            </h1>
           </div>
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="relative hidden md:block group">
-              <input
-                type="search"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 border border-slate-300 rounded-full bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-40 md:w-64 text-sm shadow-inner transition-all duration-300 group-hover:bg-slate-50"
-                value={
-                  activeTab === "jobs"
-                    ? jobSearchTerm
-                    : activeTab === "blogs"
-                    ? blogSearchTerm
-                    : activeTab === "contact"
-                    ? contactSearchTerm
-                    : activeTab === "users"
-                    ? userSearchTerm
-                    : ""
-                }
-                onChange={(e) => {
-                  if (activeTab === "jobs") {
-                    setJobSearchTerm(e.target.value);
-                  } else if (activeTab === "blogs") {
-                    setBlogSearchTerm(e.target.value);
-                  } else if (activeTab === "contact") {
-                    setContactSearchTerm(e.target.value);
-                  } else if (activeTab === "users") {
-                    setUserSearchTerm(e.target.value);
-                  }
-                }}
-              />
-              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-base" />
-            </div>
-            <button className="text-slate-500 hover:text-slate-900 md:hidden">
-              <FaSearch size={20} />
-            </button>
-
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 p-2 rounded-full hover:bg-slate-200/70"
-              title="Refresh Data"
-            >
-              <FaSyncAlt
-                size={20}
-                className={`${
-                  isRefreshing ? "animate-spin" : ""
-                } transition-transform group-hover:rotate-180 duration-500`}
-              />
-            </button>
-
-            {/* Notification Bell */}
-            <div className="relative" ref={notificationButtonRef}>
+        ) : (
+          <>
+            <div className="flex items-center">
               <button
-                onClick={handleNotificationPanelToggle}
-                className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70"
+                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden mr-2"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
-                <FaBell size={20} />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs items-center justify-center">
-                      {notifications.length}
-                    </span>
-                  </span>
-                )}
+                <FaBars size={24} />
               </button>
-
-              {/* Notification Panel */}
-              {isNotificationPanelOpen && (
-                <div
-                  ref={notificationPanelRef}
-                  className="absolute top-full right-0 mt-2 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden animate-fade-in-down"
-                >
-                  <div className="p-4 border-b border-slate-200">
-                    <h4 className="font-bold text-slate-800">Notifications</h4>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto custom-scrollbar">
-                    {notificationHistory.length > 0 ? (
-                      <ul>
-                        {notificationHistory.map((notification) => (
-                          <li key={notification.id} className="border-b border-slate-100 last:border-b-0">
-                            <button
-                              onClick={() => {
-                                setActiveTab(notification.link);
-                                setIsNotificationPanelOpen(false);
-                              }}
-                              className="w-full text-left p-4 hover:bg-slate-50 transition-colors duration-200 flex items-start gap-4"
-                            >
-                              <span className="mt-1">{notification.icon}</span>
-                              <div>
-                                <p className="text-sm text-slate-700">{notification.message}</p>
-                                <p className="text-xs text-slate-400 mt-1">{timeSince(notification.timestamp)}</p>
-                              </div>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className="p-8 text-center">
-                        <FaBell size={32} className="mx-auto text-slate-300" />
-                        <p className="mt-4 text-sm text-slate-500">You have no new notifications.</p>
-                      </div>
-                    )}
-                  </div>
+              <h1 className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight capitalize truncate">
+                {activeTab === "welcome"
+                  ? "Dashboard"
+                  : `${activeTab} Management`}
+              </h1>
+            </div>
+            <div className="flex items-center gap-3 md:gap-6">
+              {searchableTabs.includes(activeTab) && (
+                <div className="relative hidden md:block group">
+                  <input
+                    type="search"
+                    placeholder={`Search in ${activeTab}...`}
+                    className="pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-40 md:w-64 text-sm shadow-inner transition-all duration-300 group-hover:bg-slate-50 dark:group-hover:bg-slate-600"
+                    value={getCurrentSearchTerm()}
+                    onChange={handleSearchChange}
+                  />
+                  <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-base" />
                 </div>
               )}
+
+              {searchableTabs.includes(activeTab) && (
+                <button
+                  className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden"
+                  onClick={() => setIsMobileSearchVisible(true)}
+                >
+                  <FaSearch size={20} />
+                </button>
+              )}
+
+              {/* NEW: Quick Actions Dropdown */}
+              <div className="relative" ref={quickActionsButtonRef}>
+                <button
+                  onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
+                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                  title="Quick Actions"
+                >
+                  <FaPlus size={20} />
+                </button>
+                {isQuickActionsOpen && (
+                  <div
+                    ref={quickActionsRef}
+                    className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                  >
+                    <div className="p-2">
+                      <button
+                        onClick={() => {
+                          setActiveTab("jobs");
+                          setShowJobForm(true);
+                          setIsQuickActionsOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                      >
+                        <FaBriefcase className="text-blue-500" /> Post New Job
+                      </button>
+                      <button
+                        onClick={() => {
+                          setActiveTab("blogs");
+                          setShowBlogForm(true);
+                          setIsQuickActionsOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                      >
+                        <FaBlog className="text-orange-500" /> Create New Blog
+                      </button>
+                      {userInfo?.role === 'superAdmin' && (
+                        <button
+                          onClick={() => {
+                            setActiveTab("users");
+                            setIsQuickActionsOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                        >
+                          <FaUserPlus className="text-green-500" /> Invite New Admin
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* NEW: Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                title="Toggle Theme"
+              >
+                {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
+              </button>
+
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                title="Refresh Data"
+              >
+                <FaSyncAlt
+                  size={20}
+                  className={`${
+                    isRefreshing ? "animate-spin" : ""
+                  } transition-transform group-hover:rotate-180 duration-500`}
+                />
+              </button>
+
+              {/* Notification Bell */}
+              <div className="relative" ref={notificationButtonRef}>
+                <button
+                  onClick={handleNotificationPanelToggle}
+                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                >
+                  <FaBell size={20} />
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs items-center justify-center">
+                        {notifications.length}
+                      </span>
+                    </span>
+                  )}
+                </button>
+
+                {/* Notification Panel */}
+                {isNotificationPanelOpen && (
+                  <div
+                    ref={notificationPanelRef}
+                    className="absolute top-full right-0 mt-2 w-80 md:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                  >
+                    <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                      <h4 className="font-bold text-slate-800 dark:text-white">
+                        Notifications
+                      </h4>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                      {notificationHistory.length > 0 ? (
+                        <ul>
+                          {notificationHistory.map((notification) => (
+                            <li
+                              key={notification.id}
+                              className="border-b border-slate-100 dark:border-slate-700 last:border-b-0"
+                            >
+                              <button
+                                onClick={() => {
+                                  setActiveTab(notification.link);
+                                  setIsNotificationPanelOpen(false);
+                                }}
+                                className="w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 flex items-start gap-4"
+                              >
+                                <span className="mt-1">
+                                  {notification.icon}
+                                </span>
+                                <div>
+                                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                                    {timeSince(notification.timestamp)}
+                                  </p>
+                                </div>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="p-8 text-center">
+                          <FaBell
+                            size={32}
+                            className="mx-auto text-slate-300"
+                          />
+                          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+                            You have no new notifications.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <img
+                  src={getAvatarUrl(userInfo?.name, 32)}
+                  alt="User Avatar"
+                  className="w-9 h-9 rounded-full object-cover shadow-lg border-2 border-white dark:border-slate-700"
+                />
+                <span className="hidden sm:inline font-semibold text-sm text-slate-700 dark:text-slate-300">
+                  {userInfo?.name ||
+                    userInfo?.email ||
+                    (userInfo?.role === "superAdmin"
+                      ? "Super Admin"
+                      : "Admin")}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 hover:bg-red-500/10 dark:hover:bg-red-500/20 px-3 py-2 rounded-lg"
+                title="Log Out"
+              >
+                <FaSignOutAlt size={18} />
+                <span className="hidden md:inline font-semibold text-sm">
+                  Log Out
+                </span>
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <img
-                src={getAvatarUrl(userInfo?.name, 32)}
-                alt="User Avatar"
-                className="w-9 h-9 rounded-full object-cover shadow-lg border-2 border-white"
-              />
-              <span className="hidden sm:inline font-semibold text-sm text-slate-200">
-                {userInfo?.name ||
-                  userInfo?.email ||
-                  (userInfo?.role === "superAdmin" ? "Super Admin" : "Admin")}
-              </span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-slate-500 hover:text-red-500 transition-all duration-200 hover:bg-red-500/10 px-3 py-2 rounded-lg"
-              title="Log Out"
-            >
-              <FaSignOutAlt size={18} />
-              <span className="hidden md:inline font-semibold text-sm">
-                Log Out
-              </span>
-            </button>
-          </div>
-        </header>
+          </>
+        )}
+      </header>
 
         {/* Content Sections */}
         <div className="flex-grow p-4 md:p-6 overflow-y-auto space-y-10 custom-scrollbar">
@@ -1968,33 +2075,86 @@ const AdminPanel = () => {
                       Loading chart data...
                     </p>
                   </div>
+                ) : inquiryDataOverTime.every((d) => d.Inquiries === 0) ? (
+                  <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
+                    <FaChartBar className="text-4xl text-slate-300 mx-auto" />
+                    <p className="text-slate-500 mt-3">
+                      No inquiry data available for the last 12 months.
+                    </p>
+                  </div>
                 ) : (
-                  <div style={{ width: "100%", height: 300 }}>
+                  <div style={{ width: "100%", height: 350 }}>
                     <ResponsiveContainer>
-                      <LineChart
+                      <BarChart
                         data={inquiryDataOverTime}
-                        margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+                        margin={{ top: 20, right: 30, left: 0, bottom: isDesktop ? 5 : 50 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                        <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                        <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
+                        <defs>
+                          <linearGradient
+                            id="colorInquiries"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#14b8a6"
+                              stopOpacity={0.8}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#0d9488"
+                              stopOpacity={0.2}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
+                        <XAxis
+                          dataKey="name"
+                          stroke="#64748b"
+                          fontSize={12}
+                          tickLine={false}
+                          axisLine={false}
+                          angle={isDesktop ? 0 : -45}
+                          textAnchor={isDesktop ? "middle" : "end"}
+                          interval={0}
+                        />
+                        <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                         <Tooltip
-                          contentStyle={{
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            backdropFilter: "blur(5px)",
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "0.75rem",
+                          content={<CustomTooltip />}
+                          cursor={{ fill: "rgba(20, 184, 166, 0.1)" }}
+                        />
+                        <Legend wrapperStyle={{ fontSize: "14px", paddingTop: "20px" }} />
+                        <ReferenceLine
+                          y={averageInquiries}
+                          label={{
+                            value: `Avg: ${averageInquiries.toFixed(1)}`,
+                            position: 'insideTopRight',
+                            fill: '#ef4444',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            dy: -10,
                           }}
+                          stroke="#ef4444"
+                          strokeDasharray="4 4"
+                          strokeWidth={1.5}
                         />
-                        <Legend wrapperStyle={{ fontSize: "14px" }} />
-                        <Line
-                          type="monotone"
+                        <Bar
                           dataKey="Inquiries"
-                          stroke="#0d9488"
-                          strokeWidth={2}
-                          activeDot={{ r: 8, style: { fill: '#0d9488', stroke: '#fff' } }}
-                        />
-                      </LineChart>
+                          fill="url(#colorInquiries)"
+                          barSize={isDesktop ? 20 : 15}
+                          radius={[4, 4, 0, 0]}
+                          activeBar={{ fill: '#14b8a6', stroke: '#0f766e', strokeWidth: 1, fillOpacity: 1 }}
+                        >
+                          <LabelList
+                            dataKey="Inquiries"
+                            position="top"
+                            style={{ fill: "#0f766e", fontSize: "12px", fontWeight: "bold" }}
+                            formatter={(value) => (value > 0 ? value : "")}
+                          />
+                        </Bar>
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
                 )}
@@ -3317,199 +3477,6 @@ const AdminPanel = () => {
             </section>
           )}
 
-          {/* Reel Management Section - UPDATED */}
-          {activeTab === "reels" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                Reel Management
-              </h2>
-              <form
-                id="reel-form"
-                onSubmit={handleReelSubmit}
-                className="bg-slate-50 p-6 md:p-8 rounded-2xl shadow-inner mb-10 border border-slate-200 space-y-6"
-              >
-                <div>
-                  <label
-                    htmlFor="reel-upload-input"
-                    className="block text-sm font-medium text-slate-600 mb-2"
-                  >
-                    {isEditingReel
-                      ? "Select New Replacement File"
-                      : "Reel File (Image or Video)"}
-                  </label>
-                  <input
-                    type="file"
-                    id="reel-upload-input"
-                    accept="image/*,video/*"
-                    onChange={handleReelFileChange}
-                    className="block w-full text-sm text-slate-500 border border-slate-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
-                  />
-                  {!reelFile && isEditingReel && (
-                    <p className="text-sm text-yellow-400 mt-2">
-                      Please select a new file to replace the existing one.
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-8 items-start">
-                  {/* Preview for the new file */}
-                  {reelPreview && (
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-slate-600 mb-2">
-                        New File Preview:
-                      </h4>
-                      {reelFile?.type.startsWith("video/") ? (
-                        <video
-                          src={reelPreview}
-                          controls
-                          muted
-                          className="w-48 h-auto rounded-lg border border-slate-300"
-                        />
-                      ) : (
-                        <img
-                          src={reelPreview}
-                          alt="New Reel Preview"
-                          className="w-48 h-auto object-cover rounded-lg border border-slate-300"
-                        />
-                      )}
-                    </div>
-                  )}
-                  {/* Current reel preview (when editing) */}
-                  {editingReelPreview && (
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-slate-600 mb-2">
-                        Current Reel:
-                      </h4>
-                      {editingReelPreview.includes(".mp4") ||
-                      editingReelPreview.includes(".mov") ? (
-                        <video
-                          src={editingReelPreview}
-                          controls
-                          muted
-                          className="w-48 h-auto rounded-lg border border-slate-300"
-                        />
-                      ) : (
-                        <img
-                          src={editingReelPreview}
-                          alt="Current Reel"
-                          className="w-48 h-auto object-cover rounded-lg border border-slate-300"
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-end gap-4">
-                  {isEditingReel && (
-                    <button
-                      type="button"
-                      onClick={resetReelForm}
-                      className="px-6 py-3 bg-slate-200 text-slate-800 font-bold rounded-xl hover:bg-slate-300 transition duration-200"
-                      disabled={isAddingReel || isUpdatingReel}
-                    >
-                      Cancel Edit
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                    disabled={
-                      isAddingReel ||
-                      isUpdatingReel ||
-                      (!isEditingReel && !reelFile) ||
-                      (isEditingReel && !reelFile)
-                    }
-                  >
-                    {isAddingReel || isUpdatingReel ? (
-                      <FaSpinner className="animate-spin inline-block mr-2" />
-                    ) : (
-                      <FaUpload />
-                    )}
-                    {isAddingReel || isUpdatingReel
-                      ? isEditingReel
-                        ? "Updating..."
-                        : "Uploading..."
-                      : isEditingReel
-                      ? "Update Reel"
-                      : "Upload Reel"}
-                  </button>
-                </div>
-              </form>
-
-              {/* Existing Reels Grid */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">
-                  Existing Reels
-                </h3>
-                {isReelsLoading ? (
-                  <div className="text-center py-10">
-                    <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
-                    <p className="text-slate-500 mt-3">Loading reels...</p>
-                  </div>
-                ) : isReelsError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Error!</strong>
-                    <span className="block sm:inline ml-2">
-                      Failed to load reels.
-                    </span>
-                  </div>
-                ) : reels.length === 0 ? (
-                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Info!</strong>
-                    <span className="block sm:inline ml-2">
-                      No reels found. Upload one to get started.
-                    </span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {reels.map((reel) => (
-                      <div
-                        key={reel._id}
-                        className="relative group bg-slate-200 rounded-lg overflow-hidden shadow-lg aspect-w-9 aspect-h-16 border border-slate-300"
-                      >
-                        {reel.type === "image" ? (
-                          <img
-                            src={reel.url}
-                            alt="Reel content"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <video
-                            src={reel.url}
-                            muted
-                            loop
-                            playsInline
-                            onMouseOver={(e) => e.target.play()}
-                            onMouseOut={(e) => e.target.pause()}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4 gap-4">
-                          <button
-                            onClick={() => handleEditReel(reel)}
-                            className="text-white bg-blue-600/80 backdrop-blur-sm rounded-full p-3 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out hover:bg-blue-600"
-                            title="Edit Reel"
-                          >
-                            <FaPen size={18} />
-                          </button>
-                          {userInfo?.role === "superAdmin" && (
-                            <button
-                              onClick={() => openDeleteModal("reel", reel._id)}
-                              className="text-white bg-red-600/80 backdrop-blur-sm rounded-full p-3 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out delay-100 hover:bg-red-600"
-                              title="Delete Reel"
-                            >
-                              <FaTrash size={18} />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
-
           {/* Products Section - Add your content here */}
           {activeTab === "products" && (
             <section className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
@@ -3750,8 +3717,6 @@ const AdminPanel = () => {
             ? "Confirm Job Deletion"
             : modalType === "blog"
             ? "Confirm Blog Deletion"
-            : modalType === "reel"
-            ? "Confirm Reel Deletion"
             : "Confirm User Deletion"
         }
         message={
@@ -3759,11 +3724,9 @@ const AdminPanel = () => {
             ? "Are you sure you want to delete this job? This action cannot be undone."
             : modalType === "blog"
             ? "Are you sure you want to delete this blog post? This action cannot be undone."
-            : modalType === "reel"
-            ? "Are you sure you want to delete this reel? This action will remove it permanently from your campaigns."
             : "Are you sure you want to delete this user? This will revoke their access permanently."
         }
-        isLoading={isDeletingJob || isDeletingBlog || isDeletingReel || isDeletingAdmin}
+        isLoading={isDeletingJob || isDeletingBlog || isDeletingAdmin}
       />
 
       <InquiryDetailModal
