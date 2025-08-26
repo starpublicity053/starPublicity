@@ -52,42 +52,6 @@ const GlobalAnimations = () => (
       .sun-glow {
         filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.7));
       }
-      /* Logo Carousel CSS */
-      @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-25%); } }
-      .logo-carousel-container { width: 100%; overflow: hidden; position: relative; background-color: transparent; padding: 1rem 0; } 
-      @media (min-width: 768px) {
-        .logo-carousel-container { padding: 2rem 0; }
-      }
-      .logo-carousel-container::before, .logo-carousel-container::after { content: ''; position: absolute; top: 0; height: 100%; width: 15%; z-index: 2; pointer-events: none; }
-      .logo-carousel-container::before { left: 0; background: linear-gradient(to right, #1A202C 0%, transparent 100%); }
-      .logo-carousel-container::after { right: 0; background: linear-gradient(to left, #1A202C 0%, transparent 100%); }
-      .logo-carousel-track { display: flex; animation: slide 20s linear infinite; }
-      /* Increased speed for larger screens */
-      @media (min-width: 768px) { .logo-carousel-track { animation: slide 10s linear infinite; } }
-      /* Increased speed for smaller screens */
-      .logo-carousel-track:hover { animation-play-state: paused; }
-      
-      .logo-carousel-logo { 
-        flex-shrink: 0; 
-        width: 100px; 
-        height: 50px; 
-        margin: 0 12px; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        opacity: 0.7; 
-        filter: grayscale(100%); 
-        transition: all 0.3s ease-in-out;
-      }
-      @media (min-width: 640px) { /* sm breakpoint */
-        .logo-carousel-logo { 
-          width: 150px; 
-          height: 80px; 
-          margin: 0 25px; 
-        }
-      }
-      .logo-carousel-logo:hover { opacity: 1; filter: grayscale(0%); }
-      .logo-carousel-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
     `}</style>
 );
 
@@ -390,44 +354,52 @@ const HeroSection = () => {
 
 const LogoCarousel = () => {
   const logos = [
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/De_Bijenkorf_Logo.svg/800px-De_Bijenkorf_Logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Spoorwegmuseum_logo.svg/800px-Spoorwegmuseum_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Bayer_logo.svg/800px-Bayer_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Roche_logo.svg/800px-Roche_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Media_Markt_Logo.svg/800px-Media_Markt_Logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Capgemini_logo.svg/800px-Capgemini_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Coca-Cola_logo_2023.svg/800px-Coca-Cola_logo_2023.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/800px-Netflix_2015_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/800px-Amazon_logo.svg.png",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/800px-Microsoft_logo.svg.png",
+    "/assets/Logos/big bazaar.png",
+    "/assets/Logos/eicher.png",
+    "/assets/Logos/havells.png",
+    "/assets/Logos/hdfc.png",
+    "/assets/Logos/muthoot.png",
+    "/assets/Logos/ola.png",
+    "/assets/Logos/oppo.png",
+    "/assets/Logos/prince pipes.png",
+    "/assets/Logos/samsung.png",
+    "/assets/Logos/tata.png",
   ];
+  // We duplicate the logos for a seamless animation loop.
+  // Using 4 copies for a -25% translation in the keyframe.
   const duplicatedLogos = [...logos, ...logos, ...logos, ...logos];
   return (
-    <div className="logo-carousel-container">
-      {" "}
-      <div className="relative w-full overflow-hidden">
-        {" "}
-        <div className="logo-carousel-track">
-          {" "}
+    <>
+      <style>{
+        /* By defining keyframes here, they are scoped and don't pollute global styles. */
+        `@keyframes slide { from { transform: translateX(0); } to { transform: translateX(-25%); } }`
+      }</style>
+      <div className="relative w-full overflow-hidden py-4 md:py-8 group">
+        {/* Gradient Fades */}
+        <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#0D121B] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#0D121B] to-transparent z-10 pointer-events-none" />
+
+        <div className="flex animate-[slide_40s_linear_infinite] [animation-delay:-20s] group-hover:[animation-play-state:paused] md:animate-[slide_25s_linear_infinite] md:[animation-delay:-12.5s]">
           {duplicatedLogos.map((logo, index) => (
-            <div key={index} className="logo-carousel-logo">
-              {" "}
+            <div
+              key={index}
+              className="flex-shrink-0 w-[120px] h-[60px] sm:w-[180px] sm:h-[90px] mx-4 sm:mx-8 flex items-center justify-center"
+            >
               <img
                 src={logo}
                 alt={`Partner Logo ${index + 1}`}
                 loading="lazy"
-                style={
-                  logo.includes("Media_Markt_Logo.svg") ||
-                  logo.includes("Netflix_2015_logo.svg")
-                    ? { filter: "brightness(2) contrast(1.5) saturate(0.8)" }
-                    : {}
-                }
-              />{" "}
+                className={`max-w-full max-h-full object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 ${
+                  logo.includes("prince pipes.png")
+                    ? "scale-[2.4] hover:scale-[2.5]"
+                    : "hover:scale-105"
+                }`}
+              />
             </div>
-          ))}{" "}
-        </div>{" "}
-      </div>{" "}
-    </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 const MarqueeText = ({ children, baseVelocity = 100 }) => {
