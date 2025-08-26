@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import "./index.css";
 import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
   Outlet,
+  useNavigate,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
@@ -77,58 +78,87 @@ import ChatWidget from "./pages/ChatBot/ChatWidget";
 // --- ADMIN AUTH PROTECTION ---
 
 const AdminRoute = () => {
-  const token = localStorage.getItem("adminToken");
+  const { userInfo } = useSelector((state) => state.auth);
 
-  if (!token) {
+  // When the user logs out, the `logout` action sets `userInfo` to null.
+  // This check then fails, and the user is immediately redirected to the login page.
+  // This is the primary protective layer for the admin route.
+  if (!userInfo) {
     return <Navigate to="/login" replace />;
   }
 
-  try {
-    const decodedUser = jwtDecode(token);
-    if (decodedUser.role === "admin" || decodedUser.role === "superAdmin") {
-      return <AdminPanel />;
-    }
-    // User has a token but is not an admin.
-    return <Navigate to="/" replace />;
-  } catch (error) {
-    // Token is invalid, clear it and redirect.
-    localStorage.removeItem("adminToken");
-    return <Navigate to="/login" replace />;
-  }
+  // This is a secondary check to ensure the user has the correct role,
+  // even if they have a valid token.
+  const isAdmin = userInfo.role === "admin" || userInfo.role === "superAdmin";
+
+  // If user is an admin, show the panel. Otherwise, redirect to the homepage.
+  return isAdmin ? <AdminPanel /> : <Navigate to="/" replace />;
 };
 
 // Prevent logged-in admins from seeing auth pages
 const GuestRoute = ({ children }) => {
-  const token = localStorage.getItem("adminToken");
+  const { userInfo } = useSelector((state) => state.auth);
 
-  if (!token) {
-    return children; // Not logged in, show the page.
+  // If a logged-in admin tries to access a guest page (login/register),
+  // redirect them to the admin panel.
+  if (userInfo && (userInfo.role === "admin" || userInfo.role === "superAdmin")) {
+    return <Navigate to="/admin" replace />;
   }
 
-  try {
-    const decodedUser = jwtDecode(token);
-    // If they are an admin, redirect away from login/register.
-    if (decodedUser.role === "admin" || decodedUser.role === "superAdmin") {
-      return <Navigate to="/admin" replace />;
+  // Otherwise, show the guest page.
+  return children;
+};
+
+// --- UNIFIED SESSION MANAGEMENT ---
+
+// This single component handles both re-hydrating the session on app load
+// and redirecting the user to the login page upon logout.
+// It replaces the old AuthStateWatcher and the useEffect in the App component.
+const SessionManager = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  // A ref to track the previous user state to detect changes.
+  const previousUserInfoRef = useRef(userInfo);
+
+  // Effect 1: Handles re-hydrating the session from localStorage on initial app load.
+  // This runs only once when the component mounts.
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      try {
+        const user = jwtDecode(token);
+        dispatch(setCredentials({ user, token }));
+      } catch (error) {
+        console.error("Failed to decode token on app load, logging out:", error);
+        localStorage.removeItem("adminToken");
+      }
     }
-    // They have a token, but are not an admin. Let them see the login page.
-    return children;
-  } catch (error) {
-    // Token is invalid, so they are a guest.
-    return children;
-  }
+  }, [dispatch]);
+
+  // Effect 2: Watches for changes in the user's authentication state to handle logout.
+  useEffect(() => {
+    // If there was a user in the previous state, but not in the current one, it means they logged out.
+    if (previousUserInfoRef.current && !userInfo) {
+      navigate('/login');
+    }
+    // Update the ref with the current user info for the next render cycle.
+    previousUserInfoRef.current = userInfo;
+  }, [userInfo, navigate]);
+
+  return null; // This component does not render anything to the UI.
 };
 
 const AppRouter = createBrowserRouter([
   {
     path: "/",
-    // We wrap the existing MainLayout and the ChatWidget in a React Fragment.
-    // This correctly places the ChatWidget as a sibling to your layout, ensuring it is always rendered.
     element: (
       <>
         <MainLayout />
         <ToastContainer theme="colored" />
         <ChatWidget />
+        <SessionManager />
       </>
     ),
     children: [
@@ -222,26 +252,8 @@ const AppRouter = createBrowserRouter([
 ]);
 
 function App() {
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    // If a token exists but we don't have user info in our state (e.g., after a page refresh),
-    // we decode the token and restore the user's session.
-    if (token && !userInfo) {
-      try {
-        const user = jwtDecode(token);
-        // The decoded token payload is the user object. We dispatch it to our store.
-        dispatch(setCredentials({ user, token }));
-      } catch (error) {
-        console.error("Failed to decode token, logging out:", error);
-        // If token is invalid, clear it to prevent loops and log the user out.
-        localStorage.removeItem("adminToken");
-      }
-    }
-  }, [dispatch, userInfo]);
-
+  // All session logic has been moved into the SessionManager component
+  // to keep the root App component clean.
   return <RouterProvider router={AppRouter} />;
 }
 

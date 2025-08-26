@@ -25,7 +25,6 @@ const FOOTER_LINKS = {
   Company: [
     { name: "About Us", path: "/about" },
     { name: "Career", path: "/career" },
-    { name: "Campaigns", path: "/campaigns" },
   ],
   Services: [
     { name: "ATL Marketing", path: "/media/ATL" },
@@ -36,6 +35,7 @@ const FOOTER_LINKS = {
     { name: "Blogs", path: "/resources/blogs" },
     { name: "Media Finder", path: "/media-finder" },
     { name: "Job Positions", path: "/JobPosition" },
+    { name: "Production", path: "/resources/products" },
   ],
 };
 

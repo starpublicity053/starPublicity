@@ -53,6 +53,7 @@ import {
   FaExternalLinkAlt as FaForwardIcon,
 } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
+import { logout as logoutAction } from "../../features/auth/authSlice"; // Import the logout action
 import { useNavigate } from "react-router-dom";
 import {
   useGetJobsQuery,
@@ -94,6 +95,8 @@ import {
   useDeleteAdminMutation,
   useUpdateAdminStatusMutation,
 } from "../../features/auth/userApi";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Import libraries for Excel export
 import * as XLSX from "xlsx";
@@ -141,34 +144,6 @@ const initialBlogFormData = {
   keyHighlightsTitle: "What you'll learn in this blog", // Default title for highlights section
   keyHighlights: [],
   contentBlocks: [{ id: generateUniqueId(), type: "paragraph", text: "" }], // Start with an empty paragraph block
-};
-
-const ToastNotification = ({ message, type = "success", onClose }) => {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 4000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
-
-  const baseClasses =
-    "fixed top-5 right-5 z-[9999] px-6 py-4 rounded-xl shadow-2xl flex items-center gap-4 transition-transform transform duration-300 animate-fade-in-down border border-white/10 backdrop-blur-md";
-  const typeClasses = {
-    success: "bg-gradient-to-r from-green-500/80 to-teal-400/80 text-white",
-    error: "bg-gradient-to-r from-red-500/80 to-orange-400/80 text-white",
-  };
-
-  return (
-    <div className={`${baseClasses} ${typeClasses[type]}`}>
-      {type === "success" ? (
-        <FaCheckCircle size={20} />
-      ) : (
-        <FaExclamationCircle size={20} />
-      )}
-      <p className="font-semibold">{message}</p>
-      <button onClick={onClose} className="ml-4 text-white/80 hover:text-white">
-        <FaTimesCircle />
-      </button>
-    </div>
-  );
 };
 
 const ConfirmationModal = ({
@@ -545,10 +520,20 @@ const timeSince = (date) => {
   return Math.floor(seconds) + " seconds ago";
 };
 
+// Helper for email validation
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
 const AdminPanel = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [logout] = useLogoutMutation();
+  const [logoutMutation] = useLogoutMutation();
 
   // --- State Management ---
   const [activeTab, setActiveTab] = useState("welcome");
@@ -558,11 +543,6 @@ const AdminPanel = () => {
   // +++ ADD THESE TWO LINES +++
   const [showJobForm, setShowJobForm] = useState(false);
   const [showBlogForm, setShowBlogForm] = useState(false);
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success",
-  });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // --- Responsive Sidebar State ---
@@ -572,6 +552,16 @@ const AdminPanel = () => {
   useEffect(() => {
     setIsSidebarOpen(isDesktop);
   }, [isDesktop]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutMutation().unwrap(); // Optional: Call backend logout endpoint
+    } catch (error) {
+      console.error("Server logout failed, proceeding with client-side logout.", error);
+    }
+    dispatch(logoutAction());
+    // The SessionManager in App.jsx will now handle the redirect to /login
+  }, [dispatch, logoutMutation]);
 
   // Form data states
   const [jobFormData, setJobFormData] = useState(initialJobFormData);
@@ -625,6 +615,7 @@ const AdminPanel = () => {
   const [inviteName, setInviteName] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
   const [invitePassword, setInvitePassword] = useState("");
+  const [inviteRole, setInviteRole] = useState("admin"); // New: State for the role
 
   // Helper derived state
   const isEditingBlog = useMemo(() => editingBlogId !== null, [editingBlogId]);
@@ -696,18 +687,6 @@ const AdminPanel = () => {
     useUpdateAdminStatusMutation();
 
   // --- Authentication and Navigation Effects ---
-
-  const handleLogOut = useCallback(async () => {
-    try {
-      // The RTK Query logout mutation handles removing the token and resetting API state.
-      await logout().unwrap();
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error("Failed to log out:", error);
-      navigate("/login", { replace: true }); // Force navigation even on failure
-    }
-  }, [logout, navigate]);
-
   // --- Notification System ---
   const handleNotificationPanelToggle = () => {
     setIsNotificationPanelOpen((prev) => {
@@ -803,15 +782,11 @@ const AdminPanel = () => {
     };
   }, [isNotificationPanelOpen]);
 
-  const showToast = useCallback((message, type = "success") => {
-    setToast({ show: true, message, type });
-  }, []);
-
   const handleRefresh = useCallback(async () => {
     if (isRefreshing) return;
 
     setIsRefreshing(true);
-    showToast("Refreshing data...");
+    toast.info("Refreshing data...");
 
     try {
       switch (activeTab) {
@@ -838,14 +813,14 @@ const AdminPanel = () => {
           // No data to refresh for 'products' tab yet
           break;
       }
-      showToast("Data refreshed!", "success");
+      toast.success("Data refreshed!");
     } catch (error) {
       console.error("Failed to refresh data:", error);
-      showToast("Failed to refresh data.", "error");
+      toast.error("Failed to refresh data.");
     } finally {
       setIsRefreshing(false);
     }
-  }, [activeTab, refetchJobs, refetchBlogs, refetchReels, refetchInquiries, showToast, isRefreshing]);
+  }, [activeTab, refetchJobs, refetchBlogs, refetchReels, refetchInquiries, isRefreshing]);
 
   const getAvatarUrl = useCallback(
     (name, size) => {
@@ -1000,10 +975,10 @@ const AdminPanel = () => {
     try {
       await addJob(jobFormData).unwrap();
       resetJobForm();
-      showToast("Job posted successfully!");
+      toast.success("Job posted successfully!");
     } catch (error) {
       console.error("Failed to add job:", error);
-      showToast("Failed to post job.", "error");
+      toast.error("Failed to post job.");
     }
   };
 
@@ -1022,14 +997,14 @@ const AdminPanel = () => {
       else if (modalType === "reel") await deleteReel(modalId).unwrap();
       else if (modalType === "user") await deleteAdmin(modalId).unwrap();
 
-      showToast(
+      toast.success(
         `${
           modalType.charAt(0).toUpperCase() + modalType.slice(1)
         } deleted successfully!`
       );
     } catch (err) {
       console.error(`Error deleting ${modalType}:`, err);
-      showToast(`Failed to delete ${modalType}.`, "error");
+      toast.error(`Failed to delete ${modalType}.`);
     } finally {
       setIsModalOpen(false);
       setModalId(null);
@@ -1252,7 +1227,7 @@ const AdminPanel = () => {
     e.preventDefault();
 
     if (!isEditingBlog && !heroImageFile) {
-      showToast("Please select a featured image for a new blog post.", "error");
+      toast.error("Please select a featured image for a new blog post.");
       return;
     }
 
@@ -1291,10 +1266,10 @@ const AdminPanel = () => {
     try {
       if (isEditingBlog) {
         await updateBlogMutation({ id: editingBlogId, formData }).unwrap();
-        showToast("Blog post updated successfully!");
+        toast.success("Blog post updated successfully!");
       } else {
         await addBlogMutation(formData).unwrap();
-        showToast("Blog post published successfully!");
+        toast.success("Blog post published successfully!");
       }
       resetBlogForm();
     } catch (error) {
@@ -1302,7 +1277,7 @@ const AdminPanel = () => {
         `Error ${isEditingBlog ? "updating" : "publishing"} blog:`,
         error
       );
-      showToast(
+      toast.error(
         `Failed to ${isEditingBlog ? "update" : "publish"} blog post.`,
         "error"
       );
@@ -1435,7 +1410,7 @@ const AdminPanel = () => {
   const handleReelSubmit = async (e) => {
     e.preventDefault();
     if (!reelFile) {
-      showToast(
+      toast.error(
         `Please select a new ${
           isEditingReel ? "replacement" : ""
         } file to upload.`,
@@ -1450,10 +1425,10 @@ const AdminPanel = () => {
     try {
       if (isEditingReel) {
         await updateReel({ id: editingReelId, patchData: formData }).unwrap();
-        showToast("Reel updated successfully!");
+        toast.success("Reel updated successfully!");
       } else {
         await addReel(formData).unwrap();
-        showToast("Reel uploaded successfully!");
+        toast.success("Reel uploaded successfully!");
       }
       resetReelForm();
     } catch (error) {
@@ -1461,11 +1436,10 @@ const AdminPanel = () => {
         `Failed to ${isEditingReel ? "update" : "upload"} reel:`,
         error
       );
-      showToast(
+      toast.error(
         `Failed to ${isEditingReel ? "update" : "upload"} reel: ${
           error?.data?.message || "Server error"
         }`,
-        "error"
       );
     }
   };
@@ -1485,13 +1459,13 @@ const AdminPanel = () => {
           }).unwrap();
           // Since RTK Query automatically refetches and updates the cache,
           // the UI will update on its own. We just need to show a success toast.
-          showToast("Inquiry marked as read.");
+          toast.info("Inquiry marked as read.");
         } catch (error) {
           console.error("Failed to update inquiry status to read:", error);
         }
       }
     },
-    [updateContactInquiryStatus, showToast]
+    [updateContactInquiryStatus]
   );
 
   const handleForwardInquiryClick = useCallback((inquiry) => {
@@ -1503,7 +1477,7 @@ const AdminPanel = () => {
 
   const confirmForwardInquiry = async () => {
     if (!selectedInquiry || !forwardEmail) {
-      showToast(
+      toast.error(
         "Please select an inquiry and provide a forwarding email.",
         "error"
       );
@@ -1514,15 +1488,14 @@ const AdminPanel = () => {
         id: selectedInquiry._id,
         forwardingEmail: forwardEmail,
       }).unwrap();
-      showToast("Inquiry forwarded successfully!");
+      toast.success("Inquiry forwarded successfully!");
       setIsForwardModalOpen(false);
       setSelectedInquiry(null);
       setForwardEmail("");
     } catch (error) {
       console.error("Failed to forward inquiry:", error);
-      showToast(
+      toast.error(
         `Failed to forward inquiry: ${error?.data?.message || "Server error"}`,
-        "error"
       );
     }
   };
@@ -1536,16 +1509,16 @@ const AdminPanel = () => {
           id: inquiryId,
           status: newStatus,
         }).unwrap();
-        showToast(`Inquiry marked as ${newStatus}.`);
+        toast.info(`Inquiry marked as ${newStatus}.`);
       } catch (error) {
         console.error(
           `Failed to update inquiry status to ${newStatus}:`,
           error
         );
-        showToast(`Failed to mark inquiry as ${newStatus}.`, "error");
+        toast.error(`Failed to mark inquiry as ${newStatus}.`);
       }
     },
-    [updateContactInquiryStatus, showToast]
+    [updateContactInquiryStatus]
   );
 
   // New: Handle opening Add Note Modal
@@ -1561,16 +1534,15 @@ const AdminPanel = () => {
         id: inquiryId,
         content,
       }).unwrap();
-      showToast("Note added successfully!");
+      toast.success("Note added successfully!");
       setIsAddNoteModalOpen(false);
       setSelectedInquiryForNote(null);
       // Update the selected inquiry state with the new notes array from the response
       setSelectedInquiry(result.data);
     } catch (error) {
       console.error("Failed to add note:", error);
-      showToast(
-        `Failed to add note: ${error?.data?.message || "Server error"}`,
-        "error"
+      toast.error(
+        `Failed to add note: ${error?.data?.message || "Server error"}`
       );
     }
   };
@@ -1579,35 +1551,54 @@ const AdminPanel = () => {
   const handleInviteAdmin = async (e) => {
     e.preventDefault();
 
-    const adminData = {
-      name: inviteName,
-      email: inviteEmail,
-      password: invitePassword,
-    };
-
-    if (!adminData.name || !adminData.email || !adminData.password) {
-      showToast("Please provide a name, email, and password.", "error");
+    // --- Enhanced Client-Side Validation ---
+    if (!inviteName.trim() || !inviteEmail.trim() || !invitePassword) {
+      toast.error("Name, email, and password are required.");
       return;
     }
+    if (!validateEmail(inviteEmail)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    if (invitePassword.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+
+    // The data object that will be sent to the server
+    const adminData = {
+      name: inviteName.trim(),
+      email: inviteEmail.trim().toLowerCase(),
+      password: invitePassword,
+      role: inviteRole, // Include the role in the request
+    };
+
     try {
       await inviteAdmin(adminData).unwrap();
-      showToast(`Admin account created for ${adminData.name}`);
+      toast.success(`Admin account created for ${adminData.name}`);
+      // Reset all form fields
       setInviteName("");
       setInviteEmail("");
       setInvitePassword("");
+      setInviteRole("admin");
     } catch (error) {
       console.error("Failed to invite admin:", error);
-      showToast(error?.data?.message || "Failed to create admin account.", "error");
+
+      // Provide a specific error message to the user
+      const errorMessage =
+        error?.data?.message ||
+        "An unexpected error occurred. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
   const handleUpdateRole = async (id, newRole) => {
     try {
       await updateAdminRole({ id, role: newRole }).unwrap();
-      showToast("User role updated successfully.");
+      toast.success("User role updated successfully.");
     } catch (error) {
       console.error("Failed to update role:", error);
-      showToast(error?.data?.message || "Failed to update role.", "error");
+      toast.error(error?.data?.message || "Failed to update role.");
     }
   };
 
@@ -1615,10 +1606,10 @@ const AdminPanel = () => {
     const newStatus = currentStatus === "active" ? "suspended" : "active";
     try {
       await updateAdminStatus({ id, status: newStatus }).unwrap();
-      showToast(`User status updated to ${newStatus}.`);
+      toast.success(`User status updated to ${newStatus}.`);
     } catch (error) {
       console.error("Failed to update status:", error);
-      showToast(error?.data?.message || "Failed to update status.", "error");
+      toast.error(error?.data?.message || "Failed to update status.");
     }
   };
 
@@ -1661,17 +1652,8 @@ const AdminPanel = () => {
   return (
     <div
       className="flex h-screen bg-slate-100 font-sans text-slate-800 overflow-hidden relative isolate"
-      style={{
-        backgroundImage: `radial-gradient(at 20% 80%, hsla(212,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 20%, hsla(289,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 80%, hsla(180,100%,50%,0.05) 0px, transparent 50%)`,
-      }}
+      style={{ backgroundImage: `radial-gradient(at 20% 80%, hsla(212,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 20%, hsla(289,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 80%, hsla(180,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(26, 42, 128, 0.07) 0px, transparent 50%)` }}
     >
-      {toast.show && (
-        <ToastNotification
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ ...toast, show: false })}
-        />
-      )}
       {/* Sidebar Navigation */}
       <aside
         className={`
@@ -1869,7 +1851,7 @@ const AdminPanel = () => {
               </span>
             </div>
             <button
-              onClick={handleLogOut}
+              onClick={handleLogout}
               className="flex items-center gap-2 text-slate-500 hover:text-red-500 transition-all duration-200 hover:bg-red-500/10 px-3 py-2 rounded-lg"
               title="Log Out"
             >
@@ -3559,8 +3541,10 @@ const AdminPanel = () => {
                   onSubmit={handleInviteAdmin}
                   className="space-y-6"
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
+                  {/* Grid container for inputs */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* User Name Input */}
+                    <div className="lg:col-span-1">
                       <label htmlFor="inviteName" className="block text-sm font-medium text-slate-600 mb-2">
                         User Name
                       </label>
@@ -3574,7 +3558,9 @@ const AdminPanel = () => {
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
-                    <div>
+
+                    {/* User Email Input */}
+                    <div className="lg:col-span-1">
                       <label htmlFor="inviteEmail" className="block text-sm font-medium text-slate-600 mb-2">
                         User Email
                       </label>
@@ -3588,7 +3574,9 @@ const AdminPanel = () => {
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
-                    <div>
+
+                    {/* Set Password Input */}
+                    <div className="lg:col-span-1">
                       <label htmlFor="invitePassword" className="block text-sm font-medium text-slate-600 mb-2">
                         Set Initial Password
                       </label>
@@ -3603,7 +3591,25 @@ const AdminPanel = () => {
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
+                    
+                    {/* NEW: Role Selection Dropdown */}
+                    <div className="lg:col-span-1">
+                      <label htmlFor="inviteRole" className="block text-sm font-medium text-slate-600 mb-2">
+                        Role
+                      </label>
+                      <select
+                        id="inviteRole"
+                        value={inviteRole}
+                        onChange={(e) => setInviteRole(e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="superAdmin">Super Admin</option>
+                      </select>
+                    </div>
                   </div>
+                  
+                  {/* Submit Button */}
                   <div className="flex justify-end">
                     <button
                       type="submit"

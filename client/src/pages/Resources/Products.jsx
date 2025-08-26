@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Star,
   Plug,
@@ -12,6 +12,9 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const Products = () => {
+  // Create a ref for the CTA section to track its scroll position
+  const ctaSectionRef = useRef(null);
+
   // Scroll animations for Hero section background
   const { scrollYProgress: heroScrollProgress } = useScroll();
   const heroScale = useTransform(heroScrollProgress, [0, 0.5], [1, 1.1]); // Zoom out effect
@@ -19,7 +22,7 @@ const Products = () => {
 
   // Scroll animations for Call to Action background
   const { scrollYProgress: ctaScrollProgress } = useScroll({
-    target: { current: document.getElementById("cta-section") }, // Assuming an ID for the CTA section
+    target: ctaSectionRef, // Use the ref to target the section
     offset: ["start end", "end start"],
   });
   const ctaScale = useTransform(ctaScrollProgress, [0, 1], [1, 1.1]); // Zoom out effect
@@ -762,6 +765,7 @@ const Products = () => {
       {/* NEW SECTION: Let's Talk About Project! */}
       <section
         id="cta-section" // Added ID for scroll tracking
+        ref={ctaSectionRef} // Attach the ref here
         className="relative py-20 md:py-32 flex flex-col items-center justify-center text-white overflow-hidden"
       >
         <motion.div // This div will handle the background image with scroll effects
