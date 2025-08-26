@@ -21,7 +21,7 @@ const styles = {
     
     // --- UPDATED: Sized down for the new, smaller opener ---
     chatOpenerContainer: (isOpen) => ({
-        position: 'fixed', bottom: '25px', right: '25px', width: '100px', height: '100px',
+        position: 'fixed', bottom: '25px', right: '10px', width: '100px', height: '100px',
         cursor: 'pointer', zIndex: '9999',
         transform: isOpen ? 'scale(0)' : 'scale(1)',
         transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -29,7 +29,7 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
     }),
-    
+
     // Main Chat Window (UNCHANGED)
     chatWindow: (isVisible) => ({
         position: 'fixed', bottom: '20px', right: '20px', width: '380px', maxHeight: 'min(650px, 90vh)',
@@ -44,8 +44,7 @@ const styles = {
     chatHeader: {
         padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between',
         alignItems: 'center', borderBottom: '1px solid #E5E7EB', flexShrink: 0,
-        backgroundColor: '#6C63FF', color: 'white', borderRadius: '15px 15px 0 0',
-        backgroundImage: 'linear-gradient(45deg, #4F46E5, #8B5CF6)',
+        backgroundColor: '#1a2a80', color: 'white', borderRadius: '15px 15px 0 0',
     },
     headerBranding: { display: 'flex', alignItems: 'center', gap: '0.75rem', },
     avatar: {
@@ -57,7 +56,7 @@ const styles = {
     },
     headerTextContainer: { display: 'flex', flexDirection: 'column', },
     headerTitle: { margin: 0, fontSize: '1.1rem', fontWeight: '600', color: 'white', },
-    headerStatus: { margin: 0, fontSize: '0.8rem', color: '#C4B5FD', display: 'flex', alignItems: 'center', gap: '6px', },
+    headerStatus: { margin: 0, fontSize: '0.8rem', color: '#A3B3D9', display: 'flex', alignItems: 'center', gap: '6px', },
     statusDot: { width: '8px', height: '8px', backgroundColor: '#10B981', borderRadius: '50%', },
     closeButton: {
         background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)',
@@ -73,14 +72,14 @@ const styles = {
         position: 'relative',
     },
     quickReplyButton: (isHovered) => ({
-        background: isHovered ? 'linear-gradient(45deg, #4F46E5, #8B5CF6)' : '#F3F4F6',
-        border: `1px solid ${isHovered ? '#4F46E5' : '#D1D5DB'}`,
+        background: isHovered ? '#1a2a80' : '#F3F4F6',
+        border: `1px solid ${isHovered ? '#1a2a80' : '#D1D5DB'}`,
         borderRadius: '25px', padding: '0.6rem 1.25rem',
         fontSize: '0.85rem', fontWeight: '600',
         color: isHovered ? 'white' : '#4B5563',
         cursor: 'pointer', display: 'inline-flex', alignItems: 'center',
         gap: '0.6rem', transition: 'all 0.3s ease-out',
-        boxShadow: isHovered ? '0 4px 12px rgba(79, 70, 229, 0.3)' : '0 1px 3px rgba(0,0,0,0.05)',
+        boxShadow: isHovered ? '0 4px 12px rgba(26, 42, 128, 0.25)' : '0 1px 3px rgba(0,0,0,0.05)',
         transform: isHovered ? 'scale(1.03)' : 'scale(1)',
     }),
     greetingArea: { padding: '1.5rem 1.5rem 0.5rem 1.5rem', flexShrink: 0 },
@@ -96,7 +95,7 @@ const styles = {
         transition: 'background-color 0.2s',
     },
     accordionTitleContainer: { display: 'flex', alignItems: 'center', gap: '1rem' },
-    accordionIcon: { color: '#6C63FF', fontSize: '1.2rem' },
+    accordionIcon: { color: '#1a2a80', fontSize: '1.2rem' },
     accordionTitle: { fontSize: '1rem', fontWeight: '600', color: '#374151' },
     accordionChevron: (isOpen) => ({
         color: '#9CA3AF',
@@ -112,7 +111,7 @@ const styles = {
         cursor: 'pointer', textAlign: 'center', height: '100px',
         transition: 'all 0.2s ease', boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
     },
-    gridButtonIcon: (color) => ({ color: color || '#6C63FF', fontSize: '2rem' }),
+    gridButtonIcon: (color) => ({ color: color || '#1a2a80', fontSize: '2rem' }),
     gridButtonText: { fontSize: '0.8rem', color: '#374151', fontWeight: '500', lineHeight: '1.2' },
     offersView: { flexGrow: 1, overflowY: 'auto', padding: '1.5rem 1.5rem', },
     offersHeader: { display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', },
@@ -125,7 +124,7 @@ const styles = {
         marginBottom: '1.25rem', padding: '1.25rem', backgroundColor: '#F9FAFB',
         border: '1px solid #E5E7EB', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
     },
-    offerItemTitle: { margin: '0 0 0.5rem 0', fontWeight: '600', color: '#4F46E5', },
+    offerItemTitle: { margin: '0 0 0.5rem 0', fontWeight: '600', color: '#1a2a80', },
     offerItemDesc: { margin: 0, color: '#4B5563', fontSize: '0.9rem', lineHeight: '1.4' },
     inputArea: {
         display: 'flex', alignItems: 'center', padding: '1rem 1.5rem',
@@ -138,7 +137,7 @@ const styles = {
         transition: 'border-color 0.2s, box-shadow 0.2s',
     },
     micButton: {
-        background: 'none', border: 'none', color: '#6C63FF', fontSize: '1.75rem',
+        background: 'none', border: 'none', color: '#1a2a80', fontSize: '1.75rem',
         cursor: 'pointer', padding: '0', transition: 'color 0.2s ease',
     },
     chatConversation: {
@@ -146,7 +145,7 @@ const styles = {
         padding: '1.5rem 1.5rem 1rem', overflowY: 'auto',
     },
     userMessage: {
-        alignSelf: 'flex-end', backgroundColor: '#6C63FF', color: 'white',
+        alignSelf: 'flex-end', backgroundColor: '#1a2a80', color: 'white',
         padding: '0.8rem 1.2rem', borderRadius: '20px 20px 5px 20px',
         maxWidth: '75%', fontSize: '0.95rem', boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         lineHeight: '1.4',
@@ -165,7 +164,7 @@ const styles = {
 // 3. Unchanged Logic Components
 // ===================================================================
 const ConfettiEffect = () => {
-    const confettiColors = ['#F59E0B', '#10B981', '#4F46E5', '#EF4444', '#E53E3E'];
+    const confettiColors = ['#F59E0B', '#10B981', '#1a2a80', '#EF4444', '#E53E3E'];
     const confettiPieces = Array.from({ length: 50 }, (_, i) => {
         const style = {
             position: 'absolute', top: 0, left: `${Math.random() * 100}%`,
@@ -258,6 +257,7 @@ const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [isOpenerHovered, setIsOpenerHovered] = useState(false);
+    const [isCloudPopupVisible, setIsCloudPopupVisible] = useState(false);
     const [currentView, setCurrentView] = useState('main');
     const [showCelebration, setShowCelebration] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -265,6 +265,38 @@ const ChatWidget = () => {
     const [initialUserMessage, setInitialUserMessage] = useState('');
     const [userPhoneNumber, setUserPhoneNumber] = useState('');
     const [sendLeadEmail, { isLoading, isSuccess, isError, error }] = useInitiateLiveChatMutation();
+
+    // Effect to periodically show the "Ask Helix" popup
+    useEffect(() => {
+        // If the chat is open, we don't want to show the popup.
+        // The effect will be cleaned up and will not run.
+        if (isOpen) {
+            setIsCloudPopupVisible(false);
+            return;
+        }
+
+        let popupTimer;
+
+        const cycle = () => {
+            // Show popup
+            setIsCloudPopupVisible(true);
+            // Set timer to hide it after 4 seconds
+            popupTimer = setTimeout(() => {
+                setIsCloudPopupVisible(false);
+            }, 4000); // Visible for 4 seconds
+        };
+
+        // Start the first cycle after a delay, then repeat every 10 seconds
+        const initialCycleTimer = setTimeout(cycle, 1500);
+        const intervalId = setInterval(cycle, 10000);
+
+        // Cleanup function to clear all timers and intervals
+        return () => {
+            clearTimeout(initialCycleTimer);
+            clearTimeout(popupTimer);
+            clearInterval(intervalId);
+        };
+    }, [isOpen]); // Dependency on isOpen ensures this effect re-runs when the chat opens/closes.
 
     useEffect(() => {
         if (isError) {
@@ -341,17 +373,64 @@ const ChatWidget = () => {
                     0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
                     100% { transform: translateY(650px) rotate(360deg); opacity: 0.5; }
                 }
+                @keyframes cloudWiggle {
+                    0%, 100% { transform: rotate(0deg) scale(1); }
+                    25% { transform: rotate(-3deg) scale(1.03); }
+                    75% { transform: rotate(3deg) scale(1.03); }
+                }
+                .cloud-popup {
+                    position: absolute;
+                    bottom: 90%;
+                    right: 80%;
+                    background-color: #1a2a80;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 24px;
+                    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
+                    white-space: nowrap;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    opacity: 0;
+                    transform: translateY(15px) scale(0.9);
+                    transform-origin: bottom right;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    pointer-events: none;
+                }
+                .cloud-popup.visible {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                    animation: cloudWiggle 2.5s ease-in-out infinite;
+                    animation-delay: 0.5s;
+                }
+                .cloud-popup::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -8px;
+                    right: 20px;
+                    width: 0;
+                    height: 0;
+                    border-left: 10px solid transparent;
+                    border-right: 10px solid transparent;
+                    border-top: 15px solid #1a2a80;
+                    transform: rotate(30deg);
+                }
             `}</style>
             
             {/* --- UPDATED: Using the new RippleChatOpener --- */}
             <div 
                 style={styles.chatOpenerContainer(isOpen)} 
-                onClick={() => setIsOpen(true)} 
+                onClick={() => {
+                    setIsOpen(true);
+                    setIsCloudPopupVisible(false); // Hide popup on click
+                }} 
                 onMouseEnter={() => setIsOpenerHovered(true)} 
                 onMouseLeave={() => setIsOpenerHovered(false)}
                 aria-label="Open chat"
                 role="button"
             >
+                <div className={`cloud-popup ${isCloudPopupVisible ? 'visible' : ''}`}>
+                    Ask Helix
+                </div>
                 <Lottie 
                     animationData={chatbotAnimationData} 
                     loop={true} 
