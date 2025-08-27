@@ -8,6 +8,51 @@ import {
   animate,
 } from "framer-motion";
 
+// --- Data for the key points on the dotted circle ---
+const keyPoints = [
+  { text: "Localized Market", angle: 0 }, { text: "Consistent Brand", angle: 45 },
+  { text: "Customized Creative", angle: 90 }, { text: "Cross-Regional Coordination", angle: 135 },
+  { text: "Data-Driven Decision", angle: 180 }, { text: "Scalable Campaign", angle: 225 },
+  { text: "Real-Time Performance", angle: 270 }, { text: "Client Collaboration", angle: 315 },
+];
+
+// --- CORRECTED: OrbitingPoint component ---
+// Text rotation has been removed.
+const OrbitingPoint = ({ point, autoRotation }) => {
+  const outerRadius = 320;
+  const parentSize = 720;
+  const centerOffset = parentSize / 2;
+  const pointSize = 80;
+
+  const x = useTransform(autoRotation, (rotation) => {
+    const angleInRadians = (point.angle + rotation - 90) * (Math.PI / 180);
+    return centerOffset + outerRadius * Math.cos(angleInRadians) - pointSize / 2;
+  });
+
+  const y = useTransform(autoRotation, (rotation) => {
+    const angleInRadians = (point.angle + rotation - 90) * (Math.PI / 180);
+    return centerOffset + outerRadius * Math.sin(angleInRadians) - pointSize / 2;
+  });
+    
+  // REMOVED: The textRotation constant is no longer needed.
+  // const textRotation = useTransform(autoRotation, (rotation) => -rotation);
+
+  return (
+    <motion.div
+      className="absolute bg-[#1A2A80] text-white rounded-full flex items-center justify-center p-2 text-center shadow-md z-30"
+      style={{ 
+        width: pointSize, 
+        height: pointSize, 
+        left: x, 
+        top: y 
+      }}
+    >
+      {/* REMOVED: The style prop that applied the rotation is gone. */}
+      <motion.span className="font-medium text-xs">{point.text}</motion.span>
+    </motion.div>
+  );
+};
+
 const AboutUs = () => {
   // --- Animation setup for Expanding Circle Reveal ---
   const welcomeSectionRef = useRef(null);
@@ -70,14 +115,6 @@ const AboutUs = () => {
       transition: { duration: 0.8, ease: "easeOut" },
     },
   };
-  
-  // Data for the key points on the dotted circle
-  const keyPoints = [
-    { text: "Localized Market", angle: 0 }, { text: "Consistent Brand", angle: 45 },
-    { text: "Customized Creative", angle: 90 }, { text: "Cross-Regional Coordination", angle: 135 },
-    { text: "Data-Driven Decision", angle: 180 }, { text: "Scalable Campaign", angle: 225 },
-    { text: "Real-Time Performance", angle: 270 }, { text: "Client Collaboration", angle: 315 },
-  ];
 
   // --- Start: Automatic Rolling Circle Animation Setup ---
   const autoRotation = useMotionValue(0);
@@ -88,8 +125,6 @@ const AboutUs = () => {
     });
     return controls.stop;
   }, [autoRotation]);
-
-  const autoCounterRotation = useTransform(autoRotation, (value) => -value);
   
   return (
     <>
@@ -196,33 +231,53 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* === MULTI-MARKET CLIENTS Section (UNCHANGED) === */}
-      <section className="bg-white py-20 px-4 md:px-8 lg:px-16 mt-5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="relative flex justify-center items-center h-[450px] lg:h-[550px] w-full">
-                <motion.div className="relative flex justify-center items-center w-full h-full max-w-[500px] max-h-[500px]" style={{ rotate: autoRotation }}>
-                    <div className="absolute bg-white rounded-full flex items-center justify-center w-[180px] h-[180px] md:w-[220px] md:h-[220px] z-20 shadow-lg">
-                        <motion.div className="text-center text-black p-2" style={{ rotate: autoCounterRotation }}>
-                            <p className="font-bold text-xl md:text-2xl mb-1">OUR CREATIVE STRATEGY</p>
-                        </motion.div>
+      {/* === IMPROVED: Multi-Market Approach Section (Now Responsive) === */}
+      <section className="bg-white py-20 sm:py-28 px-4 md:px-8 lg:px-16 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex justify-center">
+            {/* --- Graphic Container --- */}
+            <div className="relative flex justify-center items-center w-full min-h-[550px] lg:min-h-[720px]">
+                {/* Desktop: Orbiting Points Graphic */}
+                <div className="hidden lg:flex justify-center items-center w-full h-full">
+                    <div className="relative flex justify-center items-center w-[720px] h-[720px]">
+                        {/* The main heading and text are now the central element */}
+                        <div className="absolute z-20 text-black text-center max-w-lg">
+                            <h2 className="font-bold text-3xl md:text-4xl mb-6 leading-tight">
+                                OUR APPROACH WITH <br className="hidden md:inline" />MULTI-MARKET BRANDS
+                            </h2>
+                            <p className="text-lg md:text-xl leading-relaxed">
+                                We partner with multi-market brands and businesses to deliver cohesive outdoor advertising solutions tailored to various provinces and target areas.
+                            </p>
+                        </div>
+                        <svg className="absolute inset-0 w-full h-full z-10" viewBox="0 0 720 720">
+                            <circle cx="360" cy="360" r="320" stroke="#E5E7EB" strokeWidth="3" fill="none" />
+                        </svg>
+                        {keyPoints.map((point, index) => {
+                            return (<OrbitingPoint key={index} point={point} autoRotation={autoRotation} />);
+                        })}
                     </div>
-                    <svg className="absolute inset-0 w-full h-full z-10" viewBox="0 0 500 500">
-                        <circle cx="250" cy="250" r="210" stroke="#0F2633" strokeWidth="2" fill="none" strokeDasharray="5 10"/>
-                    </svg>
-                    {keyPoints.map((point, index) => {
-                        const outerRadius = 210; const parentSize = 500; const centerOffset = parentSize / 2; const pointSize = 80;
-                        const angleRad = (point.angle - 90) * (Math.PI / 180);
-                        const xPos = centerOffset + outerRadius * Math.cos(angleRad) - pointSize / 2;
-                        const yPos = centerOffset + outerRadius * Math.sin(angleRad) - pointSize / 2;
-                        return (<motion.div key={index} className="absolute bg-[#1A2A80] text-white rounded-full flex items-center justify-center p-2 text-center shadow-md z-30" style={{ width: pointSize, height: pointSize, left: xPos, top: yPos, }}>
-                          <motion.span className="font-medium text-xs" style={{ rotate: autoCounterRotation }}>{point.text}</motion.span>
-                        </motion.div>);
-                    })}
-                </motion.div>
-            </div>
-            <div className="text-black lg:pl-12">
-                <h2 className="font-bold text-3xl md:text-4xl mb-6 leading-tight">OUR APPROACH WITH <br className="hidden md:inline" />MULTI-MARKET BRANDS</h2>
-                <p className="text-lg md:text-xl leading-relaxed">We partner with multi-market brands and businesses to deliver cohesive outdoor advertising solutions tailored to various provinces and target areas. By adapting our creative strategies to local insights while keeping brand texture, we ensure your message communicates effectively. Our streamlined coordination and understanding of geographical dynamics help brands achieve a unified impact and measurable outcomes.</p>
+                </div>
+
+                {/* Mobile: A clear, stacked layout */}
+                <div className="lg:hidden w-full max-w-md px-4">
+                    <div className="text-center text-black mb-10">
+                        <h2 className="font-bold text-3xl mb-4 leading-tight">
+                            OUR APPROACH WITH MULTI-MARKET BRANDS
+                        </h2>
+                        <p className="text-lg leading-relaxed">
+                            We partner with multi-market brands and businesses to deliver cohesive outdoor advertising solutions tailored to various provinces and target areas.
+                        </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-2xl p-6 shadow-lg border border-gray-200 mt-8">
+                        <h3 className="font-bold text-xl text-center mb-6 text-[#1A2A80]">Our Core Strategies</h3>
+                        <ul className="grid grid-cols-2 gap-4 text-center">
+                            {keyPoints.map((point) => (
+                                <li key={point.text} className="bg-white p-3 rounded-lg shadow-sm">
+                                    <p className="font-semibold text-sm text-gray-800">{point.text}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
       </section>

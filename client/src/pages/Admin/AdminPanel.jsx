@@ -1570,11 +1570,6 @@ const AdminPanel = () => {
   const handleInviteAdmin = async (e) => {
     e.preventDefault();
 
-    // --- Enhanced Client-Side Validation ---
-    if (!inviteName.trim() || !inviteEmail.trim() || !invitePassword) {
-      toast.error("Name, email, and password are required.");
-      return;
-    }
     if (!validateEmail(inviteEmail)) {
       toast.error("Please enter a valid email address.");
       return;
@@ -3521,7 +3516,6 @@ const AdminPanel = () => {
                         value={inviteName}
                         onChange={(e) => setInviteName(e.target.value)}
                         placeholder="Enter user's full name"
-                        required
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
@@ -3537,7 +3531,6 @@ const AdminPanel = () => {
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                         placeholder="Enter user's email"
-                        required
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
@@ -3553,7 +3546,6 @@ const AdminPanel = () => {
                         value={invitePassword}
                         onChange={(e) => setInvitePassword(e.target.value)}
                         placeholder="Enter a secure password"
-                        required
                         minLength="6"
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
@@ -3639,11 +3631,10 @@ const AdminPanel = () => {
                           <tr key={admin._id} className="hover:bg-slate-100">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 flex items-center gap-4">
                               <img src={getAvatarUrl(admin.name || admin.email, 40)} alt={`${admin.name || admin.email}'s avatar`} className="w-10 h-10 rounded-full object-cover" />
-                              <p className="font-bold text-slate-800">{admin.name || admin.email}</p>
+                              <p className="font-bold text-slate-800">{admin.name || 'N/A'}</p>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                              {/* Only show email here if a name exists to avoid duplication */}
-                              {admin.name ? admin.email : '—'}
+                              {admin.email}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                               <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.role === 'superAdmin' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>

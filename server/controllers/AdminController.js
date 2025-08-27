@@ -39,7 +39,9 @@ exports.registerUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Please provide email and password" });
+      return res
+        .status(400)
+        .json({ message: "Please provide email and password" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -61,7 +63,12 @@ exports.registerUser = async (req, res) => {
       userId: newUser._id,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error during registration", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Server error during registration",
+        error: error.message,
+      });
   }
 };
 
@@ -72,7 +79,9 @@ exports.loginUser = async (req, res) => {
     console.log(`[DEBUG] Login attempt for email: ${email}`);
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Please provide email and password" });
+      return res
+        .status(400)
+        .json({ message: "Please provide email and password" });
     }
 
     // Crucial: .select('+password') is needed to retrieve the password hash
@@ -87,32 +96,43 @@ exports.loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      console.log(`[DEBUG] Login failed: Password does not match for user: ${email}`);
+      console.log(
+        `[DEBUG] Login failed: Password does not match for user: ${email}`
+      );
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    
-    if (user.status === 'inactive') {
-      return res.status(403).json({ message: "Your account is inactive. Please contact support." });
+
+    if (user.status === "inactive") {
+      return res
+        .status(403)
+        .json({ message: "Your account is inactive. Please contact support." });
     }
 
     // Check for both casings to be robust against manual DB entry errors.
-    const isSuper = user.isSuperAdmin == 1 || user.isSuperadmin == 1;
-    const isAdmin = user.isAdmin == 1;
+    const isSuper = user.isSuperAdmin === 1;
+    const isAdmin = user.isAdmin === 1;
 
     // Determine user role. Super admin has precedence.
     let role;
     if (isSuper) {
-      role = 'superAdmin';
+      role = "superAdmin";
     } else if (isAdmin) {
-      role = 'admin';
+      role = "admin";
     } else {
       // If user is neither, they are not approved to log in.
-      console.log(`[DEBUG] Login failed: Account for ${email} is not approved.`);
-      return res.status(403).json({ message: "Your account has not been approved by an administrator." });
+      console.log(
+        `[DEBUG] Login failed: Account for ${email} is not approved.`
+      );
+      return res
+        .status(403)
+        .json({
+          message: "Your account has not been approved by an administrator.",
+        });
     }
 
     const payload = {
       id: user._id,
+      name: user.name, // Add name to the payload
       email: user.email,
       role: role,
       isSuperAdmin: isSuper ? 1 : 0,
@@ -129,8 +149,10 @@ exports.loginUser = async (req, res) => {
       user: payload, // Return the full payload as the user object
     });
   } catch (error) {
-    console.error('[DEBUG] SERVER ERROR DURING LOGIN:', error);
-    res.status(500).json({ message: "Server error during login", error: error.message });
+    console.error("[DEBUG] SERVER ERROR DURING LOGIN:", error);
+    res
+      .status(500)
+      .json({ message: "Server error during login", error: error.message });
   }
 };
 
@@ -140,11 +162,15 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       // To prevent email enumeration, we send a success response even if the user doesn't exist.
-      return res.status(200).json({ message: "If a user with that email exists, an OTP has been sent." });
+      return res
+        .status(200)
+        .json({
+          message: "If a user with that email exists, an OTP has been sent.",
+        });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     user.resetPasswordOtp = otp;
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save({ validateBeforeSave: false });
@@ -161,7 +187,9 @@ exports.forgotPassword = async (req, res) => {
   } catch (error) {
     console.error("FORGOT PASSWORD ERROR:", error);
     // Do not expose detailed errors to the client
-    res.status(500).json({ message: "Error sending email. Please try again later." });
+    res
+      .status(500)
+      .json({ message: "Error sending email. Please try again later." });
   }
 };
 
@@ -184,9 +212,16 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).json({ message: "Password reset successful. You can now log in." });
+    res
+      .status(200)
+      .json({ message: "Password reset successful. You can now log in." });
   } catch (error) {
-    res.status(500).json({ message: "Server error during password reset", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Server error during password reset",
+        error: error.message,
+      });
   }
 };
 
@@ -197,35 +232,61 @@ exports.resetPassword = async (req, res) => {
 // 5. Get All Admins
 exports.getAdmins = async (req, res) => {
   try {
-    // Use .lean() to get plain JS objects for better performance
-    const admins = await User.find({ $or: [{ isAdmin: 1 }, { isSuperAdmin: 1 }] }).select('-password').lean();
-    
-    // Map over the admins to add the 'role' property that the frontend expects
-    const adminsWithRoles = admins.map(admin => {
-      const isSuper = admin.isSuperAdmin == 1 || admin.isSuperadmin == 1;
+    // Find all users that have admin or superAdmin privileges
+    const admins = await User.find({
+      $or: [{ isAdmin: 1 }, { isSuperAdmin: 1 }],
+    })
+      .select("_id name email isAdmin isSuperAdmin status") // Explicitly select the fields needed
+      .lean(); // Use .lean() for better performance
+
+    // Map over the raw admin objects to create a consistent and clean structure for the frontend.
+    const formattedAdmins = admins.map((admin) => {
+      const isSuper = admin.isSuperAdmin === 1;
       return {
-        ...admin,
-        role: isSuper ? 'superAdmin' : 'admin'
+        _id: admin._id,
+        // This is the crucial part. We ensure a 'name' property always exists.
+        // If the database record is old and doesn't have a name, we provide a fallback.
+        name: admin.name || admin.email.split("@")[0], // Fallback to part of the email
+        email: admin.email,
+        role: isSuper ? "superAdmin" : "admin",
+        status: admin.status || "active", // Also provide a fallback for status
       };
     });
-    res.status(200).json(adminsWithRoles);
+
+    res.status(200).json(formattedAdmins);
   } catch (error) {
-    res.status(500).json({ message: "Server error fetching admins", error: error.message });
+    console.error("Server error fetching admins:", error); // Add logging
+    res
+      .status(500)
+      .json({ message: "Server error fetching admins", error: error.message });
   }
 };
 
 // 6. Invite Admin
 exports.inviteAdmin = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    // Now accepts password from the request, aligning with user expectation.
+    const { name, email, password, role } = req.body;
+
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required." });
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required." });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long." });
     }
 
     if (await User.findOne({ email })) {
-      return res.status(400).json({ message: "A user with this email already exists." });
+      return res
+        .status(400)
+        .json({ message: "A user with this email already exists." });
     }
 
+    // Hash the password provided in the form.
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = await User.create({
@@ -233,8 +294,8 @@ exports.inviteAdmin = async (req, res) => {
       email,
       password: hashedPassword,
       isAdmin: 1,
-      isSuperAdmin: 0,
-      status: 'active',
+      isSuperAdmin: role === "superAdmin" ? 1 : 0, // Allow creating super admins
+      status: "active",
     });
 
     res.status(201).json({
@@ -243,11 +304,14 @@ exports.inviteAdmin = async (req, res) => {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        role: 'admin',
-      }
+        role: newUser.isSuperAdmin ? "superAdmin" : "admin",
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error inviting admin", error: error.message });
+    // If email sending fails, the user is still created. You might want to handle this more gracefully.
+    res
+      .status(500)
+      .json({ message: "Server error inviting admin", error: error.message });
   }
 };
 
@@ -257,28 +321,36 @@ exports.updateAdminRole = async (req, res) => {
     const { id } = req.params;
     const { role } = req.body;
 
-    if (!['admin', 'superAdmin', 'user'].includes(role)) {
+    if (!["admin", "superAdmin", "user"].includes(role)) {
       return res.status(400).json({ message: "Invalid role specified." });
     }
-    
+
     const userToUpdate = await User.findById(id);
     if (!userToUpdate) {
       return res.status(404).json({ message: "User not found." });
     }
-    
-    if (String(req.user.id) === String(userToUpdate._id) && userToUpdate.isSuperAdmin && role !== 'superAdmin') {
-      if (await User.countDocuments({ isSuperAdmin: 1 }) <= 1) {
-        return res.status(400).json({ message: "Cannot demote the only super admin." });
+
+    if (
+      String(req.user.id) === String(userToUpdate._id) &&
+      userToUpdate.isSuperAdmin &&
+      role !== "superAdmin"
+    ) {
+      if ((await User.countDocuments({ isSuperAdmin: 1 })) <= 1) {
+        return res
+          .status(400)
+          .json({ message: "Cannot demote the only super admin." });
       }
     }
 
-    userToUpdate.isAdmin = (role === 'admin' || role === 'superAdmin') ? 1 : 0;
-    userToUpdate.isSuperAdmin = (role === 'superAdmin') ? 1 : 0;
+    userToUpdate.isAdmin = role === "admin" || role === "superAdmin" ? 1 : 0;
+    userToUpdate.isSuperAdmin = role === "superAdmin" ? 1 : 0;
     await userToUpdate.save({ validateBeforeSave: false });
 
     res.status(200).json({ message: `User role updated to ${role}.` });
   } catch (error) {
-    res.status(500).json({ message: "Server error updating role", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Server error updating role", error: error.message });
   }
 };
 
@@ -288,7 +360,7 @@ exports.updateAdminStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!['active', 'inactive'].includes(status)) {
+    if (!["active", "inactive"].includes(status)) {
       return res.status(400).json({ message: "Invalid status specified." });
     }
 
@@ -297,9 +369,16 @@ exports.updateAdminStatus = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    if (String(req.user.id) === String(userToUpdate._id) && status === 'inactive') {
-      if (await User.countDocuments({ isSuperAdmin: 1, status: 'active' }) <= 1) {
-        return res.status(400).json({ message: "Cannot deactivate the only active super admin." });
+    if (
+      String(req.user.id) === String(userToUpdate._id) &&
+      status === "inactive"
+    ) {
+      if (
+        (await User.countDocuments({ isSuperAdmin: 1, status: "active" })) <= 1
+      ) {
+        return res
+          .status(400)
+          .json({ message: "Cannot deactivate the only active super admin." });
       }
     }
 
@@ -308,7 +387,9 @@ exports.updateAdminStatus = async (req, res) => {
 
     res.status(200).json({ message: `User status updated to ${status}.` });
   } catch (error) {
-    res.status(500).json({ message: "Server error updating status", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Server error updating status", error: error.message });
   }
 };
 
@@ -318,13 +399,17 @@ exports.deleteAdmin = async (req, res) => {
     const { id } = req.params;
 
     if (String(req.user.id) === id) {
-      return res.status(400).json({ message: "You cannot delete your own account." });
+      return res
+        .status(400)
+        .json({ message: "You cannot delete your own account." });
     }
-    
+
     await User.findByIdAndDelete(id);
 
     res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Server error deleting user", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Server error deleting user", error: error.message });
   }
 };

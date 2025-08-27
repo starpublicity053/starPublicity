@@ -80,10 +80,12 @@ export const userApi = createApi({
       ],
     }),
     inviteAdmin: builder.mutation({
-      query: ({ email }) => ({
+      // This is the incorrect part: it only takes `email` from the object.
+      query: (adminData) => ({ // Corrected: Takes the whole object.
         url: 'admins/invite',
         method: 'POST',
-        body: { email },
+        // This sends the entire object, not just the email.
+        body: adminData, 
       }),
       invalidatesTags: [{ type: 'Admin', id: 'LIST' }],
     }),

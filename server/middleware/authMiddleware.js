@@ -22,8 +22,8 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: "Not authorized, user not found" });
     }
 
-    // Standardize role checks. The check for `isSuperadmin` (lowercase 'a') is kept for potential legacy reasons.
-    const isSuperAdmin = userFromDb.isSuperAdmin === 1 || userFromDb.isSuperadmin === 1;
+    // Standardize role checks.
+    const isSuperAdmin = userFromDb.isSuperAdmin === 1;
     const isAdmin = userFromDb.isAdmin === 1;
 
     // Ensure the user has at least admin privileges for any protected route
