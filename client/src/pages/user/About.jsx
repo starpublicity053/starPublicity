@@ -213,17 +213,17 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* === Quote Section (UNCHANGED) === */}
-      <section className="bg-[#1A2A80] py-20 mt-20 overflow-hidden" ref={quoteSectionRef}>
+      {/* === Quote Section (Now Responsive) === */}
+      <section className="bg-[#1A2A80] py-16 sm:py-20 mt-20 overflow-hidden" ref={quoteSectionRef}>
         <div className="px-4 md:px-8 lg:px-16 max-w-7xl mx-auto flex items-center justify-center min-w-[320px]">
           <div className="relative flex flex-col items-center text-center w-full max-w-4xl">
             <div className="relative z-10 font-sans leading-tight">
-              <motion.p style={{ x: xQuoteLine1 }} className='text-5xl md:text-6xl lg:text-7xl font-black mb-4 text-white whitespace-nowrap'>"At Star Publicity, we believe</motion.p>
-              <motion.p style={{ x: xQuoteLine2 }} className='text-6xl md:text-7xl lg:text-8xl font-serif italic mb-6 text-white whitespace-nowrap'>every bold idea can bring change in </motion.p>
-              <motion.p style={{ x: xQuoteLine3 }} className='text-5xl md:text-6xl lg:text-7xl font-black mb-8 text-white whitespace-nowrap'>our society and redefine what’s possible."</motion.p>
+              <motion.p style={{ x: xQuoteLine1 }} className='text-3xl sm:text-5xl lg:text-7xl font-black mb-2 sm:mb-4 text-white sm:whitespace-nowrap'>"At Star Publicity, we believe</motion.p>
+              <motion.p style={{ x: xQuoteLine2 }} className='text-4xl sm:text-6xl lg:text-8xl font-serif italic mb-3 sm:mb-6 text-white sm:whitespace-nowrap'>every bold idea can bring change in </motion.p>
+              <motion.p style={{ x: xQuoteLine3 }} className='text-3xl sm:text-5xl lg:text-7xl font-black mb-4 sm:mb-8 text-white sm:whitespace-nowrap'>our society and redefine what’s possible."</motion.p>
             </div>
-            <div className="w-28 h-1 bg-black mx-auto mb-6"></div>
-            <motion.div ref={attributionRef} variants={attributionVariants} initial="hidden" animate={isAttributionInView ? "visible" : "hidden"} className="relative z-10 text-xl md:text-2xl font-medium leading-normal text-white">
+            <div className="w-28 h-1 bg-black mx-auto mb-4 sm:mb-6"></div>
+            <motion.div ref={attributionRef} variants={attributionVariants} initial="hidden" animate={isAttributionInView ? "visible" : "hidden"} className="relative z-10 text-lg md:text-2xl font-medium leading-normal text-white">
               <p>Founder's Desk</p>
               <p>M/s Star Publicity</p>
             </motion.div>
@@ -282,18 +282,18 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* === Animated Contact Section (UNCHANGED) === */}
-      <section ref={contactSectionRef} className="relative w-full flex items-center justify-center min-h-[700px] overflow-hidden py-20 px-4 sm:px-6 lg:px-8 mt-20" style={{ backgroundColor: "#FFFFFF" }}>
+      {/* === Animated Contact Section (Now Responsive) === */}
+      <section ref={contactSectionRef} className="relative w-full flex items-center justify-center min-h-[90vh] sm:min-h-[700px] overflow-hidden py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-20" style={{ backgroundColor: "#FFFFFF" }}>
         <motion.div initial={{ opacity: 1, scale: 1, rotate: 0, x: "-50%", y: "-50%", width: "clamp(200px, 50vw, 400px)", height: "clamp(200px, 50vw, 400px)", backgroundColor: "#000000", borderRadius: "50%", top: "50%", left: "50%"}} animate={isInView ? { scale: [1, 2, 10, 50], opacity: [1, 1, 1, 1], rotate: [0, 0, 0, 0], x: "-50%", y: "-50%", borderRadius: ["50%", "50%", "0%", "0%"], backgroundColor: "#0F2633", width: "100vw", height: "100vh" } : {}} transition={{ duration: 1.5, delay: 0.1, ease: "easeInOut" }} className="absolute z-10 flex items-center justify-center">
             <motion.span initial={{ opacity: 1, scale: 1 }} animate={isInView ? { opacity: 0, scale: 0.5 } : {}} transition={{ duration: 0.3, ease: "easeOut" }} className="font-black text-white select-none" style={{ fontSize: "clamp(150px, 30vw, 300px)", lineHeight: "1" }}>?</motion.span>
         </motion.div>
         <motion.div variants={contentContainerVariants} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative z-30 text-white text-center px-4 max-w-2xl mx-auto w-full h-full flex flex-col justify-center items-center" style={{ opacity: 1, backgroundColor: "transparent" }}>
             <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 0.08 } : {}} transition={{ duration: 1.5, delay: 1.8, ease: "easeOut" }} className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: `url('/question-mark-bg.png')`, backgroundSize: "95% auto", backgroundRepeat: "no-repeat", backgroundPosition: "center 80%", filter: "grayscale(100%) brightness(0.7)", }}/>
-            <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8">
+            <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
                 <motion.h2 variants={contentItemVariants} className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-center">HAVE ANY QUESTIONS? WE'RE HERE TO PROVIDE THE ANSWERS.</motion.h2>
-                <motion.p variants={contentItemVariants} className="text-xl md:text-2xl font-medium text-gray-300">Try it</motion.p>
-                <motion.a variants={contentItemVariants} href="tel:0308700260" className="block text-4xl md:text-5xl font-extrabold mb-2 hover:text-[#1A2A80] transition-colors duration-300 tracking-tight" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>030 87 00 260</motion.a>
-                <motion.p variants={contentItemVariants} className="text-xl md:text-2xl mb-4 font-medium text-gray-300">Or send an app</motion.p>
+                <motion.p variants={contentItemVariants} className="text-lg sm:text-xl font-medium text-gray-300">Give us a call</motion.p>
+                <motion.a variants={contentItemVariants} href="tel:0308700260" className="block text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 hover:text-[#1A2A80] transition-colors duration-300 tracking-tight" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>030 87 00 260</motion.a>
+                <motion.p variants={contentItemVariants} className="text-lg sm:text-xl mb-4 font-medium text-gray-300">Or send us a message</motion.p>
                 <motion.a variants={contentItemVariants} href="https://wa.me/918839728739?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20your%20services." target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-[#1A2A80] text-white px-6 py-3 sm:px-8 sm:py-3 lg:px-10 lg:py-4 rounded-full text-base sm:text-lg md:text-xl font-bold hover:bg-[#153D52] transition-colors duration-300 shadow-lg" whileHover={{ scale: 1.05, boxShadow: "0 8px 20px rgba(27, 73, 101, 0.4)", }} whileTap={{ scale: 0.95 }}>
                     <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 mr-2 sm:mr-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M12.04 2C7.35 2 3.56 5.79 3.56 10.48C3.56 12.07 4.01 13.59 4.79 14.93L3.6 18.23L7.04 17.11C8.29 17.76 9.64 18.11 11.02 18.11C15.71 18.11 19.5 14.32 19.5 9.63C19.5 4.94 15.71 2 12.04 2ZM15.89 13.79C15.72 14.07 15.51 14.16 15.25 14.28C14.86 14.47 13.06 15.34 12.78 15.39C12.49 15.45 12.28 15.42 12.07 15.36C11.87 15.3 11.3 15.06 10.74 14.62C10.18 14.18 9.77 13.56 9.61 13.31C9.46 13.06 8.57 11.96 8.57 11.01C8.57 10.06 9.3 9.77 9.54 9.65C9.77 9.54 10.05 9.52 10.23 9.52C10.42 9.52 10.65 9.55 10.83 9.59C11.02 9.64 11.16 9.8 11.35 10.15C11.55 10.49 11.98 11.13 12.07 11.26C12.16 11.4 12.24 11.53 12.4 11.75C12.56 11.97 12.74 12.23 12.89 12.35C13.06 12.48 13.19 12.57 13.36 12.67C13.54 12.78 13.71 12.88 14.1 13.09C14.47 13.29 14.77 13.40 15.02 13.53C15.26 13.67 15.45 13.75 15.61 13.84C15.77 13.94 15.89 13.97 15.89 13.79Z" />
