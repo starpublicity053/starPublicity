@@ -141,12 +141,12 @@ const PromiseFeatureCard = ({ icon: Icon, title, description }) => {
         <motion.div
             whileHover={{ y: -8, scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className={`flex flex-col items-center text-center p-8 rounded-2xl shadow-lg transition-colors duration-300 bg-white`}
+            className={`flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl shadow-lg transition-colors duration-300 bg-white`}
         >
-            <div className={`w-16 h-16 flex items-center justify-center mb-4 rounded-full bg-yellow-400`}>
-                <Icon className="w-12 h-12 text-primary-blue" strokeWidth={1.5} />
+            <div className={`w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mb-4 rounded-full bg-yellow-400`}>
+                <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-primary-blue" strokeWidth={1.5} />
             </div>
-            <h3 className="font-bold text-xl text-gray-900 mb-2">{title}</h3>
+            <h3 className="font-bold text-lg sm:text-xl text-gray-900 mb-2">{title}</h3>
             <p className="text-sm text-gray-600">{description}</p>
         </motion.div>
     );
@@ -157,18 +157,18 @@ const SectionHeader = ({ title, onMouseEnter, onMouseLeave }) => {
     const inView = useInView(ref, { once: true, amount: 0.5 });
 
     return (
-        <div ref={ref} className="flex flex-col items-center mb-12" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <div className="flex items-center gap-4">
+        <div ref={ref} className="flex flex-col items-center mb-8 sm:mb-12" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+            <div className="flex items-center gap-3 sm:gap-4">
                 <motion.div 
                     initial={{ scale: 0 }} animate={inView ? { scale: 1 } : {}} transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
-                    className="w-4 h-4 bg-[#1a2a80]"
+                    className="w-3 h-3 sm:w-4 sm:h-4 bg-[#1a2a80]"
                 ></motion.div>
-                <h2 className="text-4xl md:text-5xl font-extrabold text-[#1a2a80] tracking-tight">{title}</h2>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1a2a80] tracking-tight">{title}</h2>
             </div>
             <motion.div 
-                className="h-1 mt-4 bg-gradient-to-r from-yellow-400 to-purple-500"
+                className="h-1 mt-3 sm:mt-4 bg-gradient-to-r from-yellow-400 to-purple-500"
                 initial={{ width: 0 }}
-                animate={inView ? { width: "8rem" } : {}}
+                animate={inView ? { width: "6rem" } : {}}
                 transition={{ duration: 0.6, ease: "easeOut" }}
             ></motion.div>
         </div>
@@ -299,13 +299,13 @@ const ContactUsPage = () => {
             </style>
 
             <div className="w-full bg-gray-100 font-poppins text-gray-800 relative overflow-hidden">
-                {/* === MODIFIED: Full-screen Hero Section === */}
-                <div className="h-screen w-full flex items-center justify-center p-8 lg:p-16">
+                {/* === MODIFIED: Full-screen & Responsive Hero Section === */}
+                <div className="w-full min-h-screen flex flex-col justify-center px-6 py-24 lg:px-16">
                     <motion.div 
                         variants={containerVariants} 
                         initial="hidden" 
                         animate="visible" 
-                        className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+                        className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center"
                     >
                         {/* --- Left Column: Heading & Info --- */}
                         <div className="flex flex-col">
@@ -315,13 +315,13 @@ const ContactUsPage = () => {
                                 onMouseLeave={handleMouseLeave}
                                 onMouseEnter={textEnter}
                                 onMouseLeave={textLeave}
-                                className="flex flex-col items-start -ml-1"
+                                className="flex flex-col items-start"
                             >
                                 <motion.h2
                                     initial={{ opacity: 0, y: 40 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                                    className="text-4xl md:text-5xl font-semibold text-gray-600 tracking-tight"
+                                    className="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-600 tracking-tight"
                                 >
                                     Let's Make Your
                                 </motion.h2>
@@ -332,7 +332,7 @@ const ContactUsPage = () => {
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99], delay: 0.4 }}
-                                        className="text-7xl md:text-9xl font-black text-[#1a2a80] tracking-tighter my-2 text-shadow-lg"
+                                        className="text-6xl sm:text-7xl md:text-9xl font-black text-[#1a2a80] tracking-tighter my-1 sm:my-2 text-shadow-lg"
                                     >
                                         BRAND
                                     </motion.h1>
@@ -342,25 +342,25 @@ const ContactUsPage = () => {
                                     initial={{ opacity: 0, y: 40 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-                                    className="text-4xl md:text-5xl font-semibold text-gray-600 tracking-tight self-end"
+                                    className="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-600 tracking-tight self-end"
                                 >
                                     Unforgettable.
                                 </motion.h2>
                             </motion.div>
                             
-                            <motion.p variants={itemVariants} className="mt-8 text-lg text-gray-600 max-w-lg">
+                            <motion.p variants={itemVariants} className="mt-6 sm:mt-8 text-base sm:text-lg text-gray-600 max-w-lg">
                                 From towering billboards to dynamic bus ads, we put your brand in front of thousands. Let's discuss your next high-impact campaign.
                             </motion.p>
                             
-                            <motion.div variants={itemVariants} className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 text-gray-500">
+                            <motion.div variants={itemVariants} className="mt-8 sm:mt-12 flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-4 text-gray-500">
                                 <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}><Magnetic><a href="mailto:info@starpublicity.co.in" className="block hover:text-[#1a2a80] transition-colors">info@starpublicity.co.in</a></Magnetic></div>
                                 <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}><Magnetic><a href="tel:01614668602" className="block hover:text-[#1a2a80] transition-colors">0161-4668602</a></Magnetic></div>
                             </motion.div>
                         </div>
 
                         {/* --- Right Column: Contact Form --- */}
-                        <motion.div variants={itemVariants} className="bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-white/50">
-                             <motion.form className="space-y-8 text-left" onSubmit={handleSubmit}>
+                        <motion.div variants={itemVariants} className="bg-white/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-lg border border-white/50">
+                             <motion.form className="space-y-6 sm:space-y-8 text-left" onSubmit={handleSubmit}>
                                 <div>
                                     <input type="text" id="name" placeholder="Full Name" value={formData.name} onChange={handleChange} className="w-full underline-input text-gray-900 text-lg placeholder-gray-500" />
                                 </div>
@@ -375,7 +375,7 @@ const ContactUsPage = () => {
                                         <motion.button
                                             type="submit"
                                             disabled={isLoading}
-                                            className="flex items-center justify-center gap-2 bg-[#1a2a80] text-white font-bold py-4 px-10 rounded-full transition-all duration-300 disabled:opacity-50"
+                                            className="flex items-center justify-center gap-2 bg-[#1a2a80] text-white font-bold py-3 px-8 sm:py-4 sm:px-10 rounded-full transition-all duration-300 disabled:opacity-50"
                                         >
                                             {isLoading ? 'Sending...' : <><Send className="w-5 h-5" /><span>Send Message</span></>}
                                         </motion.button>
@@ -388,9 +388,9 @@ const ContactUsPage = () => {
                     </motion.div>
                 </div>
 
-                <div ref={mapSectionRef} className="w-full h-[100vh] relative flex items-center justify-center bg-gray-100 py-16 px-8">
-                    <div ref={mapContainerRef} className="w-full max-w-6xl h-[80vh] relative">
-                        <div style={{ clipPath: 'url(#map-mask)' }} className="w-full h-full rounded-3xl shadow-2xl">
+                <div ref={mapSectionRef} className="w-full h-screen relative flex items-center justify-center bg-gray-100 py-12 px-6 sm:py-16 sm:px-8">
+                    <div ref={mapContainerRef} className="w-full max-w-6xl h-[75vh] sm:h-[80vh] relative">
+                        <div style={{ clipPath: 'url(#map-mask)' }} className="w-full h-full rounded-2xl sm:rounded-3xl shadow-2xl">
                             <MapContainer center={position} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
                                 <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
                                 <Marker position={position} ref={markerRef} icon={pulsingIcon}>
@@ -407,25 +407,25 @@ const ContactUsPage = () => {
                             </defs>
                         </svg>
 
-                        <div ref={mapTextRef} className="absolute bottom-10 left-10 z-10 pointer-events-none">
-                            <h3 className="text-4xl font-bold text-gray-900" style={{textShadow: '0 2px 10px rgba(255,255,255,0.7)'}}>Our Command Center</h3>
-                            <p className="text-lg text-gray-700 mt-1" style={{textShadow: '0 1px 5px rgba(255,255,255,0.5)'}}>Feroze Gandhi Market, Ludhiana</p>
+                        <div ref={mapTextRef} className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 z-10 pointer-events-none">
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900" style={{textShadow: '0 2px 10px rgba(255,255,255,0.7)'}}>Our Command Center</h3>
+                            <p className="text-base sm:text-lg text-gray-700 mt-1" style={{textShadow: '0 1px 5px rgba(255,255,255,0.5)'}}>Feroze Gandhi Market, Ludhiana</p>
                         </div>
                     </div>
                 </div>
 
-                <div ref={sectionRef} className="min-h-screen w-full flex flex-col justify-center items-center relative overflow-hidden py-20 pb-40 z-10 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200">
+                <div ref={sectionRef} className="min-h-screen w-full flex flex-col justify-center items-center relative overflow-hidden py-20 pb-40 px-4 z-10 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200">
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="relative w-96 h-96 rounded-full bg-secondary-yellow/30 animate-[pulse-glow_4s_ease-in-out_infinite] blur-2xl"></div>
-                        <div className="absolute w-80 h-80 rounded-full bg-tertiary-purple/20 animate-[pulse-glow-2_4s_ease-in-out_infinite_2s] blur-xl"></div>
+                        <div className="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-secondary-yellow/30 animate-[pulse-glow_4s_ease-in-out_infinite] blur-2xl"></div>
+                        <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-tertiary-purple/20 animate-[pulse-glow-2_4s_ease-in-out_infinite_2s] blur-xl"></div>
                     </div>
-                    <motion.div variants={containerVariants} initial="hidden" animate={inView ? "visible" : "hidden"} className="relative z-10 text-center flex flex-col items-center max-w-6xl mx-auto px-4">
+                    <motion.div variants={containerVariants} initial="hidden" animate={inView ? "visible" : "hidden"} className="relative z-10 text-center flex flex-col items-center max-w-6xl mx-auto">
                         <motion.div variants={itemVariants} className="mb-8 md:mb-12">
                             <SectionHeader title="Beyond the Billboard" onMouseEnter={textEnter} onMouseLeave={textLeave} />
-                            <p className="text-gray-600 mt-2 md:mt-4 text-lg max-w-xl mx-auto">Discover the strategy, creativity, and technology that power North India's most impactful outdoor campaigns.</p>
+                            <p className="text-gray-600 mt-2 md:mt-4 text-base sm:text-lg max-w-xl mx-auto">Discover the strategy, creativity, and technology that power North India's most impactful outdoor campaigns.</p>
                         </motion.div>
 
-                        <motion.div variants={itemVariants} className="relative w-full aspect-square max-w-[500px] md:w-[700px] md:h-[700px] flex justify-center items-center mt-12 md:mt-16">
+                        <motion.div variants={itemVariants} className="relative w-full aspect-square max-w-[320px] sm:max-w-[500px] md:w-[700px] md:h-[700px] flex justify-center items-center mt-12 md:mt-16">
                             
                             <svg className="absolute w-full h-full" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
@@ -477,11 +477,11 @@ const ContactUsPage = () => {
                     </motion.div>
                 </div>
                 
-                <div className="w-full flex flex-col justify-center items-center relative overflow-hidden font-poppins p-8 md:p-16 z-10 bg-gray-50">
+                <div className="w-full flex flex-col justify-center items-center relative overflow-hidden font-poppins p-6 md:p-16 z-10 bg-gray-50">
                     <div className="relative z-10 text-center flex flex-col items-center w-full max-w-6xl mx-auto">
                         <SectionHeader title="The Star Publicity Advantage" onMouseEnter={textEnter} onMouseLeave={textLeave} />
-                        <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-16">We combine speed, strategy, and creative excellence to deliver campaigns that get noticed.</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full mb-12">
+                        <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-12 sm:mb-16">We combine speed, strategy, and creative excellence to deliver campaigns that get noticed.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 w-full mb-12">
                             <PromiseFeatureCard icon={Clock} title="Speed to Market" description="We launch your campaigns quickly to seize market opportunities and maximize relevance." />
                             <PromiseFeatureCard icon={Headset} title="Strategic Placement" description="Using data-driven insights, we place your ads in high-traffic locations for maximum impact." />
                             <PromiseFeatureCard icon={Smile} title="Creative Excellence" description="From concept to execution, our creative team designs ads that captivate and convert." />
