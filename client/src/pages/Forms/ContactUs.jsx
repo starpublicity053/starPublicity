@@ -312,7 +312,7 @@ const ContactUsPage = () => {
                             <motion.div
                                 ref={headingRef}
                                 onMouseMove={handleMouseMove}
-                                onMouseLeave={() => { handleMouseLeave(); textLeave(); }}
+                                // onMouseLeave={() => { handleMouseLeave(); textLeave(); }}
                                 onMouseEnter={textEnter} 
                                 className="flex flex-col items-start"
                             >
