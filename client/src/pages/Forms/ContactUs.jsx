@@ -1,5 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Mail, Phone, MapPin, Send, MessageCircle, Smile, MessageSquareText, Clock, Headset, Globe as LucideGlobe } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  MessageCircle,
+  Smile,
+  MessageSquareText,
+  Clock,
+  Headset,
+  Globe as LucideGlobe,
+} from "lucide-react";
 import { motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -10,9 +21,9 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,9 +31,9 @@ gsap.registerPlugin(ScrollTrigger);
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 });
 
 // Defines the styles for the orbit and float animations
@@ -86,280 +97,714 @@ const animationStyles = `
 
 // Variants for staggered entrance animation
 const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
 };
 const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
 };
 
 const PromiseFeatureCard = ({ icon: Icon, title, description }) => (
-    <motion.div
-        whileHover={{ y: -8, scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 300 }}
-        className="flex flex-col items-center text-center p-6 lg:p-8 rounded-2xl shadow-lg bg-white"
-    >
-        <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center mb-4 rounded-full bg-yellow-400">
-            <Icon className="w-10 h-10 lg:w-12 lg:h-12 text-primary-blue" strokeWidth={1.5} />
-        </div>
-        <h3 className="font-bold text-lg lg:text-xl text-gray-900 mb-2">{title}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
-    </motion.div>
+  <motion.div
+    whileHover={{ y: -8, scale: 1.05 }}
+    transition={{ type: "spring", stiffness: 300 }}
+    className="flex flex-col items-center text-center p-6 lg:p-8 rounded-2xl shadow-lg bg-white"
+  >
+    <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center mb-4 rounded-full bg-yellow-400">
+      <Icon
+        className="w-10 h-10 lg:w-12 lg:h-12 text-primary-blue"
+        strokeWidth={1.5}
+      />
+    </div>
+    <h3 className="font-bold text-lg lg:text-xl text-gray-900 mb-2">{title}</h3>
+    <p className="text-sm text-gray-600">{description}</p>
+  </motion.div>
 );
 
 const SectionHeader = ({ title, onMouseEnter, onMouseLeave }) => {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, amount: 0.5 });
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
 
-    return (
-        <div ref={ref} className="flex flex-col items-center mb-8 md:mb-10" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <div className="flex items-center gap-4">
-                <motion.div
-                    initial={{ scale: 0 }} animate={inView ? { scale: 1 } : {}} transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
-                    className="w-3 h-3 sm:w-4 sm:h-4 bg-[#1a2a80]"
-                ></motion.div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a2a80] tracking-tight">{title}</h2>
-            </div>
-            <motion.div
-                className="h-1 mt-3 bg-gradient-to-r from-yellow-400 to-purple-500"
-                initial={{ width: 0 }}
-                animate={inView ? { width: "6rem" } : {}}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-            ></motion.div>
-        </div>
-    );
+  return (
+    <div
+      ref={ref}
+      className="flex flex-col items-center mb-8 md:mb-10"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <div className="flex items-center gap-4">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={inView ? { scale: 1 } : {}}
+          transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+          className="w-3 h-3 sm:w-4 sm:h-4 bg-[#1a2a80]"
+        ></motion.div>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a2a80] tracking-tight">
+          {title}
+        </h2>
+      </div>
+      <motion.div
+        className="h-1 mt-3 bg-gradient-to-r from-yellow-400 to-purple-500"
+        initial={{ width: 0 }}
+        animate={inView ? { width: "6rem" } : {}}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      ></motion.div>
+    </div>
+  );
 };
 
 const ContactUsPage = () => {
-    const sectionRef = useRef(null);
-    const inView = useInView(sectionRef, { once: true, amount: 0.3 });
-    const mapSectionRef = useRef(null);
-    const mapInView = useInView(mapSectionRef, { once: true, amount: 0.4 });
-    const [animationData, setAnimationData] = useState(null);
-    const headingRef = useRef(null);
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-    const rotateX = useTransform(y, [-200, 200], [15, -15]);
-    const rotateY = useTransform(x, [-200, 200], [-15, 15]);
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const mapSectionRef = useRef(null);
+  const mapInView = useInView(mapSectionRef, { once: true, amount: 0.4 });
+  const [animationData, setAnimationData] = useState(null);
+  const headingRef = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-200, 200], [15, -15]);
+  const rotateY = useTransform(x, [-200, 200], [-15, 15]);
 
-    const handleMouseMove = (event) => {
-        if (!headingRef.current) return;
-        const rect = headingRef.current.getBoundingClientRect();
-        x.set(event.clientX - rect.left - rect.width / 2);
-        y.set(event.clientY - rect.top - rect.height / 2);
+  const handleMouseMove = (event) => {
+    if (!headingRef.current) return;
+    const rect = headingRef.current.getBoundingClientRect();
+    x.set(event.clientX - rect.left - rect.width / 2);
+    y.set(event.clientY - rect.top - rect.height / 2);
+  };
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const Magnetic = ({ children }) => {
+    const ref = useRef(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const handleMouse = (e) => {
+      if (!ref.current) return;
+      const { clientX, clientY } = e;
+      const { height, width, left, top } = ref.current.getBoundingClientRect();
+      setPosition({
+        x: (clientX - (left + width / 2)) * 0.1,
+        y: (clientY - (top + height / 2)) * 0.1,
+      });
     };
-    const handleMouseLeave = () => { x.set(0); y.set(0); };
-
-    const Magnetic = ({ children }) => {
-        const ref = useRef(null);
-        const [position, setPosition] = useState({ x: 0, y: 0 });
-        const handleMouse = (e) => {
-            if (!ref.current) return;
-            const { clientX, clientY } = e;
-            const { height, width, left, top } = ref.current.getBoundingClientRect();
-            setPosition({ x: (clientX - (left + width / 2)) * 0.1, y: (clientY - (top + height / 2)) * 0.1 });
-        };
-        const reset = () => { setPosition({ x: 0, y: 0 }); };
-        const { x: magX, y: magY } = position;
-        return (
-            <motion.div ref={ref} onMouseMove={handleMouse} onMouseLeave={reset} animate={{ x: magX, y: magY }} transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}>
-                {children}
-            </motion.div>
-        );
+    const reset = () => {
+      setPosition({ x: 0, y: 0 });
     };
-
-    const mapContainerRef = useRef(null);
-    const mapMaskRef = useRef(null);
-    const mapTextRef = useRef(null);
-    useGSAP(() => {
-        if (!mapInView) return;
-        const tl = gsap.timeline({ scrollTrigger: { trigger: mapSectionRef.current, start: "top 70%", end: "center center", scrub: 1, } });
-        tl.fromTo(mapMaskRef.current, { attr: { r: 0 } }, { attr: { r: () => mapContainerRef.current.getBoundingClientRect().width * 0.8 }, duration: 1, ease: 'power2.in' })
-            .to(mapMaskRef.current, { attr: { rx: 24, ry: 24 }, duration: 0.5, ease: 'power2.out' }, "-=0.2");
-        gsap.fromTo(mapTextRef.current.children, { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out', scrollTrigger: { trigger: mapTextRef.current, start: 'top 80%' } });
-    }, { scope: mapSectionRef, dependencies: [mapInView] });
-
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-    const [submitStatus, setSubmitStatus] = useState({ message: '', type: '' });
-    const [sendInquiry, { isLoading }] = useSendContactInquiryMutation();
-
-    useEffect(() => {
-        fetch("https://lottie.host/a12f93b1-0872-4cb7-acb3-6b00363d7509/40tCm2hisF.json")
-            .then(res => res.json())
-            .then(data => setAnimationData(data))
-            .catch(error => console.error("Error fetching Lottie animation:", error));
-    }, []);
-
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [cursorVariant, setCursorVariant] = useState('default');
-    useEffect(() => {
-        const mouseMove = e => { setMousePosition({ x: e.clientX, y: e.clientY }); };
-        window.addEventListener('mousemove', mouseMove);
-        return () => window.removeEventListener('mousemove', mouseMove);
-    }, []);
-
-    const cursorVariants = {
-        default: { x: mousePosition.x - 8, y: mousePosition.y - 8, width: 16, height: 16, backgroundColor: '#1a2a80', mixBlendMode: 'difference' },
-        text: { x: mousePosition.x - 32, y: mousePosition.y - 32, width: 64, height: 64, backgroundColor: '#fff', mixBlendMode: 'difference' },
-        magnetic: { x: mousePosition.x - 40, y: mousePosition.y - 40, width: 80, height: 80, backgroundColor: '#fff', mixBlendMode: 'difference' }
-    };
-    const textEnter = () => setCursorVariant('text');
-    const textLeave = () => setCursorVariant('default');
-    const magneticEnter = () => setCursorVariant('magnetic');
-    const magneticLeave = () => setCursorVariant('default');
-
-    const handleChange = (e) => setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSubmitStatus({ message: '', type: '' });
-        try {
-            await sendInquiry(formData).unwrap();
-            setSubmitStatus({ message: 'Message sent successfully!', type: 'success' });
-            setFormData({ name: '', email: '', message: '' });
-        } catch (err) {
-            setSubmitStatus({ message: 'Failed to send message. Please try again.', type: 'error' });
-        }
-    };
-
-    const outerNodes = [{ icon: MessageCircle, angle: 0 }, { icon: Phone, angle: 90 }, { icon: Mail, angle: 180 }, { icon: LucideGlobe, angle: 270 }];
-    const innerNodes = [{ icon: Headset, angle: 45 }, { icon: Clock, angle: 135 }, { icon: Smile, angle: 225 }, { icon: MessageSquareText, angle: 315 }];
-    const position = [30.90178, 75.83405];
-    const pulsingIcon = new L.DivIcon({ className: 'pulsing-marker-container', html: `<div class="pulsing-marker"></div>`, iconSize: [16, 16], iconAnchor: [8, 8] });
-
+    const { x: magX, y: magY } = position;
     return (
-        <>
-            <motion.div className="custom-cursor" variants={cursorVariants} animate={cursorVariant} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
-            <style>
-                {` @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouse}
+        onMouseLeave={reset}
+        animate={{ x: magX, y: magY }}
+        transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      >
+        {children}
+      </motion.div>
+    );
+  };
+
+  const mapContainerRef = useRef(null);
+  const mapMaskRef = useRef(null);
+  const mapTextRef = useRef(null);
+  useGSAP(
+    () => {
+      if (!mapInView) return;
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: mapSectionRef.current,
+          start: "top 70%",
+          end: "center center",
+          scrub: 1,
+        },
+      });
+      tl.fromTo(
+        mapMaskRef.current,
+        { attr: { r: 0 } },
+        {
+          attr: {
+            r: () =>
+              mapContainerRef.current.getBoundingClientRect().width * 0.8,
+          },
+          duration: 1,
+          ease: "power2.in",
+        }
+      ).to(
+        mapMaskRef.current,
+        { attr: { rx: 24, ry: 24 }, duration: 0.5, ease: "power2.out" },
+        "-=0.2"
+      );
+      gsap.fromTo(
+        mapTextRef.current.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: { trigger: mapTextRef.current, start: "top 80%" },
+        }
+      );
+    },
+    { scope: mapSectionRef, dependencies: [mapInView] }
+  );
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [submitStatus, setSubmitStatus] = useState({ message: "", type: "" });
+  const [sendInquiry, { isLoading }] = useSendContactInquiryMutation();
+
+  useEffect(() => {
+    fetch(
+      "https://lottie.host/a12f93b1-0872-4cb7-acb3-6b00363d7509/40tCm2hisF.json"
+    )
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((error) =>
+        console.error("Error fetching Lottie animation:", error)
+      );
+  }, []);
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [cursorVariant, setCursorVariant] = useState("default");
+  useEffect(() => {
+    const mouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", mouseMove);
+    return () => window.removeEventListener("mousemove", mouseMove);
+  }, []);
+
+  const cursorVariants = {
+    default: {
+      x: mousePosition.x - 8,
+      y: mousePosition.y - 8,
+      width: 16,
+      height: 16,
+      backgroundColor: "#1a2a80",
+      mixBlendMode: "difference",
+    },
+    text: {
+      x: mousePosition.x - 32,
+      y: mousePosition.y - 32,
+      width: 64,
+      height: 64,
+      backgroundColor: "#fff",
+      mixBlendMode: "difference",
+    },
+    magnetic: {
+      x: mousePosition.x - 40,
+      y: mousePosition.y - 40,
+      width: 80,
+      height: 80,
+      backgroundColor: "#fff",
+      mixBlendMode: "difference",
+    },
+  };
+  const textEnter = () => setCursorVariant("text");
+  const textLeave = () => setCursorVariant("default");
+  const magneticEnter = () => setCursorVariant("magnetic");
+  const magneticLeave = () => setCursorVariant("default");
+
+  const handleChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitStatus({ message: "", type: "" });
+    try {
+      await sendInquiry(formData).unwrap();
+      setSubmitStatus({
+        message: "Message sent successfully!",
+        type: "success",
+      });
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      setSubmitStatus({
+        message: "Failed to send message. Please try again.",
+        type: "error",
+      });
+    }
+  };
+
+  const outerNodes = [
+    { icon: MessageCircle, angle: 0 },
+    { icon: Phone, angle: 90 },
+    { icon: Mail, angle: 180 },
+    { icon: LucideGlobe, angle: 270 },
+  ];
+  const innerNodes = [
+    { icon: Headset, angle: 45 },
+    { icon: Clock, angle: 135 },
+    { icon: Smile, angle: 225 },
+    { icon: MessageSquareText, angle: 315 },
+  ];
+  const position = [30.90178, 75.83405];
+  const pulsingIcon = new L.DivIcon({
+    className: "pulsing-marker-container",
+    html: `<div class="pulsing-marker"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+
+  return (
+    <>
+      <motion.div
+        className="custom-cursor"
+        variants={cursorVariants}
+        animate={cursorVariant}
+        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      />
+      <style>
+        {` @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
                     .font-poppins { font-family: 'Poppins', sans-serif; } `}
-                {` body { cursor: none; }
+        {` body { cursor: none; }
                     .leaflet-container { background-color: #f3f4f6; }
                     .pulsing-marker-container { border: none; background: none; } `}
-                {animationStyles}
-            </style>
+        {animationStyles}
+      </style>
 
-            <div className="w-full bg-gray-100 font-poppins text-gray-800 relative overflow-hidden">
-                {/* === Hero Section === */}
-                <div className="w-full min-h-screen flex flex-col justify-center px-6 sm:px-8 py-20 lg:py-24 xl:px-16">
-                    <motion.div
-                        variants={containerVariants} initial="hidden" animate="visible"
-                        className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+      <div className="w-full bg-gray-100 font-poppins text-gray-800 relative overflow-hidden">
+        {/* === Hero Section === */}
+        <div className="w-full min-h-screen flex flex-col justify-center px-6 sm:px-8 py-20 lg:py-24 xl:px-16">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+          >
+            <div className="flex flex-col">
+              <motion.div
+                ref={headingRef}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={() => {
+                  handleMouseLeave();
+                  textLeave();
+                }}
+                onMouseEnter={textEnter}
+                className="flex flex-col items-start"
+              >
+                <motion.h2
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                  className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-600 tracking-tight"
+                >
+                  Let's Make Your
+                </motion.h2>
+                <div style={{ perspective: "1000px" }}>
+                  <motion.h1
+                    style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.6, -0.05, 0.01, 0.99],
+                      delay: 0.4,
+                    }}
+                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-[#1a2a80] tracking-tighter my-1"
+                  >
+                    BRAND
+                  </motion.h1>
+                </div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
+                  className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-600 tracking-tight self-end"
+                >
+                  Unforgettable.
+                </motion.h2>
+              </motion.div>
+              <motion.p
+                variants={itemVariants}
+                className="mt-6 text-base md:text-lg text-gray-600 max-w-lg"
+              >
+                From towering billboards to dynamic bus ads, we put your brand
+                in front of thousands. Let's discuss your next high-impact
+                campaign.
+              </motion.p>
+              <motion.div
+                variants={itemVariants}
+                className="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-3 text-gray-500"
+              >
+                <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}>
+                  <Magnetic>
+                    <a
+                      href="mailto:info@starpublicity.co.in"
+                      className="block hover:text-[#1a2a80] transition-colors"
                     >
-                        {/* --- Left Column: Heading & Info --- */}
-                        <div className="flex flex-col">
-                            <motion.div
-                                ref={headingRef} onMouseMove={handleMouseMove} onMouseLeave={() => { handleMouseLeave(); textLeave(); }} onMouseEnter={textEnter}
-                                className="flex flex-col items-start"
-                            >
-                                <motion.h2
-                                    initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                                    className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-600 tracking-tight"
-                                >
-                                    Let's Make Your
-                                </motion.h2>
-                                <div style={{ perspective: "1000px" }}>
-                                    <motion.h1
-                                        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-                                        initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99], delay: 0.4 }}
-                                        className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-[#1a2a80] tracking-tighter my-1"
-                                    >
-                                        BRAND
-                                    </motion.h1>
-                                </div>
-                                <motion.h2
-                                    initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-                                    className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-600 tracking-tight self-end"
-                                >
-                                    Unforgettable.
-                                </motion.h2>
-                            </motion.div>
-                            <motion.p variants={itemVariants} className="mt-6 text-base md:text-lg text-gray-600 max-w-lg">
-                                From towering billboards to dynamic bus ads, we put your brand in front of thousands. Let's discuss your next high-impact campaign.
-                            </motion.p>
-                            <motion.div variants={itemVariants} className="mt-8 flex flex-col sm:flex-row sm:items-center gap-x-8 gap-y-3 text-gray-500">
-                                <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}><Magnetic><a href="mailto:info@starpublicity.co.in" className="block hover:text-[#1a2a80] transition-colors">info@starpublicity.co.in</a></Magnetic></div>
-                                <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}><Magnetic><a href="tel:01614668602" className="block hover:text-[#1a2a80] transition-colors">0161-4668602</a></Magnetic></div>
-                            </motion.div>
-                        </div>
-
-                        {/* --- Right Column: Contact Form --- */}
-                        <motion.div variants={itemVariants} className="bg-white/50 backdrop-blur-sm p-8 lg:p-10 rounded-2xl shadow-lg border border-white/50">
-                            <motion.form className="space-y-6 text-left" onSubmit={handleSubmit}>
-                                <div><input type="text" id="name" placeholder="Full Name" value={formData.name} onChange={handleChange} className="w-full underline-input text-gray-900 text-lg placeholder-gray-500" /></div>
-                                <div><input type="email" id="email" placeholder="Email Address" value={formData.email} onChange={handleChange} className="w-full underline-input text-gray-900 text-lg placeholder-gray-500" /></div>
-                                <div><textarea id="message" rows="3" placeholder="Your Message" value={formData.message} onChange={handleChange} className="w-full underline-input text-gray-900 text-lg placeholder-gray-500" /></div>
-                                <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave} className="flex justify-start pt-2">
-                                    <Magnetic>
-                                        <motion.button type="submit" disabled={isLoading} className="flex items-center justify-center gap-2 bg-[#1a2a80] text-white font-bold py-3 px-8 lg:py-4 lg:px-10 rounded-full transition-all duration-300 disabled:opacity-50">
-                                            {isLoading ? 'Sending...' : <><Send className="w-5 h-5" /><span>Send Message</span></>}
-                                        </motion.button>
-                                    </Magnetic>
-                                </div>
-                                {submitStatus.message && <p className={`mt-3 ${submitStatus.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{submitStatus.message}</p>}
-                            </motion.form>
-                        </motion.div>
-                    </motion.div>
+                      info@starpublicity.co.in
+                    </a>
+                  </Magnetic>
                 </div>
-
-                {/* === Map Section === */}
-                <div ref={mapSectionRef} className="w-full min-h-[90vh] relative flex items-center justify-center bg-gray-200 py-16 lg:py-20 px-6 sm:px-8">
-                    <div ref={mapContainerRef} className="w-full max-w-6xl h-[70vh] relative">
-                        <div style={{ clipPath: 'url(#map-mask)' }} className="w-full h-full rounded-2xl md:rounded-3xl shadow-2xl">
-                            <MapContainer center={position} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
-                                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-                                <Marker position={position} icon={pulsingIcon}><Popup>Feroze Gandhi Market, Ludhiana.</Popup></Marker>
-                            </MapContainer>
-                        </div>
-                        <svg className="absolute w-0 h-0"><defs><clipPath id="map-mask" clipPathUnits="objectBoundingBox"><circle ref={mapMaskRef} cx="0.5" cy="0.5" r="0" /></clipPath></defs></svg>
-                        <div ref={mapTextRef} className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 pointer-events-none">
-                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900" style={{textShadow: '0 2px 10px rgba(255,255,255,0.7)'}}>Our Command Center</h3>
-                            <p className="text-base sm:text-lg text-gray-700 mt-1" style={{textShadow: '0 1px 5px rgba(255,255,255,0.5)'}}>Feroze Gandhi Market, Ludhiana</p>
-                        </div>
-                    </div>
+                <div onMouseEnter={magneticEnter} onMouseLeave={magneticLeave}>
+                  <Magnetic>
+                    <a
+                      href="tel:01614668602"
+                      className="block hover:text-[#1a2a80] transition-colors"
+                    >
+                      0161-4668602
+                    </a>
+                  </Magnetic>
                 </div>
-
-                {/* === "Beyond the Billboard" Section === */}
-                <div ref={sectionRef} className="w-full flex flex-col justify-center items-center relative overflow-hidden py-20 lg:py-24 px-6 sm:px-8 z-10 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200">
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-secondary-yellow/30 animate-[pulse-glow_4s_ease-in-out_infinite] blur-2xl"></div>
-                        <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-tertiary-purple/20 animate-[pulse-glow-2_4s_ease-in-out_infinite_2s] blur-xl"></div>
-                    </div>
-                    <motion.div variants={containerVariants} initial="hidden" animate={inView ? "visible" : "hidden"} className="relative z-10 text-center flex flex-col items-center max-w-6xl mx-auto">
-                        <motion.div variants={itemVariants} className="mb-10">
-                            <SectionHeader title="Beyond the Billboard" onMouseEnter={textEnter} onMouseLeave={textLeave} />
-                            <p className="text-gray-600 text-base md:text-lg max-w-xl lg:max-w-2xl mx-auto">Discover the strategy, creativity, and technology that power North India's most impactful outdoor campaigns.</p>
-                        </motion.div>
-                        <motion.div variants={itemVariants} className="relative w-full aspect-square max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] flex justify-center items-center mt-12 lg:mt-16">
-                            <svg className="absolute w-full h-full" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <defs><linearGradient id="comet-gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="var(--tertiary-purple)" stopOpacity="0" /><stop offset="50%" stopColor="var(--tertiary-purple)" stopOpacity="1" /><stop offset="100%" stopColor="var(--primary-blue)" stopOpacity="1" /></linearGradient></defs>
-                                <circle cx="350" cy="350" r="325" stroke="var(--tertiary-purple)" strokeOpacity="0.15" strokeWidth="1"/><circle cx="350" cy="350" r="225" stroke="var(--tertiary-purple)" strokeOpacity="0.15" strokeWidth="1"/>
-                                <circle cx="350" cy="350" r="325" stroke="url(#comet-gradient)" strokeWidth="2" strokeLinecap="round" strokeDasharray="15 45" className="rotate-from-center animate-[orbit-outer_60s_ease-in-out_infinite]" />
-                                <circle cx="350" cy="350" r="225" stroke="url(#comet-gradient)" strokeWidth="2" strokeLinecap="round" strokeDasharray="15 45" className="rotate-from-center animate-[orbit-inner_40s_ease-in-out_infinite]" />
-                            </svg>
-                            <div className="absolute w-full h-full animate-[orbit-outer_60s_ease-in-out_infinite]"><div className="absolute w-full h-full z-10 animate-[orbit-outer_60s_ease-in-out_infinite]">{outerNodes.map((node, index) => (<div key={`outer-${index}`} className="absolute inset-0" style={{ transform: `rotate(${node.angle}deg)` }}><div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-outer"><div className="relative flex items-center justify-center w-14 h-14"><div className="absolute w-full h-full bg-primary-blue/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div><div className="relative flex items-center justify-center w-12 h-12 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105"><node.icon size={22} className="text-primary-blue" /></div></div></div></div>))}</div></div>
-                            <div className="absolute w-[64.2%] h-[64.2%] animate-[orbit-inner_40s_ease-in-out_infinite]"><div className="absolute w-full h-full z-10 animate-[orbit-inner_40s_ease-in-out_infinite]">{innerNodes.map((node, index) => (<div key={`inner-${index}`} className="absolute inset-0" style={{ transform: `rotate(${node.angle}deg)` }}><div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-inner"><div className="relative flex items-center justify-center w-12 h-12"><div className="absolute w-full h-full bg-secondary-yellow/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div><div className="relative flex items-center justify-center w-10 h-10 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105"><node.icon size={18} className="text-primary-blue" /></div></div></div></div>))}</div></div>
-                            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 flex justify-center items-center rounded-full overflow-hidden">{animationData && <Lottie animationData={animationData} loop={true} autoplay={true} className="w-full h-full" />}</motion.div>
-                        </motion.div>
-                    </motion.div>
-                </div>
-                
-                {/* === "Advantage" Section === */}
-                <div className="w-full flex flex-col justify-center items-center relative overflow-hidden font-poppins py-20 lg:py-24 px-6 sm:px-8 xl:px-16 z-10 bg-gray-50">
-                    <div className="relative z-10 text-center flex flex-col items-center w-full max-w-6xl mx-auto">
-                        <SectionHeader title="The Star Publicity Advantage" onMouseEnter={textEnter} onMouseLeave={textLeave} />
-                        <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto mb-12 lg:mb-16">We combine speed, strategy, and creative excellence to deliver campaigns that get noticed.</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full">
-                            <PromiseFeatureCard icon={Clock} title="Speed to Market" description="We launch your campaigns quickly to seize market opportunities and maximize relevance." />
-                            <PromiseFeatureCard icon={Headset} title="Strategic Placement" description="Using data-driven insights, we place your ads in high-traffic locations for maximum impact." />
-                            <PromiseFeatureCard icon={Smile} title="Creative Excellence" description="From concept to execution, our creative team designs ads that captivate and convert." />
-                            <PromiseFeatureCard icon={MessageSquareText} title="Measurable Results" description="We provide clear reporting and analytics to track your campaign's performance and ROI." />
-                        </div>
-                    </div>
-                </div>
+              </motion.div>
             </div>
-        </>
-    );
+
+            <motion.div
+              variants={itemVariants}
+              className="bg-white/50 backdrop-blur-sm p-8 lg:p-10 rounded-2xl shadow-lg border border-white/50"
+            >
+              <motion.form
+                className="space-y-6 text-left"
+                onSubmit={handleSubmit}
+              >
+                <div>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full underline-input text-gray-900 text-lg placeholder-gray-500"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full underline-input text-gray-900 text-lg placeholder-gray-500"
+                  />
+                </div>
+                <div>
+                  <textarea
+                    id="message"
+                    rows="3"
+                    placeholder="Your Message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full underline-input text-gray-900 text-lg placeholder-gray-500"
+                  />
+                </div>
+                <div
+                  onMouseEnter={magneticEnter}
+                  onMouseLeave={magneticLeave}
+                  className="flex justify-start pt-2"
+                >
+                  <Magnetic>
+                    <motion.button
+                      type="submit"
+                      disabled={isLoading}
+                      className="flex items-center justify-center gap-2 bg-[#1a2a80] text-white font-bold py-3 px-8 lg:py-4 lg:px-10 rounded-full transition-all duration-300 disabled:opacity-50"
+                    >
+                      {isLoading ? (
+                        "Sending..."
+                      ) : (
+                        <>
+                          <Send className="w-5 h-5" />
+                          <span>Send Message</span>
+                        </>
+                      )}
+                    </motion.button>
+                  </Magnetic>
+                </div>
+                {submitStatus.message && (
+                  <p
+                    className={`mt-3 ${
+                      submitStatus.type === "success"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {submitStatus.message}
+                  </p>
+                )}
+              </motion.form>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <div
+          ref={mapSectionRef}
+          className="w-full min-h-[90vh] relative flex items-center justify-center bg-gray-200 py-16 lg:py-20 px-6 sm:px-8"
+        >
+          <div
+            ref={mapContainerRef}
+            className="w-full max-w-6xl h-[70vh] relative"
+          >
+            <div
+              style={{ clipPath: "url(#map-mask)" }}
+              className="w-full h-full rounded-2xl md:rounded-3xl shadow-2xl"
+            >
+              <MapContainer
+                center={position}
+                zoom={15}
+                scrollWheelZoom={false}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                <Marker position={position} icon={pulsingIcon}>
+                  <Popup>
+                    Our office is located in Feroze Gandhi Market, Ludhiana.
+                  </Popup>
+                </Marker>
+              </MapContainer>
+            </div>
+            <svg className="absolute w-0 h-0">
+              <defs>
+                <clipPath id="map-mask" clipPathUnits="objectBoundingBox">
+                  <circle ref={mapMaskRef} cx="0.5" cy="0.5" r="0" />
+                </clipPath>
+              </defs>
+            </svg>
+            <div
+              ref={mapTextRef}
+              className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 pointer-events-none"
+            >
+              <h3
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900"
+                style={{ textShadow: "0 2px 10px rgba(255,255,255,0.7)" }}
+              >
+                Our Command Center
+              </h3>
+              <p
+                className="text-base sm:text-lg text-gray-700 mt-1"
+                style={{ textShadow: "0 1px 5px rgba(255,255,255,0.5)" }}
+              >
+                Feroze Gandhi Market, Ludhiana
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          ref={sectionRef}
+          className="w-full flex flex-col justify-center items-center relative overflow-hidden py-20 lg:py-24 px-6 sm:px-8 z-10 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200"
+        >
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-secondary-yellow/30 animate-[pulse-glow_4s_ease-in-out_infinite] blur-2xl"></div>
+            <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-tertiary-purple/20 animate-[pulse-glow-2_4s_ease-in-out_infinite_2s] blur-xl"></div>
+          </div>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            className="relative z-10 text-center flex flex-col items-center max-w-6xl mx-auto"
+          >
+            <motion.div variants={itemVariants} className="mb-10">
+              <SectionHeader
+                title="Beyond the Billboard"
+                onMouseEnter={textEnter}
+                onMouseLeave={textLeave}
+              />
+              <p className="text-gray-600 text-base md:text-lg max-w-xl lg:max-w-2xl mx-auto">
+                Discover the strategy, creativity, and technology that power
+                North India's most impactful outdoor campaigns.
+              </p>
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              className="relative w-full aspect-square max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] flex justify-center items-center mt-12 lg:mt-16"
+            >
+              <svg
+                className="absolute w-full h-full"
+                viewBox="0 0 700 700"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient
+                    id="comet-gradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="var(--tertiary-purple)"
+                      stopOpacity="0"
+                    />
+                    <stop
+                      offset="50%"
+                      stopColor="var(--tertiary-purple)"
+                      stopOpacity="1"
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="var(--primary-blue)"
+                      stopOpacity="1"
+                    />
+                  </linearGradient>
+                </defs>
+                <circle
+                  cx="350"
+                  cy="350"
+                  r="325"
+                  stroke="var(--tertiary-purple)"
+                  strokeOpacity="0.15"
+                  strokeWidth="1"
+                />
+                <circle
+                  cx="350"
+                  cy="350"
+                  r="225"
+                  stroke="var(--tertiary-purple)"
+                  strokeOpacity="0.15"
+                  strokeWidth="1"
+                />
+                <circle
+                  cx="350"
+                  cy="350"
+                  r="325"
+                  stroke="url(#comet-gradient)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray="15 45"
+                  className="rotate-from-center animate-[orbit-outer_60s_ease-in-out_infinite]"
+                />
+                <circle
+                  cx="350"
+                  cy="350"
+                  r="225"
+                  stroke="url(#comet-gradient)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray="15 45"
+                  className="rotate-from-center animate-[orbit-inner_40s_ease-in-out_infinite]"
+                />
+              </svg>
+              <div className="absolute w-full h-full animate-[orbit-outer_60s_ease-in-out_infinite]">
+                {outerNodes.map((node, index) => (
+                  <div
+                    key={`outer-${index}`}
+                    className="absolute inset-0"
+                    style={{ transform: `rotate(${node.angle}deg)` }}
+                  >
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-outer">
+                      <div className="relative flex items-center justify-center w-14 h-14">
+                        <div className="absolute w-full h-full bg-primary-blue/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
+                        <div className="relative flex items-center justify-center w-12 h-12 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
+                          <node.icon size={22} className="text-primary-blue" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute w-[64.2%] h-[64.2%] animate-[orbit-inner_40s_ease-in-out_infinite]">
+                {innerNodes.map((node, index) => (
+                  <div
+                    key={`inner-${index}`}
+                    className="absolute inset-0"
+                    style={{ transform: `rotate(${node.angle}deg)` }}
+                  >
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-inner">
+                      <div className="relative flex items-center justify-center w-12 h-12">
+                        <div className="absolute w-full h-full bg-secondary-yellow/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
+                        <div className="relative flex items-center justify-center w-10 h-10 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
+                          <node.icon size={18} className="text-primary-blue" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="relative flex justify-center items-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={inView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ duration: 0.6 }}
+                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden"
+                >
+                  {animationData && (
+                    <Lottie
+                      animationData={animationData}
+                      loop={true}
+                      autoplay={true}
+                      className="w-full h-full"
+                    />
+                  )}
+                </motion.div>
+
+                <motion.div
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.5, 1, 1, 0.5],
+                    y: [10, 0, 0, 10],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    times: [0, 0.2, 0.8, 1], // Fade in 20%, stay 60%, fade out 20%
+                  }}
+                  className="absolute -top-4 -right-20 sm:-top-8 sm:-right-28 w-48 sm:w-56 z-20"
+                >
+                  <svg viewBox="0 0 200 130" className="drop-shadow-lg filter">
+                    <path
+                      d="M171.3,5.1C148.9-6,117.2-1.3,100,10.1C82.8-1.3,51.1-6,28.7,5.1C-3.4,20.6-9.1,57.1,17.4,82.4c10.4,9.9,25.3,15,40.5,14.6c2.4,10,10.2,17.9,20.7,21.1c-0.8-4.7-1.3-9.5-1.5-14.3c-0.2-5.4,0-10.8,0.5-16.2c7.2,1.3,14.7,1.8,22.3,1.5c18-0.7,35-6.7,46.8-19.3C196.1,65.3,193.8,20.6,171.3,5.1z"
+                      fill="#FFFFFF"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center pb-8 sm:pb-10">
+                    <p className="text-center text-sm sm:text-base font-semibold text-[#1a2a80] px-4">
+                      Hey! Welcome to <br /> Star Publicity
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <div className="w-full flex flex-col justify-center items-center relative overflow-hidden font-poppins py-20 lg:py-24 px-6 sm:px-8 xl:px-16 z-10 bg-gray-50">
+          <div className="relative z-10 text-center flex flex-col items-center w-full max-w-6xl mx-auto">
+            <SectionHeader
+              title="The Star Publicity Advantage"
+              onMouseEnter={textEnter}
+              onMouseLeave={textLeave}
+            />
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto mb-12 lg:mb-16">
+              We combine speed, strategy, and creative excellence to deliver
+              campaigns that get noticed.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full">
+              <PromiseFeatureCard
+                icon={Clock}
+                title="Speed to Market"
+                description="We launch your campaigns quickly to seize market opportunities and maximize relevance."
+              />
+              <PromiseFeatureCard
+                icon={Headset}
+                title="Strategic Placement"
+                description="Using data-driven insights, we place your ads in high-traffic locations for maximum impact."
+              />
+              <PromiseFeatureCard
+                icon={Smile}
+                title="Creative Excellence"
+                description="From concept to execution, our creative team designs ads that captivate and convert."
+              />
+              <PromiseFeatureCard
+                icon={MessageSquareText}
+                title="Measurable Results"
+                description="We provide clear reporting and analytics to track your campaign's performance and ROI."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default ContactUsPage;
