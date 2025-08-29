@@ -352,54 +352,69 @@ const HeroSection = () => {
   );
 };
 
-const LogoCarousel = () => {
-  const logos = [
-    "/assets/Logos/big bazaar.png",
-    "/assets/Logos/eicher.png",
-    "/assets/Logos/havells.png",
-    "/assets/Logos/hdfc.png",
-    "/assets/Logos/muthoot.png",
-    "/assets/Logos/ola.png",
-    "/assets/Logos/oppo.png",
-    "/assets/Logos/prince pipes.png",
-    "/assets/Logos/samsung.png",
-    "/assets/Logos/tata.png",
-  ];
-  // We duplicate the logos for a seamless animation loop.
-  // Using 4 copies for a -25% translation in the keyframe.
-  const duplicatedLogos = [...logos, ...logos, ...logos, ...logos];
-  return (
-    <>
-      <style>{
-        /* By defining keyframes here, they are scoped and don't pollute global styles. */
-        `@keyframes slide { from { transform: translateX(0); } to { transform: translateX(-25%); } }`
-      }</style>
-      <div className="relative w-full overflow-hidden py-4 md:py-8 group">
-        {/* Gradient Fades */}
-        <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#0D121B] to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#0D121B] to-transparent z-10 pointer-events-none" />
+const LogoCarousel = ({ baseVelocity = 2.5 }) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const resolvedBaseVelocity = isDesktop ? 4 : baseVelocity;
 
-        <div className="flex animate-[slide_40s_linear_infinite] [animation-delay:-20s] group-hover:[animation-play-state:paused] md:animate-[slide_25s_linear_infinite] md:[animation-delay:-12.5s]">
-          {duplicatedLogos.map((logo, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-[120px] h-[60px] sm:w-[180px] sm:h-[90px] mx-4 sm:mx-8 flex items-center justify-center"
-            >
-              <img
-                src={logo}
-                alt={`Partner Logo ${index + 1}`}
-                loading="lazy"
-                className={`max-w-full max-h-full object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 ${
-                  logo.includes("prince pipes.png")
-                    ? "scale-[2.4] hover:scale-[2.5]"
-                    : "hover:scale-105"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+  const baseX = useMotionValue(0);
+  const x = useTransform(baseX, (v) => `${wrap(0, -25, v)}%`);
+
+  const directionFactor = useRef(-1);
+  const isHovering = useRef(false);
+
+  useAnimationFrame((t, delta) => {
+    if (isHovering.current) return;
+    baseX.set(baseX.get() + directionFactor.current * resolvedBaseVelocity * (delta / 1000));
+  });
+  const logos = useMemo(
+    () => [
+      "/assets/Logos/big bazaar.png",
+      "/assets/Logos/eicher.png",
+      "/assets/Logos/havells.png",
+      "/assets/Logos/hdfc.png",
+      "/assets/Logos/muthoot.png",
+      "/assets/Logos/ola.png",
+      "/assets/Logos/oppo.png",
+      "/assets/Logos/prince pipes.png",
+      "/assets/Logos/samsung.png",
+      "/assets/Logos/tata.png",
+    ],
+    []
+  );
+
+  // We need to duplicate the logos multiple times to create a seamless loop that works on very wide screens.
+  const duplicatedLogos = useMemo(() => [...logos, ...logos, ...logos, ...logos], [logos]);
+
+  return (
+    <div
+      className="relative w-full overflow-hidden py-4 md:py-8"
+      onMouseEnter={() => (isHovering.current = true)}
+      onMouseLeave={() => (isHovering.current = false)}
+    >
+      {/* Gradient Fades */}
+      <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#0D121B] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#0D121B] to-transparent z-10 pointer-events-none" />
+
+      <motion.div className="flex" style={{ x }}>
+        {duplicatedLogos.map((logo, index) => (
+          <div
+            key={`${logo.split("/").pop()}-${index}`}
+            className="flex-shrink-0 w-[120px] h-[60px] sm:w-[180px] sm:h-[90px] mx-4 sm:mx-8 flex items-center justify-center"
+          >
+            <img
+              src={logo}
+              alt={`Partner Logo ${index + 1}`}
+              loading="lazy"
+              className={`max-w-full max-h-full object-contain ${
+                logo.includes("prince pipes.png")
+                  ? "scale-[2.4]"
+                  : ""
+              }`}
+            />
+          </div>
+        ))}
+      </motion.div>
+    </div>
   );
 };
 const MarqueeText = ({ children, baseVelocity = 100 }) => {

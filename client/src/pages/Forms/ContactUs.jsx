@@ -12,29 +12,14 @@ import {
   Globe as LucideGlobe,
 } from "lucide-react";
 import { motion, useInView, useMotionValue, useTransform } from "framer-motion";
+import Lottie from "lottie-react";
+import { useSendContactInquiryMutation } from "../../features/auth/contactUs";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lottie from "lottie-react";
-import { useSendContactInquiryMutation } from "../../features/auth/contactUs";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
+import mapImage from "/assets/map.png";
 gsap.registerPlugin(ScrollTrigger);
-
-// Fix for default marker icon issue with webpack
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
 
 // Defines the styles for the orbit and float animations
 const animationStyles = `
@@ -92,6 +77,15 @@ const animationStyles = `
         0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 42, 128, 0.7); }
         70% { transform: scale(1); box-shadow: 0 0 10px 10px rgba(26, 42, 128, 0); }
         100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(26, 42, 128, 0); }
+    }
+    .pulsing-marker-yellow {
+        box-shadow: 0 0 8px #facc15, 0 0 16px #facc15;
+        animation: pulse-yellow 2s infinite;
+    }
+    @keyframes pulse-yellow {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 8px 8px rgba(250, 204, 21, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
     }
 `;
 
@@ -154,11 +148,24 @@ const SectionHeader = ({ title, onMouseEnter, onMouseLeave }) => {
   );
 };
 
+const LocationMarker = ({ name, top, left, delay, inView }) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.5 }}
+    animate={inView ? { opacity: 1, scale: 1 } : {}}
+    transition={{ duration: 0.5, ease: "easeOut", delay }}
+    style={{ top, left }}
+    className="absolute flex items-center gap-2 transform -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+  >
+    <div className="w-3 h-3 bg-yellow-400 rounded-full pulsing-marker-yellow" />
+    <span className="text-sm font-bold text-white bg-[#1a2a80] px-2 py-1 rounded-md shadow-lg whitespace-nowrap">
+      {name}
+    </span>
+  </motion.div>
+);
+
 const ContactUsPage = () => {
-  const sectionRef = useRef(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.3 });
   const mapSectionRef = useRef(null);
-  const mapInView = useInView(mapSectionRef, { once: true, amount: 0.4 });
+  const mapInView = useInView(mapSectionRef, { once: true, amount: 0.2 });
   const [animationData, setAnimationData] = useState(null);
   const headingRef = useRef(null);
   const x = useMotionValue(0);
@@ -206,52 +213,6 @@ const ContactUsPage = () => {
     );
   };
 
-  const mapContainerRef = useRef(null);
-  const mapMaskRef = useRef(null);
-  const mapTextRef = useRef(null);
-  useGSAP(
-    () => {
-      if (!mapInView) return;
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: mapSectionRef.current,
-          start: "top 70%",
-          end: "center center",
-          scrub: 1,
-        },
-      });
-      tl.fromTo(
-        mapMaskRef.current,
-        { attr: { r: 0 } },
-        {
-          attr: {
-            r: () =>
-              mapContainerRef.current.getBoundingClientRect().width * 0.8,
-          },
-          duration: 1,
-          ease: "power2.in",
-        }
-      ).to(
-        mapMaskRef.current,
-        { attr: { rx: 24, ry: 24 }, duration: 0.5, ease: "power2.out" },
-        "-=0.2"
-      );
-      gsap.fromTo(
-        mapTextRef.current.children,
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.1,
-          duration: 0.5,
-          ease: "power2.out",
-          scrollTrigger: { trigger: mapTextRef.current, start: "top 80%" },
-        }
-      );
-    },
-    { scope: mapSectionRef, dependencies: [mapInView] }
-  );
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -260,7 +221,7 @@ const ContactUsPage = () => {
   const [submitStatus, setSubmitStatus] = useState({ message: "", type: "" });
   const [sendInquiry, { isLoading }] = useSendContactInquiryMutation();
 
-  useEffect(() => {
+  useEffect(() => { 
     fetch(
       "https://lottie.host/a12f93b1-0872-4cb7-acb3-6b00363d7509/40tCm2hisF.json"
     )
@@ -344,13 +305,12 @@ const ContactUsPage = () => {
     { icon: Smile, angle: 225 },
     { icon: MessageSquareText, angle: 315 },
   ];
-  const position = [30.90178, 75.83405];
-  const pulsingIcon = new L.DivIcon({
-    className: "pulsing-marker-container",
-    html: `<div class="pulsing-marker"></div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  });
+  const locations = [
+    { name: "Punjab", top: "30%", left: "30%", delay: 0.8 },
+    { name: "Haryana", top: "45%", left: "45%", delay: 1.0 },
+    { name: "Delhi", top: "53%", left: "52%", delay: 1.2 },
+    { name: "Rajasthan", top: "60%", left: "25%", delay: 1.4 },
+  ];
 
   return (
     <>
@@ -363,9 +323,7 @@ const ContactUsPage = () => {
       <style>
         {` @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
                     .font-poppins { font-family: 'Poppins', sans-serif; } `}
-        {` body { cursor: none; }
-                    .leaflet-container { background-color: #f3f4f6; }
-                    .pulsing-marker-container { border: none; background: none; } `}
+        {` body { cursor: none; } `}
         {animationStyles}
       </style>
 
@@ -532,239 +490,215 @@ const ContactUsPage = () => {
           </motion.div>
         </div>
 
+        {/* Merged Map and "Beyond the Billboard" sections */}
         <div
           ref={mapSectionRef}
-          className="w-full min-h-[90vh] relative flex items-center justify-center bg-gray-200 py-16 lg:py-20 px-6 sm:px-8"
-        >
-          <div
-            ref={mapContainerRef}
-            className="w-full max-w-6xl h-[70vh] relative"
-          >
-            <div
-              style={{ clipPath: "url(#map-mask)" }}
-              className="w-full h-full rounded-2xl md:rounded-3xl shadow-2xl"
-            >
-              <MapContainer
-                center={position}
-                zoom={15}
-                scrollWheelZoom={false}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-                <Marker position={position} icon={pulsingIcon}>
-                  <Popup>
-                    Our office is located in Feroze Gandhi Market, Ludhiana.
-                  </Popup>
-                </Marker>
-              </MapContainer>
-            </div>
-            <svg className="absolute w-0 h-0">
-              <defs>
-                <clipPath id="map-mask" clipPathUnits="objectBoundingBox">
-                  <circle ref={mapMaskRef} cx="0.5" cy="0.5" r="0" />
-                </clipPath>
-              </defs>
-            </svg>
-            <div
-              ref={mapTextRef}
-              className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 pointer-events-none"
-            >
-              <h3
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900"
-                style={{ textShadow: "0 2px 10px rgba(255,255,255,0.7)" }}
-              >
-                Our Command Center
-              </h3>
-              <p
-                className="text-base sm:text-lg text-gray-700 mt-1"
-                style={{ textShadow: "0 1px 5px rgba(255,255,255,0.5)" }}
-              >
-                Feroze Gandhi Market, Ludhiana
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          ref={sectionRef}
-          className="w-full flex flex-col justify-center items-center relative overflow-hidden py-20 lg:py-24 px-6 sm:px-8 z-10 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200"
+          className="w-full relative flex flex-col items-center justify-center overflow-hidden py-20 lg:py-24 px-6 sm:px-8 bg-gray-50 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-gray-100 to-gray-200"
         >
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-secondary-yellow/30 animate-[pulse-glow_4s_ease-in-out_infinite] blur-2xl"></div>
             <div className="absolute w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-tertiary-purple/20 animate-[pulse-glow-2_4s_ease-in-out_infinite_2s] blur-xl"></div>
           </div>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            className="relative z-10 text-center flex flex-col items-center max-w-6xl mx-auto"
-          >
-            <motion.div variants={itemVariants} className="mb-10">
-              <SectionHeader
-                title="Beyond the Billboard"
-                onMouseEnter={textEnter}
-                onMouseLeave={textLeave}
-              />
-              <p className="text-gray-600 text-base md:text-lg max-w-xl lg:max-w-2xl mx-auto">
-                Discover the strategy, creativity, and technology that power
-                North India's most impactful outdoor campaigns.
-              </p>
-            </motion.div>
-            <motion.div
-              variants={itemVariants}
-              className="relative w-full aspect-square max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] flex justify-center items-center mt-12 lg:mt-16"
+
+          <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center text-center px-4">
+            <SectionHeader
+              title="Our Reach & Your Impact"
+              onMouseEnter={textEnter}
+              onMouseLeave={textLeave}
+            />
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={mapInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-gray-600 text-base md:text-lg max-w-3xl mx-auto mb-12 lg:mb-16"
             >
-              <svg
-                className="absolute w-full h-full"
-                viewBox="0 0 700 700"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <defs>
-                  <linearGradient
-                    id="comet-gradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--tertiary-purple)"
-                      stopOpacity="0"
-                    />
-                    <stop
-                      offset="50%"
-                      stopColor="var(--tertiary-purple)"
-                      stopOpacity="1"
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--primary-blue)"
-                      stopOpacity="1"
-                    />
-                  </linearGradient>
-                </defs>
-                <circle
-                  cx="350"
-                  cy="350"
-                  r="325"
-                  stroke="var(--tertiary-purple)"
-                  strokeOpacity="0.15"
-                  strokeWidth="1"
-                />
-                <circle
-                  cx="350"
-                  cy="350"
-                  r="225"
-                  stroke="var(--tertiary-purple)"
-                  strokeOpacity="0.15"
-                  strokeWidth="1"
-                />
-                <circle
-                  cx="350"
-                  cy="350"
-                  r="325"
-                  stroke="url(#comet-gradient)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeDasharray="15 45"
-                  className="rotate-from-center animate-[orbit-outer_60s_ease-in-out_infinite]"
-                />
-                <circle
-                  cx="350"
-                  cy="350"
-                  r="225"
-                  stroke="url(#comet-gradient)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeDasharray="15 45"
-                  className="rotate-from-center animate-[orbit-inner_40s_ease-in-out_infinite]"
-                />
-              </svg>
-              <div className="absolute w-full h-full animate-[orbit-outer_60s_ease-in-out_infinite]">
-                {outerNodes.map((node, index) => (
-                  <div
-                    key={`outer-${index}`}
-                    className="absolute inset-0"
-                    style={{ transform: `rotate(${node.angle}deg)` }}
-                  >
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-outer">
-                      <div className="relative flex items-center justify-center w-14 h-14">
-                        <div className="absolute w-full h-full bg-primary-blue/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
-                        <div className="relative flex items-center justify-center w-12 h-12 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
-                          <node.icon size={22} className="text-primary-blue" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="absolute w-[64.2%] h-[64.2%] animate-[orbit-inner_40s_ease-in-out_infinite]">
-                {innerNodes.map((node, index) => (
-                  <div
-                    key={`inner-${index}`}
-                    className="absolute inset-0"
-                    style={{ transform: `rotate(${node.angle}deg)` }}
-                  >
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-inner">
-                      <div className="relative flex items-center justify-center w-12 h-12">
-                        <div className="absolute w-full h-full bg-secondary-yellow/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
-                        <div className="relative flex items-center justify-center w-10 h-10 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
-                          <node.icon size={18} className="text-primary-blue" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              From our strategic hub in Ludhiana, we combine geographical
+              dominance with creative technology to put your brand on the map and
+              in the minds of millions.
+            </motion.p>
+          </div>
 
-              <div className="relative flex justify-center items-center">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={inView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.6 }}
-                  className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden"
-                >
-                  {animationData && (
-                    <Lottie
-                      animationData={animationData}
-                      loop={true}
-                      autoplay={true}
-                      className="w-full h-full"
-                    />
-                  )}
-                </motion.div>
-
-                <motion.div
-                  animate={{
-                    opacity: [0, 1, 1, 0],
-                    scale: [0.5, 1, 1, 0.5],
-                    y: [10, 0, 0, 10],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    repeatType: "loop",
-                    times: [0, 0.2, 0.8, 1], // Fade in 20%, stay 60%, fade out 20%
-                  }}
-                  className="absolute -top-4 -right-20 sm:-top-8 sm:-right-28 w-48 sm:w-56 z-20"
-                >
-                  <svg viewBox="0 0 200 130" className="drop-shadow-lg filter">
-                    <path
-                      d="M171.3,5.1C148.9-6,117.2-1.3,100,10.1C82.8-1.3,51.1-6,28.7,5.1C-3.4,20.6-9.1,57.1,17.4,82.4c10.4,9.9,25.3,15,40.5,14.6c2.4,10,10.2,17.9,20.7,21.1c-0.8-4.7-1.3-9.5-1.5-14.3c-0.2-5.4,0-10.8,0.5-16.2c7.2,1.3,14.7,1.8,22.3,1.5c18-0.7,35-6.7,46.8-19.3C196.1,65.3,193.8,20.6,171.3,5.1z"
-                      fill="#FFFFFF"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center pb-8 sm:pb-10">
-                    <p className="text-center text-sm sm:text-base font-semibold text-[#1a2a80] px-4">
-                      Hey! Welcome to <br /> Star Publicity
-                    </p>
-                  </div>
-                </motion.div>
-              </div>
+          <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            {/* Left Column: Map Section */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={mapInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+              className="relative w-full max-w-lg mx-auto flex justify-center items-center"
+            >
+              <img
+                src={mapImage}
+                alt="Map showing office location in Feroze Gandhi Market, Ludhiana"
+                className="w-full h-auto object-contain rounded-xl"
+              />
+              {locations.map((loc) => (
+                <LocationMarker key={loc.name} {...loc} inView={mapInView} />
+              ))}
             </motion.div>
-          </motion.div>
+
+            {/* Right Column: Lottie Section */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate={mapInView ? "visible" : "hidden"}
+              className="relative z-10 flex flex-col items-center w-full"
+            >
+              <motion.div
+                variants={itemVariants}
+                className="relative w-full aspect-square max-w-[400px] sm:max-w-[500px] flex justify-center items-center"
+              >
+                <svg
+                  className="absolute w-full h-full"
+                  viewBox="0 0 700 700"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <linearGradient
+                      id="comet-gradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="0%"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="var(--tertiary-purple)"
+                        stopOpacity="0"
+                      />
+                      <stop
+                        offset="50%"
+                        stopColor="var(--tertiary-purple)"
+                        stopOpacity="1"
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="var(--primary-blue)"
+                        stopOpacity="1"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <circle
+                    cx="350"
+                    cy="350"
+                    r="325"
+                    stroke="var(--tertiary-purple)"
+                    strokeOpacity="0.15"
+                    strokeWidth="1"
+                  />
+                  <circle
+                    cx="350"
+                    cy="350"
+                    r="225"
+                    stroke="var(--tertiary-purple)"
+                    strokeOpacity="0.15"
+                    strokeWidth="1"
+                  />
+                  <circle
+                    cx="350"
+                    cy="350"
+                    r="325"
+                    stroke="url(#comet-gradient)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="15 45"
+                    className="rotate-from-center animate-[orbit-outer_60s_ease-in-out_infinite]"
+                  />
+                  <circle
+                    cx="350"
+                    cy="350"
+                    r="225"
+                    stroke="url(#comet-gradient)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="15 45"
+                    className="rotate-from-center animate-[orbit-inner_40s_ease-in-out_infinite]"
+                  />
+                </svg>
+                <div className="absolute w-full h-full animate-[orbit-outer_60s_ease-in-out_infinite]">
+                  {outerNodes.map((node, index) => (
+                    <div
+                      key={`outer-${index}`}
+                      className="absolute inset-0"
+                      style={{ transform: `rotate(${node.angle}deg)` }}
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-outer">
+                        <div className="relative flex items-center justify-center w-14 h-14">
+                          <div className="absolute w-full h-full bg-primary-blue/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
+                          <div className="relative flex items-center justify-center w-12 h-12 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
+                            <node.icon size={22} className="text-primary-blue" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute w-[64.2%] h-[64.2%] animate-[orbit-inner_40s_ease-in-out_infinite]">
+                  {innerNodes.map((node, index) => (
+                    <div
+                      key={`inner-${index}`}
+                      className="absolute inset-0"
+                      style={{ transform: `rotate(${node.angle}deg)` }}
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 cursor-pointer group icon-wrapper-inner">
+                        <div className="relative flex items-center justify-center w-12 h-12">
+                          <div className="absolute w-full h-full bg-secondary-yellow/50 rounded-full animate-ping opacity-75 group-hover:opacity-100"></div>
+                          <div className="relative flex items-center justify-center w-10 h-10 bg-white/80 border border-purple-400/50 rounded-full backdrop-blur-sm transition-all group-hover:scale-105">
+                            <node.icon size={18} className="text-primary-blue" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="relative flex justify-center items-center">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={mapInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ duration: 0.6 }}
+                    className="relative z-10 w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden"
+                  >
+                    {animationData && (
+                      <Lottie
+                        animationData={animationData}
+                        loop={true}
+                        autoplay={true}
+                        className="w-full h-full"
+                      />
+                    )}
+                  </motion.div>
+
+                  <motion.div
+                    animate={{
+                      opacity: [0, 1, 1, 0],
+                      scale: [0.5, 1, 1, 0.5],
+                      y: [10, 0, 0, 10],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      repeatType: "loop",
+                      times: [0, 0.2, 0.8, 1], // Fade in 20%, stay 60%, fade out 20%
+                    }}
+                    className="absolute -top-4 -right-20 sm:-top-8 sm:-right-28 w-48 sm:w-56 z-20"
+                  >
+                    <svg viewBox="0 0 200 130" className="drop-shadow-lg filter">
+                      <path
+                        d="M171.3,5.1C148.9-6,117.2-1.3,100,10.1C82.8-1.3,51.1-6,28.7,5.1C-3.4,20.6-9.1,57.1,17.4,82.4c10.4,9.9,25.3,15,40.5,14.6c2.4,10,10.2,17.9,20.7,21.1c-0.8-4.7-1.3-9.5-1.5-14.3c-0.2-5.4,0-10.8,0.5-16.2c7.2,1.3,14.7,1.8,22.3,1.5c18-0.7,35-6.7,46.8-19.3C196.1,65.3,193.8,20.6,171.3,5.1z"
+                        fill="#FFFFFF"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center pb-8 sm:pb-10">
+                      <p className="text-center text-sm sm:text-base font-semibold text-[#1a2a80] px-4">
+                        Hey! Welcome to <br /> Star Publicity
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
 
         <div className="w-full flex flex-col justify-center items-center relative overflow-hidden font-poppins py-20 lg:py-24 px-6 sm:px-8 xl:px-16 z-10 bg-gray-50">
@@ -786,7 +720,7 @@ const ContactUsPage = () => {
               />
               <PromiseFeatureCard
                 icon={Headset}
-                title="Strategic Placement"
+                title="Strategic Placement" 
                 description="Using data-driven insights, we place your ads in high-traffic locations for maximum impact."
               />
               <PromiseFeatureCard
