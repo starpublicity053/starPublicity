@@ -18,6 +18,8 @@ const protect = require("../middleware/authMiddleware");
 // This middleware should check if req.user.isSuperAdmin === 1
 const restrictToSuperAdmin = require("../middleware/superAdminMiddleware");
 
+const { requestCallback } = require("../controllers/MediaController");
+
 const multer = require("multer");
 const blogController = require("../controllers/BlogController");
 const blogContactController = require("../controllers/BlogContactController");
@@ -89,6 +91,9 @@ router.post("/contact/inquiries/:id/forward", forwardContactInquiry);
 router.patch("/contact/inquiries/:id/status", updateContactInquiryStatus);
 // ✅ NEW ROUTE: Add a new note to an inquiry.
 router.post("/contact/inquiries/:id/notes", addContactInquiryNote);
+
+router.post("/media/request-callback", requestCallback);
+
 
 // --- Other Existing Routes ---
 router.post("/ATL-inquiry", sendAtlInquiry);

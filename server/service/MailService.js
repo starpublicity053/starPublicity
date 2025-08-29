@@ -369,6 +369,67 @@ const sendBlogContactInquiryEmail = async (formData) => {
   }
 };
 
+/**
+ * Sends a notification email for a new "Request a Callback" submission.
+ * @param {object} formData - The data from the callback form.
+ * @param {string} formData.name - The name of the person requesting the callback.
+ * @param {string} formData.phone - The phone number of the person.
+ * @param {string} [formData.company] - The company of the person (optional).
+ */
+const sendCallbackRequestEmail = async (formData) => {
+  const { name, phone, company } = formData;
+
+  const mailOptions = {
+    from: `"Star Publicity" <${process.env.HR_EMAIL}>`,
+    to: process.env.HR_RECEIVER_EMAIL,
+    subject: `📞 New Callback Request from ${name}`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <title>New Callback Request</title>
+          <style>
+              body { margin: 0; padding: 0; background-color: #f5f8fa; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+              .email-container { max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); border: 1px solid #e0e6eb; }
+              .header { background-color: #1A2A80; padding: 25px 20px; text-align: center; color: #ffffff; }
+              .header h1 { margin: 0; font-size: 26px; font-weight: 700; }
+              .content-section { padding: 30px 40px; }
+              .content-section h2 { color: #1A2A80; font-size: 24px; margin-top: 0; margin-bottom: 25px; text-align: center; font-weight: 600;}
+              .data-table { width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 20px; border-collapse: collapse; }
+              .data-table td { padding: 12px 18px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
+              .data-table tr:last-child td { border-bottom: none; }
+              .data-table td:first-child { font-weight: bold; color: #333; width: 40%; }
+              .footer { background-color: #e9ecef; padding: 25px 20px; text-align: center; font-size: 13px; color: #777; }
+          </style>
+      </head>
+      <body>
+          <div class="email-container">
+              <div class="header"><h1>New Callback Request</h1></div>
+              <div class="content-section">
+                  <h2>📞 Lead Details</h2>
+                  <table class="data-table" role="presentation">
+                      <tr><td>Full Name:</td><td>${name}</td></tr>
+                      <tr><td>Phone Number:</td><td>${phone}</td></tr>
+                      <tr><td>Company:</td><td>${company || "N/A"}</td></tr>
+                  </table>
+              </div>
+              <div class="footer"><p>This request was submitted via the "Request a Callback" form on ${new Date().toLocaleDateString()}.</p></div>
+          </div>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Callback request email sent successfully.");
+  } catch (error) {
+    console.error("Error sending callback request email:", error);
+    // We don't re-throw the error, so the API request doesn't fail if the email fails.
+  }
+};
+
 module.exports = {
   sendContactInquiryEmail,
   sendForwardedInquiryEmail,
@@ -376,4 +437,5 @@ module.exports = {
   sendBtlInquiryEmail,
   sendTtlInquiryEmail,
   sendBlogContactInquiryEmail,
+  sendCallbackRequestEmail,
 };
