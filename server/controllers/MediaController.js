@@ -28,6 +28,22 @@ const requestCallback = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get all media inquiries
+ * @route   GET /api/media
+ * @access  Private/Admin
+ */
+const getAllMediaInquiries = async (req, res) => {
+  try {
+    const inquiries = await CallbackRequest.find({}).sort({ createdAt: -1 });
+    res.status(200).json(inquiries);
+  } catch (error) {
+    console.error("Error fetching media inquiries:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
 module.exports = {
   requestCallback,
+  getAllMediaInquiries,
 };

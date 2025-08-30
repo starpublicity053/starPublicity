@@ -9,7 +9,7 @@ import {
   FaBars,
   FaBlog,
   FaBoxOpen,
-  FaVideo,
+  FaBullhorn, // New: Icon for media inquiries
   FaBriefcase,
   FaEnvelope,
   FaBell,
@@ -68,6 +68,8 @@ import {
   useDeleteBlogMutation,
   useUpdateBlogMutation,
 } from "../../features/auth/blogApi";
+// New: Import media API hook
+import { useGetMediaInquiriesQuery } from "../../features/auth/mediaApi";
 // Import the new contact API hooks and new mutations
 import {
   useGetContactInquiriesQuery,
@@ -77,7 +79,7 @@ import {
 } from "../../features/auth/contactUs"; // Assuming contactUs.js is in auth feature folder
 
 // New: Import user management API hooks (assuming they exist)
-import {
+import { 
   useLoginMutation,
   useLogoutMutation,
   useRegisterMutation,
@@ -111,6 +113,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 // Define menu items for the sidebar
 const menuItems = [
+  { key: "media", label: "Media", icon: <FaBullhorn /> },
   { key: "blogs", label: "Blogs", icon: <FaBlog /> },
   { key: "products", label: "Products", icon: <FaBoxOpen /> },
   { key: "jobs", label: "Jobs", icon: <FaBriefcase /> },
@@ -119,7 +122,7 @@ const menuItems = [
 ];
 
 // New: Define which tabs are searchable
-const searchableTabs = ["jobs", "blogs", "contact", "users"];
+const searchableTabs = ["jobs", "blogs", "contact", "users", "media"];
 
 // UPDATED: Initial state for job form with new structured fields
 const initialJobFormData = {
@@ -650,6 +653,14 @@ const AdminPanel = () => {
   const [blogSearchTerm, setBlogSearchTerm] = useState("");
   const [contactSearchTerm, setContactSearchTerm] = useState(""); // New: for Contact
   const [userSearchTerm, setUserSearchTerm] = useState(""); // New: for Users
+  const [mediaSearchTerm, setMediaSearchTerm] = useState("");
+
+  // New states for Media Inquiry Filtering, Sorting, and Modal
+  const [mediaInquiryFilter, setMediaInquiryFilter] = useState("all"); // e.g., 'all', 'new', 'contacted'
+  const [mediaInquirySortBy, setMediaInquirySortBy] = useState("latest"); // 'latest', 'oldest', 'name'
+  const [isMediaInquiryModalOpen, setIsMediaInquiryModalOpen] =
+    useState(false);
+  const [selectedMediaInquiry, setSelectedMediaInquiry] = useState(null);
 
   // Confirmation modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -738,6 +749,21 @@ const AdminPanel = () => {
   const [deleteAdmin, { isLoading: isDeletingAdmin }] = useDeleteAdminMutation();
   const [updateAdminStatus, { isLoading: isUpdatingAdminStatus }] =
     useUpdateAdminStatusMutation();
+  const {
+    data: mediaInquiries = [],
+    isLoading: isMediaLoading,
+    isError: isMediaError,
+    refetch: refetchMedia,
+    error: mediaError, // Capture the error object for debugging
+  } = useGetMediaInquiriesQuery();
+
+  // Effect to show a detailed error toast if media inquiries fail to load
+  useEffect(() => {
+    if (isMediaError) {
+      console.error("Error loading media inquiries:", mediaError);
+      toast.error(`Media Load Error: ${mediaError?.data?.message || 'Check console for details'}`);
+    }
+  }, [isMediaError, mediaError]);
 
   // --- Authentication and Navigation Effects ---
   // --- Notification System ---
@@ -852,12 +878,17 @@ const AdminPanel = () => {
         case "contact":
           await refetchInquiries();
           break;
+        case "media":
+          await refetchMedia();
+          break;
         case "users":
           await refetchAdmins();
           break;
         case "welcome":
           // Refresh all data for the dashboard
-          await Promise.all([refetchJobs(), refetchBlogs(), refetchInquiries()]);
+          await Promise.all([
+            refetchJobs(), refetchBlogs(), refetchInquiries(), refetchMedia(),
+          ]);
           break;
         default:
           // No data to refresh for 'products' tab yet
@@ -870,7 +901,14 @@ const AdminPanel = () => {
     } finally {
       setIsRefreshing(false);
     }
-  }, [activeTab, refetchJobs, refetchBlogs, refetchInquiries, isRefreshing]);
+  }, [
+    activeTab,
+    refetchJobs,
+    refetchBlogs,
+    refetchInquiries,
+    refetchMedia,
+    isRefreshing,
+  ]);
 
   const getAvatarUrl = useCallback(
     (name, size) => {
@@ -899,6 +937,9 @@ const AdminPanel = () => {
       case "contact":
         setContactSearchTerm(value);
         break;
+      case "media":
+        setMediaSearchTerm(value);
+        break;
       case "users":
         setUserSearchTerm(value);
         break;
@@ -916,6 +957,8 @@ const AdminPanel = () => {
         return blogSearchTerm;
       case "contact":
         return contactSearchTerm;
+      case "media":
+        return mediaSearchTerm;
       case "users":
         return userSearchTerm;
       default:
@@ -1001,6 +1044,45 @@ const AdminPanel = () => {
         (admin.email || "").toLowerCase().includes(lowerSearch)
     );
   }, [admins, userSearchTerm]);
+
+  // New: Filtered Media Inquiries
+  const filteredMediaInquiries = useMemo(() => {
+    let filtered = mediaInquiries;
+
+    // Apply search term
+    if (mediaSearchTerm) {
+      const lowerSearch = mediaSearchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (item) =>
+          (item.name || "").toLowerCase().includes(lowerSearch) ||
+          (item.company || "").toLowerCase().includes(lowerSearch) ||
+          (item.phone || "").toLowerCase().includes(lowerSearch) ||
+          (item.message || "").toLowerCase().includes(lowerSearch)
+      );
+    }
+    return filtered;
+  }, [mediaInquiries, mediaSearchTerm]);
+
+  // New: Sorted Media Inquiries
+  const sortedMediaInquiries = useMemo(() => {
+    let sorted = [...filteredMediaInquiries];
+    if (mediaInquirySortBy === "latest") {
+      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (mediaInquirySortBy === "oldest") {
+      sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (mediaInquirySortBy === "name") {
+      sorted.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    }
+    return sorted;
+  }, [filteredMediaInquiries, mediaInquirySortBy]);
+
+  // --- Media Inquiry Handlers ---
+  const handleViewMediaInquiry = useCallback((inquiry) => {
+    setSelectedMediaInquiry(inquiry);
+    setIsMediaInquiryModalOpen(true);
+    // Optional: Add logic to mark as read here if needed
+  }, []);
+
   // --- Job Management Handlers ---
 
   const handleJobChange = useCallback((e) => {
@@ -1456,6 +1538,14 @@ const AdminPanel = () => {
     [inquiries]
   );
 
+  // New: Calculate media metrics
+  const mediaMetrics = useMemo(
+    () => ({
+      totalMedia: mediaInquiries.length,
+    }),
+    [mediaInquiries]
+  );
+
   // Sort blog posts by creation date for "Recent Activity" on the dashboard
   const recentBlogPosts = useMemo(() => {
     return [...blogPosts]
@@ -1629,38 +1719,210 @@ const AdminPanel = () => {
 
   // --- New: Handler for downloading inquiries as Excel ---
   const handleDownloadExcel = useCallback(() => {
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    const fileExtension = ".xlsx";
-    const formattedData = sortedInquiries.map((inquiry) => {
-      // Combine notes into a single string
-      const notes =
-        inquiry.notes && inquiry.notes.length > 0
-          ? inquiry.notes
-              .map(
-                (note) =>
-                  `${note.content} (on ${new Date(
-                    note.createdAt
-                  ).toLocaleString()})`
-              )
-              .join("\n")
-          : "No notes";
-      return {
-        "Full Name": inquiry.name, // Use the 'name' field
-        Email: inquiry.email,
-        Message: inquiry.message,
-        Status: inquiry.status,
-        "Received Date": new Date(inquiry.createdAt).toLocaleString(),
-        Notes: notes,
-      };
+    // --- 1. Data Preparation ---
+    const reportTitle = "Star Publicity - Contact Inquiries Report";
+    const generationDate = `Generated on: ${new Date().toLocaleString()}`;
+    const totalInquiries = `Total Inquiries: ${sortedInquiries.length}`;
+
+    const headers = ["Full Name", "Email", "Message", "Status", "Received Date", "Notes"];
+    const data = sortedInquiries.map((inquiry) => {
+      const notes = (inquiry.notes && inquiry.notes.length > 0)
+        ? inquiry.notes.map(note => `${note.content} (on ${new Date(note.createdAt).toLocaleString()})`).join("\n")
+        : "No notes";
+      return [
+        inquiry.name || "N/A",
+        inquiry.email || "N/A",
+        inquiry.message || "N/A",
+        inquiry.status || "N/A",
+        new Date(inquiry.createdAt).toLocaleString(),
+        notes,
+      ];
     });
 
-    const ws = XLSX.utils.json_to_sheet(formattedData);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    // --- 2. Worksheet Creation ---
+    const finalData = [
+      [reportTitle],
+      [generationDate],
+      [totalInquiries],
+      [], // Spacer
+      headers,
+      ...data
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(finalData);
+
+    // --- 3. Styling Definitions (same as media export) ---
+    const titleStyle = { font: { name: "Arial", sz: 24, bold: true, color: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" } };
+    const subtitleStyle = { font: { name: "Arial", sz: 12, italic: true, color: { rgb: "6B7280" } }, alignment: { horizontal: "center", vertical: "center" } };
+    const summaryStyle = { font: { name: "Arial", sz: 12, bold: true, color: { rgb: "334155" } }, alignment: { horizontal: "center", vertical: "center" } };
+    const headerStyle = {
+      font: { name: "Arial", sz: 13, bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "2563EB" } }, // Professional Blue
+      alignment: { horizontal: "center", vertical: "center" },
+      border: { top: { style: "thin", color: { rgb: "1E40AF" } }, bottom: { style: "thin", color: { rgb: "1E40AF" } }, left: { style: "thin", color: { rgb: "1E40AF" } }, right: { style: "thin", color: { rgb: "1E40AF" } } },
+    };
+    const dataCellStyle = {
+      font: { name: "Arial", sz: 11, color: { rgb: "000000" } },
+      alignment: { vertical: "center", wrapText: true },
+      border: { top: { style: "thin", color: { rgb: "D1D5DB" } }, bottom: { style: "thin", color: { rgb: "D1D5DB" } }, left: { style: "thin", color: { rgb: "D1D5DB" } }, right: { style: "thin", color: { rgb: "D1D5DB" } } },
+    };
+    const altRowFill = { fill: { fgColor: { rgb: "F3F4F6" } } };
+
+    // --- 4. Apply Styles and Formatting ---
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    const headerRowIndex = 4;
+
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+        let cell = ws[cell_ref];
+        if (!cell) continue;
+
+        if (R === 0) { cell.s = titleStyle; continue; }
+        if (R === 1) { cell.s = subtitleStyle; continue; }
+        if (R === 2) { cell.s = summaryStyle; continue; }
+        if (R === headerRowIndex) { cell.s = headerStyle; continue; }
+        if (R > headerRowIndex) {
+          cell.s = JSON.parse(JSON.stringify(dataCellStyle));
+          if (R % 2 === 0) {
+            cell.s.fill = altRowFill.fill;
+          }
+        }
+      }
+    }
+
+    // --- 5. Column Widths, Row Heights, and Merges ---
+    ws["!cols"] = [ { wch: 30 }, { wch: 35 }, { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 50 } ];
+    ws["!rows"] = [ { hpt: 40 }, { hpt: 20 }, { hpt: 20 }, { hpt: 10 }, { hpt: 25 } ];
+    ws["!merges"] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }, // Title
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }, // Subtitle
+      { s: { r: 2, c: 0 }, e: { r: 2, c: 5 } }, // Summary
+    ];
+    ws['!autofilter'] = { ref: `A${headerRowIndex + 1}:F${headerRowIndex + 1}` };
+
+    // --- 6. File Generation ---
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Contact Inquiries");
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    saveAs(data, "ContactInquiries" + fileExtension);
+    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+    saveAs(dataBlob, "StarPublicity_Contact_Inquiries_Report.xlsx");
   }, [sortedInquiries]);
+
+  // New: Handler for downloading media inquiries as Excel
+  const handleDownloadMediaExcel = useCallback(() => {
+    // --- 1. Data Preparation ---
+    const reportTitle = "Star Publicity - Media Inquiries Report";
+    const generationDate = `Generated on: ${new Date().toLocaleString()}`;
+    const totalInquiries = `Total Inquiries: ${sortedMediaInquiries.length}`;
+
+    const headers = ["Name", "Company Name", "Contact Number", "Received Date"];
+    const data = sortedMediaInquiries.map((inquiry) => ([
+      inquiry.name || "N/A",
+      inquiry.company || "N/A",
+      inquiry.phone || "N/A",
+      new Date(inquiry.createdAt).toLocaleString(),
+    ]));
+
+    // --- 2. Worksheet Creation ---
+    const finalData = [
+      [reportTitle],
+      [generationDate],
+      [totalInquiries],
+      [], // Spacer
+      headers,
+      ...data
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(finalData);
+
+    // --- 3. Styling Definitions ---
+    const titleStyle = {
+      font: { name: "Arial", sz: 24, bold: true, color: { rgb: "1E3A8A" } }, // Dark Blue
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+    const subtitleStyle = {
+      font: { name: "Arial", sz: 12, italic: true, color: { rgb: "6B7280" } }, // Gray
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+    const summaryStyle = {
+      font: { name: "Arial", sz: 12, bold: true, color: { rgb: "334155" } }, // Slate
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+    const headerStyle = {
+      font: { name: "Arial", sz: 13, bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "2563EB" } }, // Professional Blue
+      alignment: { horizontal: "center", vertical: "center" },
+      border: {
+        top: { style: "thin", color: { rgb: "1E40AF" } },
+        bottom: { style: "thin", color: { rgb: "1E40AF" } },
+        left: { style: "thin", color: { rgb: "1E40AF" } },
+        right: { style: "thin", color: { rgb: "1E40AF" } },
+      },
+    };
+    const dataCellStyle = {
+      font: { name: "Arial", sz: 11, color: { rgb: "000000" } },
+      alignment: { vertical: "center", wrapText: true },
+      border: {
+        top: { style: "thin", color: { rgb: "D1D5DB" } },
+        bottom: { style: "thin", color: { rgb: "D1D5DB" } },
+        left: { style: "thin", color: { rgb: "D1D5DB" } },
+        right: { style: "thin", color: { rgb: "D1D5DB" } },
+      },
+    };
+    const altRowFill = { fill: { fgColor: { rgb: "F3F4F6" } } }; // Light Gray for zebra stripes
+
+    // --- 4. Apply Styles and Formatting ---
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    const headerRowIndex = 4;
+
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+        let cell = ws[cell_ref];
+        if (!cell) continue;
+
+        if (R === 0) { cell.s = titleStyle; continue; }
+        if (R === 1) { cell.s = subtitleStyle; continue; }
+        if (R === 2) { cell.s = summaryStyle; continue; }
+        if (R === headerRowIndex) { cell.s = headerStyle; continue; }
+        if (R > headerRowIndex) {
+          cell.s = JSON.parse(JSON.stringify(dataCellStyle)); // Deep copy
+          if (R % 2 === 0) { // Zebra stripes on even data rows (R is 0-indexed)
+            cell.s.fill = altRowFill.fill;
+          }
+        }
+      }
+    }
+
+    // --- 5. Column Widths, Row Heights, and Merges ---
+    ws["!cols"] = [
+      { wch: 35 }, // Name
+      { wch: 40 }, // Company Name
+      { wch: 25 }, // Contact Number
+      { wch: 25 }, // Received Date
+    ];
+    ws["!rows"] = [
+      { hpt: 40 }, // Title
+      { hpt: 20 }, // Subtitle
+      { hpt: 20 }, // Summary
+      { hpt: 10 }, // Spacer
+      { hpt: 25 }, // Header
+    ];
+    ws["!merges"] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }, // Title
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }, // Subtitle
+      { s: { r: 2, c: 0 }, e: { r: 2, c: 3 } }, // Summary
+    ];
+    
+    // Add auto-filter to the header row
+    ws['!autofilter'] = { ref: `A${headerRowIndex + 1}:D${headerRowIndex + 1}` };
+
+    // --- 6. File Generation ---
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Media Inquiries");
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+    saveAs(dataBlob, "StarPublicity_Media_Inquiries_Report.xlsx");
+  }, [sortedMediaInquiries]);
 
   // --- Rendered Component (JSX) ---
   return (
@@ -3194,6 +3456,75 @@ const AdminPanel = () => {
             </section>
           )}
 
+          {/* Media Inquiries Section */}
+          {activeTab === "media" && (
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
+                Media Inquiries
+              </h2>
+              {/* Filtering and Sorting for Media Inquiries */}
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-10 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="mediaInquirySortBy" className="text-slate-600 font-medium text-sm">Sort by:</label>
+                  <select
+                    id="mediaInquirySortBy"
+                    value={mediaInquirySortBy}
+                    onChange={(e) => setMediaInquirySortBy(e.target.value)}
+                    className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
+                  >
+                    <option value="latest">Latest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="name">Name</option>
+                  </select>
+                </div>
+                <button
+                  onClick={handleDownloadMediaExcel}
+                  className="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-green-600/40"
+                >
+                  <FaFileDownload /> Export to Excel
+                </button>
+              </div>
+              {/* Media Inquiry Listings Table */}
+              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+                <h3 className="text-2xl font-bold text-slate-800 mb-6">All Media Inquiries</h3>
+                {isMediaLoading ? (
+                  <div className="text-center py-10"><FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" /><p className="text-slate-500 mt-3">Loading media inquiries...</p></div>
+                ) : isMediaError ? (
+                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load media inquiries.</span></div>
+                ) : sortedMediaInquiries.length === 0 ? (
+                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative"><strong className="font-bold">Info!</strong><span className="block sm:inline ml-2">No media inquiries found.</span></div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead className="border-b-2 border-slate-200">
+                        <tr>
+                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Company Name</th>
+                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Number</th>
+                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
+                          <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200/70 bg-white">
+                        {sortedMediaInquiries.map((inquiry) => (
+                          <tr key={inquiry._id} className="hover:bg-slate-100">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{inquiry.name || 'N/A'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.company || 'N/A'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.phone || 'N/A'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{new Date(inquiry.createdAt).toLocaleDateString()}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end items-center gap-2">
+                              <button onClick={() => handleViewMediaInquiry(inquiry)} className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200" title="View Details"><FaEye size={16} /></button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Contact Management Section */}
           {activeTab === "contact" && (
             <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
@@ -3744,6 +4075,47 @@ const AdminPanel = () => {
         isLoading={isAddingInquiryNote}
         inquiryId={selectedInquiryForNote}
       />
+
+      {/* New: Media Inquiry Detail Modal */}
+      {selectedMediaInquiry && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center z-[100] px-4 py-8"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="bg-white text-slate-900 rounded-2xl p-6 md:p-10 shadow-xl w-full max-w-4xl mx-4 transform transition-all duration-300 scale-100 opacity-100 overflow-y-auto max-h-[90vh] border border-slate-200">
+            <div className="flex justify-between items-center pb-6 mb-6 border-b border-slate-200">
+              <div className="flex items-center">
+                <FaBullhorn className="text-pink-400 text-3xl md:text-4xl mr-4" />
+                <h3 className="text-2xl md:text-3xl font-extrabold text-slate-800">
+                  Media Inquiry Details
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedMediaInquiry(null)}
+                className="text-slate-400 hover:text-slate-800 transition-colors duration-200"
+                aria-label="Close"
+              >
+                <FaTimesCircle size={28} />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
+                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaUserIcon /></span>
+                <div><strong className="block text-sm font-semibold text-slate-600">Name:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.name || 'N/A'}</span></div>
+              </div>
+              <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
+                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaPhoneIcon /></span>
+                <div><strong className="block text-sm font-semibold text-slate-600">Phone:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.phone || 'N/A'}</span></div>
+              </div>
+              <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
+                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaBriefcase /></span>
+                <div><strong className="block text-sm font-semibold text-slate-600">Company Name:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.company || 'N/A'}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
