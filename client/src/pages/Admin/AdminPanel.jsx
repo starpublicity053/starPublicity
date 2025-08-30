@@ -79,7 +79,7 @@ import {
 } from "../../features/auth/contactUs"; // Assuming contactUs.js is in auth feature folder
 
 // New: Import user management API hooks (assuming they exist)
-import { 
+import {
   useLoginMutation,
   useLogoutMutation,
   useRegisterMutation,
@@ -108,6 +108,9 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   LabelList,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -212,28 +215,31 @@ const ConfirmationModal = ({
 };
 
 // New: Custom hook to calculate the average inquiries for the ReferenceLine
-const useAverageInquiries = (inquiryDataOverTime) => {
+const useAverageOverTime = (data, dataKey) => {
   return useMemo(() => {
-    if (!inquiryDataOverTime || inquiryDataOverTime.length === 0) {
+    if (!data || data.length === 0) {
       return 0;
     }
-    const totalInquiries = inquiryDataOverTime.reduce(
-      (sum, entry) => sum + entry.Inquiries,
+    const total = data.reduce(
+      (sum, entry) => sum + (entry[dataKey] || 0),
       0
     );
     // Average over the full 12-month period for a more stable metric.
     // This gives a clear view of average monthly performance over the year.
-    return totalInquiries / 12;
-  }, [inquiryDataOverTime]);
+    return total / 12;
+  }, [data, dataKey]);
 };
+
 
 // Custom Tooltip for Recharts
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
+    const data = payload[0];
+    const colorClass = data.dataKey === 'Inquiries' ? 'text-blue-600' : 'text-pink-600';
     return (
       <div className="p-4 bg-white/90 backdrop-blur-sm shadow-lg rounded-xl border border-slate-200">
         <p className="label font-bold text-slate-800">{`${label}`}</p>
-        <p className="intro text-teal-600">{`Inquiries : ${payload[0].value}`}</p>
+        <p className={`intro font-semibold ${colorClass}`}>{`${data.name} : ${data.value}`}</p>
       </div>
     );
   }
@@ -1167,8 +1173,7 @@ const AdminPanel = () => {
       else if (modalType === "user") await deleteAdmin(modalId).unwrap();
 
       toast.success(
-        `${
-          modalType.charAt(0).toUpperCase() + modalType.slice(1)
+        `${modalType.charAt(0).toUpperCase() + modalType.slice(1)
         } deleted successfully!`
       );
     } catch (err) {
@@ -1225,7 +1230,38 @@ const AdminPanel = () => {
     return Object.values(monthlyData);
   }, [inquiries, isInquiriesLoading]);
 
-  const averageInquiries = useAverageInquiries(inquiryDataOverTime);
+  const averageInquiries = useAverageOverTime(inquiryDataOverTime, 'Inquiries');
+
+  // New: Process media inquiry data for the bar chart
+  const mediaDataOverTime = useMemo(() => {
+    if (isMediaLoading || !mediaInquiries || mediaInquiries.length === 0) {
+      return [];
+    }
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyData = {};
+
+    // Initialize the last 12 months
+    const today = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+      const monthName = `${monthNames[d.getMonth()]} '${d.getFullYear().toString().slice(-2)}`;
+      monthlyData[monthKey] = { name: monthName, "Media Inquiries": 0 };
+    }
+
+    // Populate with actual inquiry counts
+    mediaInquiries.forEach(inquiry => {
+      const date = new Date(inquiry.createdAt);
+      const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+      if (monthlyData[monthKey]) {
+        monthlyData[monthKey]["Media Inquiries"] += 1;
+      }
+    });
+    return Object.values(monthlyData);
+  }, [mediaInquiries, isMediaLoading]);
+
+  const averageMediaInquiries = useAverageOverTime(mediaDataOverTime, 'Media Inquiries');
 
   // --- Blog Management Handlers ---
 
@@ -1791,8 +1827,8 @@ const AdminPanel = () => {
     }
 
     // --- 5. Column Widths, Row Heights, and Merges ---
-    ws["!cols"] = [ { wch: 30 }, { wch: 35 }, { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 50 } ];
-    ws["!rows"] = [ { hpt: 40 }, { hpt: 20 }, { hpt: 20 }, { hpt: 10 }, { hpt: 25 } ];
+    ws["!cols"] = [{ wch: 30 }, { wch: 35 }, { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 50 }];
+    ws["!rows"] = [{ hpt: 40 }, { hpt: 20 }, { hpt: 20 }, { hpt: 10 }, { hpt: 25 }];
     ws["!merges"] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }, // Title
       { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }, // Subtitle
@@ -1912,7 +1948,7 @@ const AdminPanel = () => {
       { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }, // Subtitle
       { s: { r: 2, c: 0 }, e: { r: 2, c: 3 } }, // Summary
     ];
-    
+
     // Add auto-filter to the header row
     ws['!autofilter'] = { ref: `A${headerRowIndex + 1}:D${headerRowIndex + 1}` };
 
@@ -1952,11 +1988,10 @@ const AdminPanel = () => {
               setActiveTab("welcome");
               if (!isDesktop) setIsSidebarOpen(false);
             }}
-            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
-              activeTab === "welcome"
+            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === "welcome"
                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
                 : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-            }`}
+              }`}
           >
             <span className="w-6 text-center text-lg"><FaTachometerAlt /></span>
             Dashboard
@@ -1968,11 +2003,10 @@ const AdminPanel = () => {
                 setActiveTab(key);
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
-              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
-                activeTab === key
+              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === key
                   ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
                   : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-              }`}
+                }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
             </button>
@@ -1990,242 +2024,240 @@ const AdminPanel = () => {
 
       {/* Main Content Area */}
       <main
-        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${
-          isDesktop ? "md:ml-64" : ""
-        }`}
-    >
-      <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
-        {isMobileSearchVisible && !isDesktop ? (
-          <div className="relative w-full flex items-center">
-            <FaSearch className="absolute left-3.5 text-slate-500 text-base" />
-            <input
-              type="search"
-              placeholder={`Search in ${activeTab}...`}
-              className="pl-10 pr-10 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full text-sm"
-              value={getCurrentSearchTerm()}
-              onChange={handleSearchChange}
-              autoFocus
-            />
-            <button
-              onClick={() => setIsMobileSearchVisible(false)}
-              className="absolute right-2 text-slate-500 hover:text-slate-900"
-            >
-              <FaTimesCircle size={20} />
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center">
+        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${isDesktop ? "md:ml-64" : ""
+          }`}
+      >
+        <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
+          {isMobileSearchVisible && !isDesktop ? (
+            <div className="relative w-full flex items-center">
+              <FaSearch className="absolute left-3.5 text-slate-500 text-base" />
+              <input
+                type="search"
+                placeholder={`Search in ${activeTab}...`}
+                className="pl-10 pr-10 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full text-sm"
+                value={getCurrentSearchTerm()}
+                onChange={handleSearchChange}
+                autoFocus
+              />
               <button
-                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden mr-2"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                onClick={() => setIsMobileSearchVisible(false)}
+                className="absolute right-2 text-slate-500 hover:text-slate-900"
               >
-                <FaBars size={24} />
+                <FaTimesCircle size={20} />
               </button>
-              <h1 className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight capitalize truncate">
-                {activeTab === "welcome"
-                  ? "Dashboard"
-                  : `${activeTab} Management`}
-              </h1>
             </div>
-            <div className="flex items-center gap-3 md:gap-6">
-              {searchableTabs.includes(activeTab) && (
-                <div className="relative hidden md:block group">
-                  <input
-                    type="search"
-                    placeholder={`Search in ${activeTab}...`}
-                    className="pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-40 md:w-64 text-sm shadow-inner transition-all duration-300 group-hover:bg-slate-50 dark:group-hover:bg-slate-600"
-                    value={getCurrentSearchTerm()}
-                    onChange={handleSearchChange}
-                  />
-                  <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-base" />
-                </div>
-              )}
-
-              {searchableTabs.includes(activeTab) && (
+          ) : (
+            <>
+              <div className="flex items-center">
                 <button
-                  className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden"
-                  onClick={() => setIsMobileSearchVisible(true)}
+                  className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden mr-2"
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 >
-                  <FaSearch size={20} />
+                  <FaBars size={24} />
                 </button>
-              )}
+                <h1 className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight capitalize truncate">
+                  {activeTab === "welcome"
+                    ? "Dashboard"
+                    : `${activeTab} Management`}
+                </h1>
+              </div>
+              <div className="flex items-center gap-3 md:gap-6">
+                {searchableTabs.includes(activeTab) && (
+                  <div className="relative hidden md:block group">
+                    <input
+                      type="search"
+                      placeholder={`Search in ${activeTab}...`}
+                      className="pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-full bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-40 md:w-64 text-sm shadow-inner transition-all duration-300 group-hover:bg-slate-50 dark:group-hover:bg-slate-600"
+                      value={getCurrentSearchTerm()}
+                      onChange={handleSearchChange}
+                    />
+                    <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-base" />
+                  </div>
+                )}
 
-              {/* NEW: Quick Actions Dropdown */}
-              <div className="relative" ref={quickActionsButtonRef}>
-                <button
-                  onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
-                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
-                  title="Quick Actions"
-                >
-                  <FaPlus size={20} />
-                </button>
-                {isQuickActionsOpen && (
-                  <div
-                    ref={quickActionsRef}
-                    className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                {searchableTabs.includes(activeTab) && (
+                  <button
+                    className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white md:hidden"
+                    onClick={() => setIsMobileSearchVisible(true)}
                   >
-                    <div className="p-2">
-                      <button
-                        onClick={() => {
-                          setActiveTab("jobs");
-                          setShowJobForm(true);
-                          setIsQuickActionsOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
-                      >
-                        <FaBriefcase className="text-blue-500" /> Post New Job
-                      </button>
-                      <button
-                        onClick={() => {
-                          setActiveTab("blogs");
-                          setShowBlogForm(true);
-                          setIsQuickActionsOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
-                      >
-                        <FaBlog className="text-orange-500" /> Create New Blog
-                      </button>
-                      {userInfo?.role === 'superAdmin' && (
+                    <FaSearch size={20} />
+                  </button>
+                )}
+
+                {/* NEW: Quick Actions Dropdown */}
+                <div className="relative" ref={quickActionsButtonRef}>
+                  <button
+                    onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
+                    className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                    title="Quick Actions"
+                  >
+                    <FaPlus size={20} />
+                  </button>
+                  {isQuickActionsOpen && (
+                    <div
+                      ref={quickActionsRef}
+                      className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                    >
+                      <div className="p-2">
                         <button
                           onClick={() => {
-                            setActiveTab("users");
+                            setActiveTab("jobs");
+                            setShowJobForm(true);
                             setIsQuickActionsOpen(false);
                           }}
                           className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
                         >
-                          <FaUserPlus className="text-green-500" /> Invite New Admin
+                          <FaBriefcase className="text-blue-500" /> Post New Job
                         </button>
-                      )}
+                        <button
+                          onClick={() => {
+                            setActiveTab("blogs");
+                            setShowBlogForm(true);
+                            setIsQuickActionsOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                        >
+                          <FaBlog className="text-orange-500" /> Create New Blog
+                        </button>
+                        {userInfo?.role === 'superAdmin' && (
+                          <button
+                            onClick={() => {
+                              setActiveTab("users");
+                              setIsQuickActionsOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
+                          >
+                            <FaUserPlus className="text-green-500" /> Invite New Admin
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-
-              {/* NEW: Theme Toggle Button */}
-              <button
-                onClick={toggleTheme}
-                className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
-                title="Toggle Theme"
-              >
-                {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
-              </button>
-
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
-                title="Refresh Data"
-              >
-                <FaSyncAlt
-                  size={20}
-                  className={`${
-                    isRefreshing ? "animate-spin" : ""
-                  } transition-transform group-hover:rotate-180 duration-500`}
-                />
-              </button>
-
-              {/* Notification Bell */}
-              <div className="relative" ref={notificationButtonRef}>
-                <button
-                  onClick={handleNotificationPanelToggle}
-                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
-                >
-                  <FaBell size={20} />
-                  {notifications.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs items-center justify-center">
-                        {notifications.length}
-                      </span>
-                    </span>
                   )}
+                </div>
+
+                {/* NEW: Theme Toggle Button */}
+                <button
+                  onClick={toggleTheme}
+                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                  title="Toggle Theme"
+                >
+                  {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
                 </button>
 
-                {/* Notification Panel */}
-                {isNotificationPanelOpen && (
-                  <div
-                    ref={notificationPanelRef}
-                    className="absolute top-full right-0 mt-2 w-80 md:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                <button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
+                  title="Refresh Data"
+                >
+                  <FaSyncAlt
+                    size={20}
+                    className={`${isRefreshing ? "animate-spin" : ""
+                      } transition-transform group-hover:rotate-180 duration-500`}
+                  />
+                </button>
+
+                {/* Notification Bell */}
+                <div className="relative" ref={notificationButtonRef}>
+                  <button
+                    onClick={handleNotificationPanelToggle}
+                    className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
                   >
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                      <h4 className="font-bold text-slate-800 dark:text-white">
-                        Notifications
-                      </h4>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
-                      {notificationHistory.length > 0 ? (
-                        <ul>
-                          {notificationHistory.map((notification) => (
-                            <li
-                              key={notification.id}
-                              className="border-b border-slate-100 dark:border-slate-700 last:border-b-0"
-                            >
-                              <button
-                                onClick={() => {
-                                  setActiveTab(notification.link);
-                                  setIsNotificationPanelOpen(false);
-                                }}
-                                className="w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 flex items-start gap-4"
+                    <FaBell size={20} />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs items-center justify-center">
+                          {notifications.length}
+                        </span>
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Notification Panel */}
+                  {isNotificationPanelOpen && (
+                    <div
+                      ref={notificationPanelRef}
+                      className="absolute top-full right-0 mt-2 w-80 md:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden animate-fade-in-down"
+                    >
+                      <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                        <h4 className="font-bold text-slate-800 dark:text-white">
+                          Notifications
+                        </h4>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                        {notificationHistory.length > 0 ? (
+                          <ul>
+                            {notificationHistory.map((notification) => (
+                              <li
+                                key={notification.id}
+                                className="border-b border-slate-100 dark:border-slate-700 last:border-b-0"
                               >
-                                <span className="mt-1">
-                                  {notification.icon}
-                                </span>
-                                <div>
-                                  <p className="text-sm text-slate-700 dark:text-slate-300">
-                                    {notification.message}
-                                  </p>
-                                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                                    {timeSince(notification.timestamp)}
-                                  </p>
-                                </div>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <div className="p-8 text-center">
-                          <FaBell
-                            size={32}
-                            className="mx-auto text-slate-300"
-                          />
-                          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-                            You have no new notifications.
-                          </p>
-                        </div>
-                      )}
+                                <button
+                                  onClick={() => {
+                                    setActiveTab(notification.link);
+                                    setIsNotificationPanelOpen(false);
+                                  }}
+                                  className="w-full text-left p-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200 flex items-start gap-4"
+                                >
+                                  <span className="mt-1">
+                                    {notification.icon}
+                                  </span>
+                                  <div>
+                                    <p className="text-sm text-slate-700 dark:text-slate-300">
+                                      {notification.message}
+                                    </p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                                      {timeSince(notification.timestamp)}
+                                    </p>
+                                  </div>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="p-8 text-center">
+                            <FaBell
+                              size={32}
+                              className="mx-auto text-slate-300"
+                            />
+                            <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+                              You have no new notifications.
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={getAvatarUrl(userInfo?.name, 32)}
+                    alt="User Avatar"
+                    className="w-9 h-9 rounded-full object-cover shadow-lg border-2 border-white dark:border-slate-700"
+                  />
+                  <span className="hidden sm:inline font-semibold text-sm text-slate-700 dark:text-slate-300">
+                    {userInfo?.name ||
+                      userInfo?.email ||
+                      (userInfo?.role === "superAdmin"
+                        ? "Super Admin"
+                        : "Admin")}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 hover:bg-red-500/10 dark:hover:bg-red-500/20 px-3 py-2 rounded-lg"
+                  title="Log Out"
+                >
+                  <FaSignOutAlt size={18} />
+                  <span className="hidden md:inline font-semibold text-sm">
+                    Log Out
+                  </span>
+                </button>
               </div>
-              <div className="flex items-center gap-2">
-                <img
-                  src={getAvatarUrl(userInfo?.name, 32)}
-                  alt="User Avatar"
-                  className="w-9 h-9 rounded-full object-cover shadow-lg border-2 border-white dark:border-slate-700"
-                />
-                <span className="hidden sm:inline font-semibold text-sm text-slate-700 dark:text-slate-300">
-                  {userInfo?.name ||
-                    userInfo?.email ||
-                    (userInfo?.role === "superAdmin"
-                      ? "Super Admin"
-                      : "Admin")}
-                </span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 hover:bg-red-500/10 dark:hover:bg-red-500/20 px-3 py-2 rounded-lg"
-                title="Log Out"
-              >
-                <FaSignOutAlt size={18} />
-                <span className="hidden md:inline font-semibold text-sm">
-                  Log Out
-                </span>
-              </button>
-            </div>
-          </>
-        )}
-      </header>
+            </>
+          )}
+        </header>
 
         {/* Content Sections */}
         <div className="flex-grow p-4 md:p-6 overflow-y-auto space-y-10 custom-scrollbar">
@@ -2319,104 +2351,68 @@ const AdminPanel = () => {
                 </div>
               </div>
 
-              {/* Contact Inquiries Chart */}
-              <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                  <FaChartBar className="text-teal-500 mr-3" /> Contact Inquiries
-                  Over Time
-                </h3>
-                {isInquiriesLoading ? (
-                  <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
-                    <FaSpinner className="animate-spin text-4xl text-teal-500 mx-auto" />
-                    <p className="text-slate-500 mt-3">
-                      Loading chart data...
-                    </p>
-                  </div>
-                ) : inquiryDataOverTime.every((d) => d.Inquiries === 0) ? (
-                  <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
-                    <FaChartBar className="text-4xl text-slate-300 mx-auto" />
-                    <p className="text-slate-500 mt-3">
-                      No inquiry data available for the last 12 months.
-                    </p>
-                  </div>
-                ) : (
-                  <div style={{ width: "100%", height: 350 }}>
-                    <ResponsiveContainer>
-                      <BarChart
-                        data={inquiryDataOverTime}
-                        margin={{ top: 20, right: 30, left: 0, bottom: isDesktop ? 5 : 50 }}
-                      >
-                        <defs>
-                          <linearGradient
-                            id="colorInquiries"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#14b8a6"
-                              stopOpacity={0.8}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#0d9488"
-                              stopOpacity={0.2}
-                            />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-                        <XAxis
-                          dataKey="name"
-                          stroke="#64748b"
-                          fontSize={12}
-                          tickLine={false}
-                          axisLine={false}
-                          angle={isDesktop ? 0 : -45}
-                          textAnchor={isDesktop ? "middle" : "end"}
-                          interval={0}
-                        />
-                        <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                        <Tooltip
-                          content={<CustomTooltip />}
-                          cursor={{ fill: "rgba(20, 184, 166, 0.1)" }}
-                        />
-                        <Legend wrapperStyle={{ fontSize: "14px", paddingTop: "20px" }} />
-                        <ReferenceLine
-                          y={averageInquiries}
-                          label={{
-                            value: `Avg: ${averageInquiries.toFixed(1)}`,
-                            position: 'insideTopRight',
-                            fill: '#ef4444',
-                            fontSize: 12,
-                            fontWeight: 'bold',
-                            dy: -10,
-                          }}
-                          stroke="#ef4444"
-                          strokeDasharray="4 4"
-                          strokeWidth={1.5}
-                        />
-                        <Bar
-                          dataKey="Inquiries"
-                          fill="url(#colorInquiries)"
-                          barSize={isDesktop ? 20 : 15}
-                          radius={[4, 4, 0, 0]}
-                          activeBar={{ fill: '#14b8a6', stroke: '#0f766e', strokeWidth: 1, fillOpacity: 1 }}
-                        >
-                          <LabelList
-                            dataKey="Inquiries"
-                            position="top"
-                            style={{ fill: "#0f766e", fontSize: "12px", fontWeight: "bold" }}
-                            formatter={(value) => (value > 0 ? value : "")}
-                          />
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
-              </section>
-
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                    <FaChartBar className="text-teal-500 mr-3" /> Contact Inquiries Over Time
+                  </h3>
+                  {isInquiriesLoading ? (
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
+                      <FaSpinner className="animate-spin text-4xl text-teal-500 mx-auto" />
+                      <p className="text-slate-500 mt-3">Loading chart data...</p>
+                    </div>
+                  ) : inquiryDataOverTime.every((d) => d.Inquiries === 0) ? (
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
+                      <FaChartBar className="text-4xl text-slate-300 mx-auto" />
+                      <p className="text-slate-500 mt-3">No inquiry data available for the last 12 months.</p>
+                    </div>
+                  ) : (
+                    <div style={{ width: '100%', height: 350 }}>
+                      <ResponsiveContainer>
+                        <BarChart data={inquiryDataOverTime} margin={{ top: 20, right: 30, left: 5, bottom: isDesktop ? 5 : 50 }}>
+                          <defs><linearGradient id="colorInquiries" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9} /><stop offset="95%" stopColor="#22d3ee" stopOpacity={0.4} /></linearGradient></defs>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.5)" />
+                          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} angle={isDesktop ? 0 : -45} textAnchor={isDesktop ? 'middle' : 'end'} interval={0} />
+                          <YAxis allowDecimals={false} stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(59, 130, 246, 0.1)" }} />
+                          <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px', color: '#475569' }} />
+                          <ReferenceLine y={averageInquiries} label={{ value: `Avg: ${averageInquiries.toFixed(1)}`, position: 'insideTopRight', fill: '#f43f5e', fontSize: 12, fontWeight: 'bold', dy: -10 }} stroke="#f43f5e" strokeDasharray="4 4" strokeWidth={1.5} />
+                          <Bar dataKey="Inquiries" fill="url(#colorInquiries)" barSize={isDesktop ? 20 : 15} radius={[6, 6, 0, 0]} activeBar={{ fill: '#2563eb', stroke: '#1e40af', strokeWidth: 1, fillOpacity: 1 }}>
+                            <LabelList dataKey="Inquiries" position="top" style={{ fill: '#1e40af', fontSize: '12px', fontWeight: 'bold' }} formatter={(value) => (value > 0 ? value : '')} />
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                </section>
+                <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
+                    <FaBullhorn className="text-pink-500 mr-3" /> Media Inquiries Over Time
+                  </h3>
+                  {isMediaLoading ? (
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center"><FaSpinner className="animate-spin text-4xl text-pink-500 mx-auto" /><p className="text-slate-500 mt-3">Loading chart data...</p></div>
+                  ) : mediaDataOverTime.every((d) => d["Media Inquiries"] === 0) ? (
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center"><FaBullhorn className="text-4xl text-slate-300 mx-auto" /><p className="text-slate-500 mt-3">No media inquiry data available for the last 12 months.</p></div>
+                  ) : (
+                    <div style={{ width: '100%', height: 350 }}>
+                      <ResponsiveContainer>
+                        <BarChart data={mediaDataOverTime} margin={{ top: 20, right: 30, left: 5, bottom: isDesktop ? 5 : 50 }}>
+                          <defs><linearGradient id="colorMedia" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ec4899" stopOpacity={0.9} /><stop offset="95%" stopColor="#f43f5e" stopOpacity={0.4} /></linearGradient></defs>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.5)" />
+                          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} angle={isDesktop ? 0 : -45} textAnchor={isDesktop ? 'middle' : 'end'} interval={0} />
+                          <YAxis allowDecimals={false} stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(236, 72, 153, 0.1)" }} />
+                          <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px', color: '#475569' }} />
+                          <ReferenceLine y={averageMediaInquiries} label={{ value: `Avg: ${averageMediaInquiries.toFixed(1)}`, position: 'insideTopRight', fill: '#16a34a', fontSize: 12, fontWeight: 'bold', dy: -10 }} stroke="#16a34a" strokeDasharray="4 4" strokeWidth={1.5} />
+                          <Bar dataKey="Media Inquiries" fill="url(#colorMedia)" barSize={isDesktop ? 20 : 15} radius={[6, 6, 0, 0]} activeBar={{ fill: '#ec4899', stroke: '#be123c', strokeWidth: 1, fillOpacity: 1 }}>
+                            <LabelList dataKey="Media Inquiries" position="top" style={{ fill: '#be123c', fontSize: '12px', fontWeight: 'bold' }} formatter={(value) => (value > 0 ? value : '')} />
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                </section>
+              </div>
               {/* Secondary Stats & Activity Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Blog Posts */}
@@ -2780,7 +2776,7 @@ const AdminPanel = () => {
                                 {job.title}
                               </h4>
                               <p className="text-sm text-slate-400">
-                                {job.location} 
+                                {job.location}
                               </p>
                             </div>
                             <span className="text-xs font-semibold text-blue-300 bg-blue-500/20 px-2 py-1 rounded-full whitespace-nowrap">
@@ -3621,11 +3617,10 @@ const AdminPanel = () => {
                               </p>
                             </div>
                             <span
-                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${
-                                inquiry.status === "read"
+                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${inquiry.status === "read"
                                   ? "bg-green-100 text-green-800"
                                   : "bg-yellow-100 text-yellow-800"
-                              }`}
+                                }`}
                             >
                               {inquiry.status}
                             </span>
@@ -3648,11 +3643,10 @@ const AdminPanel = () => {
                                   inquiry.status
                                 )
                               }
-                              className={`ml-4 ${
-                                inquiry.status === "read"
+                              className={`ml-4 ${inquiry.status === "read"
                                   ? "text-yellow-500 hover:text-yellow-400"
                                   : "text-green-500 hover:text-green-400"
-                              } transition-colors duration-200`}
+                                } transition-colors duration-200`}
                               title={
                                 inquiry.status === "read"
                                   ? "Mark as Unread"
@@ -3741,11 +3735,10 @@ const AdminPanel = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
-                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
-                                    inquiry.status === "read"
+                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${inquiry.status === "read"
                                       ? "bg-green-100 text-green-800"
                                       : "bg-yellow-100 text-yellow-800"
-                                  }`}
+                                    }`}
                                 >
                                   {inquiry.status}
                                 </span>
@@ -3765,11 +3758,10 @@ const AdminPanel = () => {
                                       inquiry.status
                                     )
                                   }
-                                  className={`p-2 rounded-full transition-all duration-200 ${
-                                    inquiry.status === "read"
+                                  className={`p-2 rounded-full transition-all duration-200 ${inquiry.status === "read"
                                       ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
                                       : "text-green-500 hover:text-green-700 hover:bg-green-100"
-                                  }`}
+                                    }`}
                                   title={
                                     inquiry.status === "read"
                                       ? "Mark as Unread"
@@ -3881,7 +3873,7 @@ const AdminPanel = () => {
                         className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
                       />
                     </div>
-                    
+
                     {/* NEW: Role Selection Dropdown */}
                     <div className="lg:col-span-1">
                       <label htmlFor="inviteRole" className="block text-sm font-medium text-slate-600 mb-2">
@@ -3898,7 +3890,7 @@ const AdminPanel = () => {
                       </select>
                     </div>
                   </div>
-                  
+
                   {/* Submit Button */}
                   <div className="flex justify-end">
                     <button
@@ -4020,11 +4012,11 @@ const AdminPanel = () => {
             </section>
           )}
           {activeTab === 'users' && userInfo?.role !== 'superAdmin' && (
-              <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-                  <FaExclamationCircle className="mx-auto text-red-500/50" size={80} />
-                  <h2 className="text-3xl font-extrabold text-slate-900 mt-6 mb-4">Access Denied</h2>
-                  <p className="text-lg text-slate-500">You do not have permission to view or manage users.</p>
-              </div>
+            <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
+              <FaExclamationCircle className="mx-auto text-red-500/50" size={80} />
+              <h2 className="text-3xl font-extrabold text-slate-900 mt-6 mb-4">Access Denied</h2>
+              <p className="text-lg text-slate-500">You do not have permission to view or manage users.</p>
+            </div>
           )}
         </div>
       </main>
@@ -4038,15 +4030,15 @@ const AdminPanel = () => {
           modalType === "job"
             ? "Confirm Job Deletion"
             : modalType === "blog"
-            ? "Confirm Blog Deletion"
-            : "Confirm User Deletion"
+              ? "Confirm Blog Deletion"
+              : "Confirm User Deletion"
         }
         message={
           modalType === "job"
             ? "Are you sure you want to delete this job? This action cannot be undone."
             : modalType === "blog"
-            ? "Are you sure you want to delete this blog post? This action cannot be undone."
-            : "Are you sure you want to delete this user? This will revoke their access permanently."
+              ? "Are you sure you want to delete this blog post? This action cannot be undone."
+              : "Are you sure you want to delete this user? This will revoke their access permanently."
         }
         isLoading={isDeletingJob || isDeletingBlog || isDeletingAdmin}
       />

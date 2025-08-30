@@ -22,4 +22,5 @@ export const mediaApi = createApi({
   }),
 });
 
-export const { useRequestCallbackMutation, useGetMediaInquiriesQuery } = mediaApi;
+export const { useRequestCallbackMutation, useGetMediaInquiriesQuery } =
+  mediaApi;

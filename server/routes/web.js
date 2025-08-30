@@ -18,7 +18,10 @@ const protect = require("../middleware/authMiddleware");
 // This middleware should check if req.user.isSuperAdmin === 1
 const restrictToSuperAdmin = require("../middleware/superAdminMiddleware");
 
-const { requestCallback,getAllMediaInquiries } = require("../controllers/MediaController");
+const {
+  requestCallback,
+  getAllMediaInquiries,
+} = require("../controllers/MediaController");
 
 const multer = require("multer");
 const blogController = require("../controllers/BlogController");
@@ -95,7 +98,6 @@ router.post("/contact/inquiries/:id/notes", addContactInquiryNote);
 router.post("/media/request-callback", requestCallback);
 // This route fetches all media inquiries for the admin panel (protected).
 router.get("/media", getAllMediaInquiries);
-
 
 // --- Other Existing Routes ---
 router.post("/ATL-inquiry", sendAtlInquiry);

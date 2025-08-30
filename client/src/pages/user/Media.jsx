@@ -667,11 +667,10 @@ const MediaFinderSection = ({ onOpenModal }) => {
                                 <button
                                   key={city}
                                   onClick={() => setSelectedCity(city)}
-                                  className={`w-full text-left p-2.5 my-1 rounded-md text-sm transition-colors ${
-                                    selectedCity === city
+                                  className={`w-full text-left p-2.5 my-1 rounded-md text-sm transition-colors ${selectedCity === city
                                       ? "bg-[#1a2a80] text-white font-bold"
                                       : "text-gray-700 hover:bg-gray-200/70"
-                                  }`}
+                                    }`}
                                 >
                                   {city}
                                 </button>

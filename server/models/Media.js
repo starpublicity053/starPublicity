@@ -22,6 +22,9 @@ const callbackRequestSchema = new mongoose.Schema(
   }
 );
 
-const CallbackRequest = mongoose.model("CallbackRequest", callbackRequestSchema);
+const CallbackRequest = mongoose.model(
+  "CallbackRequest",
+  callbackRequestSchema
+);
 
 module.exports = CallbackRequest;

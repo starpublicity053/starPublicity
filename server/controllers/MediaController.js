@@ -21,7 +21,9 @@ const requestCallback = async (req, res) => {
     // Send email notification to HR
     await sendCallbackRequestEmail({ name, phone, company });
 
-    res.status(201).json({ message: "Callback request received successfully." });
+    res
+      .status(201)
+      .json({ message: "Callback request received successfully." });
   } catch (error) {
     console.error("Error saving callback request:", error);
     res.status(500).json({ message: "Server error. Please try again later." });
