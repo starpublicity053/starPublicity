@@ -359,7 +359,7 @@ const LookWalker = () => {
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg')`, // Dark concrete texture
+            backgroundImage: `url('/assets/BTL marketing images/Look Walker ads/bg image.png')`, // Dark concrete texture
             filter: "brightness(0.5) contrast(1.1) grayscale(0.2)", // Darker, a bit desaturated, industrial feel
             transform: "scale(1.03)",
           }}
@@ -442,7 +442,7 @@ const LookWalker = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Huge billboard in a bustling city
+                src="/assets/BTL marketing images/Look Walker ads/walking.png" // Huge billboard in a bustling city
                 alt="Full wrap advertisement on public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -462,7 +462,7 @@ const LookWalker = () => {
           <div className="flex flex-col md:flex-row-reverse items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Digital advertising screen with abstract content
+                src="/assets/BTL marketing images/Look Walker ads/instant.png" // Digital advertising screen with abstract content
                 alt="Digital screens inside public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -482,7 +482,7 @@ const LookWalker = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Top-down view of complex road network
+                src="/assets/BTL marketing images/Look Walker ads/hyperlocal.png" // Top-down view of complex road network
                 alt="Map with highlighted routes and data"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />

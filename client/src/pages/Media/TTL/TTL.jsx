@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 import { useSendTTLInquiryMutation } from "../../../features/auth/contactApi";
 
 const ttlServices = [
-    { name: "Brand Collaboration", image: "https://images.pexels.com/photos/1379640/pexels-photo-1379640.jpeg", path: "/media/TTL/brand-collaboration", description: "Forge powerful alliances to amplify your brand's reach and impact." },
-    { name: "Email & WhatsApp Marketing", image: "https://images.pexels.com/photos/1456291/pexels-photo-1456291.jpeg", path: "/media/TTL/email-whatsapp-marketing", description: "Directly connect with your audience through personalized messaging campaigns." },
-    { name: "Google Ads", image: "https://images.pexels.com/photos/1525041/pexels-photo-1525041.jpeg", path: "/media/TTL/google-ads", description: "Dominate search results and reach customers actively looking for your services." },
-    { name: "Mall Inside LED Ads", image: "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg", path: "/media/TTL/mall-inside-led", description: "Capture attention in high-traffic retail environments with dynamic displays." },
-    { name: "MCLED Hoardings Ads", image: "https://images.pexels.com/photos/443446/pexels-photo-443446.jpeg", path: "/media/TTL/mc-led-hoardings", description: "Make a monumental impact with large-format outdoor advertising." },
-    { name: "Social Media Advertising", image: "https://images.pexels.com/photos/1629998/pexels-photo-1629998.jpeg", path: "/media/TTL/social-media-ads", description: "Engage with your audience where they spend most of their time online." },
+    { name: "Brand Collaboration", image: "/assets/TTL marketing images/brand collab.png", path: "/media/TTL/brand-collaboration", description: "Forge powerful alliances to amplify your brand's reach and impact." },
+    { name: "Email & WhatsApp Marketing", image: "/assets/TTL marketing images/email ad.png", path: "/media/TTL/email-whatsapp-marketing", description: "Directly connect with your audience through personalized messaging campaigns." },
+    { name: "Google Ads", image: "/assets/TTL marketing images/google ad.png", path: "/media/TTL/google-ads", description: "Dominate search results and reach customers actively looking for your services." },
+    { name: "Mall Inside LED Ads", image: "/assets/TTL marketing images/mall inside.png", path: "/media/TTL/mall-inside-led", description: "Capture attention in high-traffic retail environments with dynamic displays." },
+    { name: "MCLED Hoardings Ads", image: "/assets/TTL marketing images/mc led hoarding.png", path: "/media/TTL/mc-led-hoardings", description: "Make a monumental impact with large-format outdoor advertising." },
+    { name: "Social Media Advertising", image: "/assets/TTL marketing images/social media ads.png", path: "/media/TTL/social-media-ads", description: "Engage with your audience where they spend most of their time online." },
 ];
 
 const containerVariants = {

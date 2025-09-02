@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion"; // Imported for the new CTA section
 
+// Image imports
+import heroBg from "/assets/ATL marketing images/ATL marketing images/Airport ads/bg image.png";
+import benefitImg1 from "/assets/ATL marketing images/ATL marketing images/Airport ads/prestigious.png";
+import benefitImg2 from "/assets/ATL marketing images/ATL marketing images/Airport ads/multi format.png";
+import benefitImg3 from "/assets/ATL marketing images/ATL marketing images/Airport ads/event activation .png";
+
 const AirportAdvertisements = () => {
   const refs = [
     useRef(null), // Hero section container
@@ -178,7 +184,7 @@ const AirportAdvertisements = () => {
         <p class="text-sm">A testament to integrated physical and digital urban advertising.</p>
       `,
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png",
     },
     {
       id: "urban-connectivity", // Added unique ID
@@ -187,7 +193,7 @@ const AirportAdvertisements = () => {
       tagline:
         "Connecting communities through enhanced transit and strategic urban planning.",
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png",
     },
     {
       id: "data-marketing", // Added unique ID
@@ -196,7 +202,7 @@ const AirportAdvertisements = () => {
       tagline:
         "Leveraging insights to craft campaigns that speak directly to the audience.",
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png",
     },
     {
       id: "green-initiatives", // Added unique ID
@@ -205,7 +211,7 @@ const AirportAdvertisements = () => {
       tagline:
         "Inspiring eco-consciousness and promoting sustainable urban living solutions.",
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL marketing images/Wall Wraps.png",
     },
     {
       id: "cultural-arts", // Added unique ID
@@ -214,7 +220,7 @@ const AirportAdvertisements = () => {
       tagline:
         "Bringing vibrant cultural events and artistic expressions to every corner of the city.",
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL_BTL_TTL/Van activity/Van activity 1.png",
     },
     {
       id: "brand-evolution", // Added unique ID
@@ -223,7 +229,7 @@ const AirportAdvertisements = () => {
       tagline:
         "Sculpting unique brand identities that leave a lasting imprint on the urban landscape.",
       image:
-        "https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg",
+        "/assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png",
     },
   ];
 
@@ -359,7 +365,7 @@ const AirportAdvertisements = () => {
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg')`, // Dark concrete texture
+            backgroundImage: `url(${heroBg})`, // Dark concrete texture
             filter: "brightness(0.5) contrast(1.1) grayscale(0.2)", // Darker, a bit desaturated, industrial feel
             transform: "scale(1.03)",
           }}
@@ -432,7 +438,7 @@ const AirportAdvertisements = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Huge billboard in a bustling city
+                src={benefitImg1} // Huge billboard in a bustling city
                 alt="Full wrap advertisement on public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -452,7 +458,7 @@ const AirportAdvertisements = () => {
           <div className="flex flex-col md:flex-row-reverse items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Digital advertising screen with abstract content
+                src={benefitImg2} // Digital advertising screen with abstract content
                 alt="Digital screens inside public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -472,7 +478,7 @@ const AirportAdvertisements = () => {
           <div className="flex flex-col md:flex-row items-center md:items-stretch bg-white rounded-3xl shadow-xl overflow-hidden group">
             <div className="md:w-1/2 relative min-h-[300px] md:min-h-[400px] overflow-hidden">
               <img
-                src="https://www.arbeitstipps.de/wp-content/uploads/2019/01/atl-btl-marketing.jpg" // Top-down view of complex road network
+                src={benefitImg3} // Top-down view of complex road network
                 alt="Map with highlighted routes and data"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />

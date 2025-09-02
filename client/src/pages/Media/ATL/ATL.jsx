@@ -3,27 +3,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSendATLInquiryMutation } from "../../../features/auth/contactApi";
 
-// --- CORRECTED: No local image imports are needed. ---
-// The atlServices array now uses direct string paths.
-
 const atlServices = [
-    { name: "Unipoles", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/unipoles" },
-    { name: "Bus Branding", image: "/assets/ATL_BTL_TTL/BUS Branding/BUS Branding 1.png", path: "/media/ATL/bus-branding" },
-    { name: "Bus Stands", image: "/assets/ATL_BTL_TTL/Bus Stands/Bus Stands 1.png", path: "/media/ATL/bus-stands" },
-    { name: "Auto Branding", image: "/assets/ATL_BTL_TTL/Auto branding/Auto branding 1.png", path: "/media/ATL/auto-branding" },
-    { name: "City Gantries", image: "/assets/ATL_BTL_TTL/City Gantries/City Gantries 1.png", path: "/media/ATL/city-gantries" },
-    { name: "Kiosks Advertisements", image: "/assets/ATL_BTL_TTL/Kiosks Advertisements/Kiosks Advertisements 1.png", path: "/media/ATL/kiosks" },
-    { name: "City Mall Advertisements", image: "/assets/ATL_BTL_TTL/City Mall Advertisements/City Mall Advertisements 1.png", path: "/media/ATL/mall-ads" },
-    { name: "Van Activity", image: "/assets/ATL_BTL_TTL/Van activity/Van activity 1.png", path: "/media/ATL/van-activity" },
-    { name: "Petrol Pumps", image: "/assets/ATL_BTL_TTL/petrol pump/petrol pump 1.png", path: "/media/ATL/petrol-pumps" },
-    { name: "Wall Wraps", image: "/assets/ATL marketing images/Wall Wraps.png", path: "/media/ATL/wall-wraps" },
-    { name: "Wall Paintings", image: "/assets/ATL_BTL_TTL/wall painting/wall painting 1.png", path: "/media/ATL/wall-paintings" },
-    { name: "Indian Railway Trains/Stations", image: "/assets/ATL_BTL_TTL/Railway Station/Railway Station 2.png", path: "/media/ATL/railway-ads" },
-    { name: "Metro Trains/Stations", image: "/assets/ATL_BTL_TTL/Metro/Metro Advertisements 1.png", path: "/media/ATL/metro-ads" },
-    { name: "Airports Advertisements", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/airport-ads" },
-    { name: "Newspaper Advertisements", image: "/assets/ATL marketing images/Airport Advertising.png", path: "/media/ATL/newspaper-ads" },
-    { name: "News Channels Advertisements", image: "/assets/ATL_BTL_TTL/Metro/Television/Television 1.png", path: "/media/ATL/tv-ads" },
-    { name: "FM Radio Advertisements", image: "/assets/ATL_BTL_TTL/Metro/FM Radio/FM Radio 1.png", path: "/media/ATL/radio-ads" },
+    { name: "Unipoles", image: "/assets/ATL marketing images/ATL marketing images/unipole.png", url: "/media/ATL/unipoles" },
+    { name: "Bus Branding", image: "/assets/ATL marketing images/ATL marketing images/bus branding.png", url: "/media/ATL/bus-branding" },
+    { name: "Bus Stands", image: "/assets/ATL marketing images/ATL marketing images/bus stand.png", url: "/media/ATL/bus-stands" },
+    { name: "Auto Branding", image: "/assets/ATL marketing images/ATL marketing images/auto branding.png", url: "/media/ATL/auto-branding" },
+    { name: "City Gantries", image: "/assets/ATL marketing images/ATL marketing images/city gantries.png", url: "/media/ATL/city-gantries" },
+    { name: "Kiosks Advertisements", image: "/assets/ATL marketing images/ATL marketing images/kiosks ads.png", url: "/media/ATL/kiosks" },
+    { name: "City Mall Advertisements", image: "/assets/ATL marketing images/ATL marketing images/city mall.png", url: "/media/ATL/mall-ads" },
+    { name: "Van Activity", image: "/assets/ATL marketing images/ATL marketing images/van ads.png", url: "/media/ATL/van-activity" },
+    { name: "Petrol Pumps", image: "/assets/ATL marketing images/ATL marketing images/petrol pump.png", url: "/media/ATL/petrol-pumps" },
+    { name: "Wall Wraps", image: "/assets/ATL marketing images/ATL marketing images/Wall Wraps.png", url: "/media/ATL/wall-wraps" },
+    { name: "Wall Paintings", image: "/assets/ATL marketing images/ATL marketing images/wall painting.png", url: "/media/ATL/wall-paintings" },
+    { name: "Indian Railway Trains/Stations", image: "/assets/ATL marketing images/ATL marketing images/railway station.png", url: "/media/ATL/railway-ads" },
+    { name: "Metro Trains/Stations", image: "/assets/ATL marketing images/ATL marketing images/metro ads.png", url: "/media/ATL/metro-ads" },
+    { name: "Airports Advertisements", image: "/assets/ATL marketing images/ATL marketing images/Airport Advertising.png", url: "/media/ATL/airport-ads" },
+    { name: "Newspaper Advertisements", image: "/assets/ATL marketing images/ATL marketing images/newspaper ad.png", url: "/media/ATL/newspaper-ads" },
+    { name: "News Channels Advertisements", image: "/assets/ATL marketing images/ATL marketing images/News Channel ads.png", url: "/media/ATL/tv-ads" },
+    { name: "FM Radio Advertisements", image: "/assets/ATL marketing images/ATL marketing images/FM radio.png", url: "/media/ATL/radio-ads" },
 ];
 
 const differentiators = [
@@ -288,7 +285,7 @@ function ATLMarketing() {
                         <motion.div key={idx} variants={{ hidden: { opacity: 0, y: 50, scale: 0.95 }, visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } } }} className="group relative h-72 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 flip-card" >
                             <div className="flip-card-inner">
                                 <div className="flip-card-front">
-                                    <Link to={item.path} className="block w-full h-full">
+                                <Link to={item.url} className="block w-full h-full">
                                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                                         <div className="absolute bottom-0 left-0 p-4 text-white">
@@ -301,7 +298,7 @@ function ATLMarketing() {
                                     <p className="text-center text-sm px-4">
                                         Explore our {item.name.toLowerCase()} services to amplify your brand's reach and impact.
                                     </p>
-                                    <Link to={item.path} className="mt-6 inline-block bg-white text-[#1A2A80] font-semibold py-2 px-5 sm:px-6 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 text-sm" >
+                                <Link to={item.url} className="mt-6 inline-block bg-white text-[#1A2A80] font-semibold py-2 px-5 sm:px-6 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 text-sm" >
                                         Learn More
                                     </Link>
                                 </div>

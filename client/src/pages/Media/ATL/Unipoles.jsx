@@ -362,7 +362,7 @@ const Unipoles = () => {
           className="absolute inset-0 w-full h-full bg-cover bg-center"
           style={{
             // CORRECTED: Using direct path string for backgroundImage
-            backgroundImage: `url("/assets/ATL marketing images/Unipole/background image.png")`, 
+            backgroundImage: `url("/assets/ATL marketing images/ATL marketing images/Unipole/background image.png")`, 
             filter: "brightness(0.5) contrast(1.1) grayscale(0.2)",
             transform: "scale(1.03)",
           }}
@@ -426,7 +426,7 @@ const Unipoles = () => {
             <div className="md:w-1/2 relative overflow-hidden">
               <img
                 // CORRECTED: Using direct path string for src
-                src="/assets/ATL marketing images/Unipole/unmatched daylight visibility.png" 
+                src="/assets/ATL marketing images/ATL marketing images/Unipole/unmatched daylight visibility.png" 
                 alt="Full wrap advertisement on public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -447,7 +447,7 @@ const Unipoles = () => {
             <div className="md:w-1/2 relative overflow-hidden">
               <img
                 // CORRECTED: Using direct path string for src
-                src="/assets/ATL marketing images/Unipole/high traffic dominance.png" 
+                src="/assets/ATL marketing images/ATL marketing images/Unipole/high traffic dominance.png" 
                 alt="Digital screens inside public transport"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
@@ -468,7 +468,7 @@ const Unipoles = () => {
             <div className="md:w-1/2 relative overflow-hidden">
               <img
                 // CORRECTED: Using direct path string for src
-                src="/assets/ATL marketing images/Unipole/weatherproof brand presence.png" 
+                src="/assets/ATL marketing images/ATL marketing images/Unipole/weatherproof brand presence.png" 
                 alt="Map with highlighted routes and data"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
               />
