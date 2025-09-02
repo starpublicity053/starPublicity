@@ -20,6 +20,8 @@ import {
   Phone,
   Briefcase,
   Send,
+  Wallpaper,
+  Brush,
   Check, // ✅ Icon added
 } from "lucide-react";
 import {
@@ -450,17 +452,17 @@ const dashboardData = {
     Ludhiana: [
       {
         id: 1,
-        title: "Feroze Gandhi Market Hoarding",
-        type: "Hoardings",
+        title: "Feroze Gandhi Market Hoarding & Unipoles",
+        type: "Hoardings & Unipoles",
         category: "ATL",
         image:
           "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         audience: "Shoppers, Corporate",
-        impressions: "2.5M/month",
+        impressions: "3M/month",
       },
       {
         id: 2,
-        title: "City Circuit Bus Fleet",
+        title: "Ludhiana City Bus Branding",
         type: "Bus Branding",
         category: "ATL",
         image:
@@ -468,18 +470,85 @@ const dashboardData = {
         audience: "General Commuters",
         impressions: "4.2M/month",
       },
-    ],
-    Jaipur: [
       {
-        id: 3,
-        title: "World Trade Park Digital Screen",
-        type: "Digital OOH",
+        id: 10,
+        title: "Main Market Wall Wraps",
+        type: "Wall Wraps",
+        category: "BTL",
+        image:
+          "https://images.pexels.com/photos/1904100/pexels-photo-1904100.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        audience: "Shoppers, Local Residents",
+        impressions: "1.2M/month",
+      },
+      {
+        id: 11,
+        title: "Urban Area Wall Paintings",
+        type: "Wall Painting",
+        category: "BTL",
+        image:
+          "https://images.pexels.com/photos/1570264/pexels-photo-1570264.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        audience: "Pedestrians, Local Community",
+        impressions: "900k/month",
+      },
+      {
+        id: 44,
+        title: "Ludhiana City Bus",
+        type: "Ludhiana City Bus",
         category: "ATL",
         image:
-          "https://images.pexels.com/photos/226589/pexels-photo-226589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        audience: "High-End Shoppers",
-        impressions: "3.1M/month",
+          "https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        audience: "City Commuters, Students",
+        impressions: "3.8M/month",
       },
+    ],
+    Amritsar: [
+      { id: 12, title: "Amritsar Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/777059/pexels-photo-777059.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Tourists, General Public", impressions: "2.7M/month" },
+      { id: 13, title: "Amritsar Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/2132126/pexels-photo-2132126.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, Tourists", impressions: "3.5M/month" },
+      { id: 14, title: "Amritsar Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/162553/street-art-grafitti-mural-art-162553.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Local Residents", impressions: "1.0M/month" },
+      { id: 15, title: "Amritsar Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/2085998/pexels-photo-2085998.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "800k/month" },
+    ],
+    Jalandhar: [
+      { id: 16, title: "Jalandhar Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/2422588/pexels-photo-2422588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Public, Commuters", impressions: "2.2M/month" },
+      { id: 17, title: "Jalandhar Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters", impressions: "3.0M/month" },
+      { id: 18, title: "Jalandhar Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/1154638/pexels-photo-1154638.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Local Residents", impressions: "950k/month" },
+      { id: 19, title: "Jalandhar Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/2310641/pexels-photo-2310641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "750k/month" },
+    ],
+    Gurugram: [
+      { id: 20, title: "Gurugram Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Corporate, Tech Professionals", impressions: "5.5M/month" },
+      { id: 21, title: "Gurugram Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, IT Crowd", impressions: "6.0M/month" },
+      { id: 22, title: "Gurugram Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/220769/pexels-photo-220769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Corporate Employees", impressions: "2.5M/month" },
+      { id: 23, title: "Gurugram Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/1227520/pexels-photo-1227520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "1.8M/month" },
+    ],
+    Faridabad: [
+      { id: 24, title: "Faridabad Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/21014/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Industrial, General Public", impressions: "3.0M/month" },
+      { id: 25, title: "Faridabad Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/2418493/pexels-photo-2418493.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters", impressions: "3.2M/month" },
+      { id: 26, title: "Faridabad Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/2096983/pexels-photo-2096983.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Local Residents", impressions: "1.3M/month" },
+      { id: 27, title: "Faridabad Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/102127/pexels-photo-102127.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "1.0M/month" },
+    ],
+    "New Delhi": [
+      { id: 28, title: "New Delhi Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/933054/pexels-photo-933054.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Public, Tourists, Corporate", impressions: "10M/month" },
+      { id: 29, title: "New Delhi Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/3419692/pexels-photo-3419692.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, Tourists", impressions: "12M/month" },
+      { id: 30, title: "New Delhi Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/262367/pexels-photo-262367.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Urban Youth", impressions: "5.0M/month" },
+      { id: 31, title: "New Delhi Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/356079/pexels-photo-356079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "3.5M/month" },
+    ],
+    Noida: [
+      { id: 32, title: "Noida Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/2690323/pexels-photo-2690323.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "IT Professionals, Students", impressions: "4.5M/month" },
+      { id: 33, title: "Noida Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/1422408/pexels-photo-1422408.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, Students", impressions: "5.2M/month" },
+      { id: 34, title: "Noida Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Corporate Employees", impressions: "2.2M/month" },
+      { id: 35, title: "Noida Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/2749501/pexels-photo-2749501.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "1.5M/month" },
+    ],
+    Jaipur: [
+      { id: 3, title: "World Trade Park Digital Screen", type: "Digital OOH", category: "ATL", image: "https://images.pexels.com/photos/226589/pexels-photo-226589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "High-End Shoppers", impressions: "3.1M/month" },
+      { id: 36, title: "Jaipur Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/3584437/pexels-photo-3584437.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Tourists, General Public", impressions: "3.5M/month" },
+      { id: 37, title: "Jaipur Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/2236674/pexels-photo-2236674.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, Tourists", impressions: "4.5M/month" },
+      { id: 38, title: "Jaipur Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/1029141/pexels-photo-1029141.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Local Residents", impressions: "1.5M/month" },
+      { id: 39, title: "Jaipur Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/374894/pexels-photo-374894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "1.2M/month" },
+    ],
+    Jodhpur: [
+      { id: 40, title: "Jodhpur Hoarding & Unipoles", type: "Hoardings & Unipoles", category: "ATL", image: "https://images.pexels.com/photos/1007427/pexels-photo-1007427.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Tourists, General Public", impressions: "2.0M/month" },
+      { id: 41, title: "Jodhpur Bus Branding", type: "Bus Branding", category: "ATL", image: "https://images.pexels.com/photos/2403391/pexels-photo-2403391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "General Commuters, Tourists", impressions: "2.8M/month" },
+      { id: 42, title: "Jodhpur Wall Wraps", type: "Wall Wraps", category: "BTL", image: "https://images.pexels.com/photos/3601094/pexels-photo-3601094.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Shoppers, Local Residents", impressions: "900k/month" },
+      { id: 43, title: "Jodhpur Wall Paintings", type: "Wall Painting", category: "BTL", image: "https://images.pexels.com/photos/163036/mario-luigi-yoschi-figures-163036.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", audience: "Pedestrians, Local Community", impressions: "700k/month" },
     ],
   },
 };
@@ -583,11 +652,11 @@ const MediaFinderSection = ({ onOpenModal }) => {
   );
 
   const mediaTypeDetails = {
-    Hoardings: {
+    "Hoardings & Unipoles": {
       icon: <Building size={28} className="text-[#1a2a80]" />,
-      description: "Large format billboards on key routes.",
+      description: "Large format billboards and unipoles on key routes.",
       theory:
-        "Hoardings are a classic and powerful form of outdoor advertising. Placed along high-traffic roads and in key urban areas, they offer unparalleled visibility to a broad audience. Their large size makes them impossible to ignore, ensuring your brand message is seen by thousands of commuters, pedestrians, and drivers daily. They are perfect for brand-building, new product launches, and creating a massive local impact.",
+        "Hoardings and Unipoles are a classic and powerful form of outdoor advertising. Placed along high-traffic roads and in key urban areas, they offer unparalleled visibility to a broad audience. Their large size makes them impossible to ignore, ensuring your brand message is seen by thousands of commuters, pedestrians, and drivers daily. They are perfect for brand-building, new product launches, and creating a massive local impact.",
     },
     "Bus Branding": {
       icon: <Bus size={28} className="text-[#1a2a80]" />,
@@ -600,6 +669,24 @@ const MediaFinderSection = ({ onOpenModal }) => {
       description: "Dynamic digital screens in high-traffic areas.",
       theory:
         "Digital Out-of-Home (OOH) brings the flexibility and dynamism of online advertising to the physical world. Located in prime spots like malls, airports, and busy intersections, these screens can display video, animations, and changing messages. This allows for real-time updates, day-parting, and more engaging, contextually relevant advertising that captures modern audiences' attention.",
+    },
+    "Wall Wraps": {
+      icon: <Wallpaper size={28} className="text-[#1a2a80]" />,
+      description: "Large-scale graphics on building exteriors.",
+      theory:
+        "Wall wraps transform entire building facades into massive canvases for your brand. They create a high-impact, unmissable visual statement in urban environments. Ideal for high-traffic areas, they can generate significant buzz and social media sharing, making them perfect for major campaigns and brand launches.",
+    },
+    "Wall Painting": {
+      icon: <Brush size={28} className="text-[#1a2a80]" />,
+      description: "Artistic and durable hand-painted ads.",
+      theory:
+        "Wall paintings offer a unique, artistic, and authentic way to advertise. Hand-painted by skilled artists, these ads have a rustic charm and can become local landmarks. They are highly durable and offer a long-term presence in specific neighborhoods, connecting with the community on a deeper level.",
+    },
+    "Ludhiana City Bus": {
+      icon: <Bus size={28} className="text-[#1a2a80]" />,
+      description: "Exclusive branding on Ludhiana's dedicated city bus network.",
+      theory:
+        "Target the heart of Ludhiana with dedicated advertising on its city buses. This hyper-local approach ensures your message is seen by daily commuters, shoppers, and residents across all major routes within Ludhiana, providing high-frequency exposure to a captive urban audience.",
     },
   };
 
@@ -773,9 +860,9 @@ const AdvertisingMediaSection = () => {
   const mediaTypes = [
     {
       icon: <Building className="w-12 h-12 text-[#1a2a80]" />,
-      title: "Hoardings & Billboards",
+      title: "Hoardings & Unipoles",
       description:
-        "Capture attention on the busiest roads across North India with bold visuals.",
+        "Stand tall with unskippable displays on major highways and busiest roads.",
     },
     {
       icon: <Bus className="w-12 h-12 text-[#1a2a80]" />,
@@ -788,19 +875,19 @@ const AdvertisingMediaSection = () => {
       description: "Engage daily commuters at key metro and railway locations.",
     },
     {
-      icon: <Megaphone className="w-12 h-12 text-[#1a2a80]" />,
-      title: "Unipoles & Gantry Signs",
-      description: "Stand tall with unskippable displays on major highways.",
-    },
-    {
       icon: <MapPin className="w-12 h-12 text-[#1a2a80]" />,
       title: "Airport Advertising",
       description: "Engage with prestigious audiences at major airports.",
     },
     {
-      icon: <Building className="w-12 h-12 text-[#1a2a80]" />,
-      title: "Mall & Retail Branding",
-      description: "Engage shoppers at top malls with creative placements.",
+      icon: <Wallpaper className="w-12 h-12 text-[#1a2a80]" />,
+      title: "Wall Wraps",
+      description: "Create unmissable visual statements on building exteriors.",
+    },
+    {
+      icon: <Brush className="w-12 h-12 text-[#1a2a80]" />,
+      title: "Wall Painting",
+      description: "Connect with communities through artistic, hand-painted advertisements.",
     },
   ];
   return (
