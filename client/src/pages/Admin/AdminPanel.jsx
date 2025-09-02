@@ -2265,10 +2265,10 @@ const AdminPanel = () => {
           {activeTab === "welcome" && (
             <div className="space-y-6">
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-                Welcome,{" "}
-                <span className="truncate">
+                 Welcome,{" "}
+                <span className="truncate text-[#1a2a80]">
                   {userInfo?.name ||
-                    userInfo?.email ||
+                    // userInfo?.email ||
                     (userInfo?.role === "superAdmin" ? "Super Admin" : "Admin")}
                 </span>
                 !
