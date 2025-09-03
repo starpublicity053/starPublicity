@@ -48,24 +48,20 @@ const generateContentHTML = (blocks) => {
       html += `
         <div class="flex flex-col sm:flex-row gap-4 my-10">
           <figure class="flex-1 text-center">
-            <img src="${getOptimizedCloudinaryUrl(image1.url)}" alt="${
-        image1.caption || "Blog content image"
-      }" class="rounded-2xl shadow-lg" /> 
-            ${
-              image1.caption
-                ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${image1.caption}</figcaption>`
-                : ""
-            }
+            <img src="${getOptimizedCloudinaryUrl(image1.url)}" alt="${image1.caption || "Blog content image"
+        }" class="rounded-2xl shadow-lg" /> 
+            ${image1.caption
+          ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${image1.caption}</figcaption>`
+          : ""
+        }
           </figure>
           <figure class="flex-1 text-center">
-            <img src="${getOptimizedCloudinaryUrl(image2.url)}" alt="${
-        image2.caption || "Blog content image"
-      }" class="rounded-2xl shadow-lg" /> 
-            ${
-              image2.caption
-                ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${image2.caption}</figcaption>`
-                : ""
-            }
+            <img src="${getOptimizedCloudinaryUrl(image2.url)}" alt="${image2.caption || "Blog content image"
+        }" class="rounded-2xl shadow-lg" /> 
+            ${image2.caption
+          ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${image2.caption}</figcaption>`
+          : ""
+        }
           </figure>
         </div>
       `;
@@ -93,14 +89,12 @@ const generateContentHTML = (blocks) => {
       case "image":
         html += `
           <figure class="my-10 text-center">
-            <img src="${getOptimizedCloudinaryUrl(block.url)}" alt="${
-          block.caption || "Blog content image"
-        }" class="rounded-2xl shadow-lg mx-auto" />
-            ${
-              block.caption
-                ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${block.caption}</figcaption>`
-                : ""
-            }
+            <img src="${getOptimizedCloudinaryUrl(block.url)}" alt="${block.caption || "Blog content image"
+          }" class="rounded-2xl shadow-lg mx-auto" />
+            ${block.caption
+            ? `<figcaption class="text-gray-600 text-sm italic mt-2 font-serif">${block.caption}</figcaption>`
+            : ""
+          }
           </figure>`;
         break;
       case "quote":
@@ -177,11 +171,10 @@ const SidebarContent = ({
       {formSubmitted && submitMessage && (
         <div
           ref={feedbackRef}
-          className={`relative z-20 px-4 py-3 rounded-lg text-center animate-fade-in mb-4 ${
-            isSubmitSuccess
+          className={`relative z-20 px-4 py-3 rounded-lg text-center animate-fade-in mb-4 ${isSubmitSuccess
               ? "bg-green-100 border border-green-400 text-green-700"
               : "bg-red-100 border border-red-400 text-red-700"
-          }`}
+            }`}
           role="alert"
           aria-live="polite"
         >
@@ -313,8 +306,8 @@ const SidebarContent = ({
             {isSubmitting
               ? "Submitting..."
               : isSubmitSuccess
-              ? "Submitted!"
-              : "Submit Inquiry"}
+                ? "Submitted!"
+                : "Submit Inquiry"}
           </span>
         </button>
       </form>
@@ -476,8 +469,8 @@ const BlogDetailPage = () => {
         typeof post.content === "string"
           ? JSON.parse(post.content)
           : Array.isArray(post.content)
-          ? post.content
-          : [{ type: "paragraph", text: String(post.content) }];
+            ? post.content
+            : [{ type: "paragraph", text: String(post.content) }];
     } catch (error) {
       console.error("Error parsing blog content:", error);
       parsedContentBlocks = [{ type: "paragraph", text: post.content }];
@@ -598,10 +591,9 @@ const BlogDetailPage = () => {
         </div>
       </div>
 
-      <div className={`fixed bottom-8 right-4 sm:right-8 z-40 bg-white p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 ${
-          showStickyShare
-            ? "opacity-100 scale-100"
-            : "opacity-0 scale-90 pointer-events-none"
+      <div className={`fixed bottom-8 right-4 sm:right-8 z-40 bg-white p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 ${showStickyShare
+          ? "opacity-100 scale-100"
+          : "opacity-0 scale-90 pointer-events-none"
         } hidden md:flex flex-col space-y-3 sm:space-y-4 border border-blue-100`}>
         <a
           href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(post.title)}`}

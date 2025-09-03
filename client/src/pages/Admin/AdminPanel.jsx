@@ -5,43 +5,10 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import { FaMoon, FaSun, FaBars, FaBlog, FaBoxOpen, FaBullhorn, FaBriefcase, FaEnvelope, FaBell, FaUserCircle, FaSignOutAlt, FaSearch, FaTrash, FaUpload, FaPen, FaTachometerAlt, FaChartBar, FaClock, FaUserShield, FaUserPlus, FaUsers, FaUserSlash, FaUserCheck, FaCalendarAlt, FaFire, FaSpinner, FaExclamationCircle, FaTimesCircle, FaSyncAlt, FaArrowUp, FaArrowDown, FaReply, FaEye, FaCheckCircle, FaStickyNote, FaPlus, FaFileDownload, FaInfoCircle, FaUser, FaPhone, FaMapMarkerAlt, FaTag, FaLightbulb, FaExternalLinkAlt } from "react-icons/fa";
+
+// Use aliases for icons that have a generic name to avoid conflicts and improve clarity
 import {
-  FaBars,
-  FaBlog,
-  FaBoxOpen,
-  FaBullhorn, // New: Icon for media inquiries
-  FaBriefcase,
-  FaEnvelope,
-  FaBell,
-  FaUserCircle,
-  FaSignOutAlt,
-  FaSearch,
-  FaTrash,
-  FaUpload,
-  FaPen,
-  FaTachometerAlt,
-  FaChartBar,
-  FaClock,
-  FaUserShield,
-  FaUserPlus,
-  FaUsers,
-  FaUserSlash,
-  FaUserCheck,
-  FaCalendarAlt,
-  FaFire,
-  FaSpinner,
-  FaExclamationCircle,
-  FaTimesCircle,
-  FaSyncAlt,
-  FaArrowUp,
-  FaArrowDown,
-  FaReply,
-  FaEye,
-  FaCheckCircle, // New: For marking as read
-  FaStickyNote, // New: For adding notes
-  FaPlus, // New: For add note button
-  FaFileDownload, // New: For the download button
-  FaInfoCircle, // New: For inquiry details icon
   FaCalendarAlt as FaCalendarIcon,
   FaUser as FaUserIcon,
   FaEnvelope as FaEnvelopeIcon,
@@ -52,7 +19,6 @@ import {
   FaLightbulb as FaStatusIcon,
   FaExternalLinkAlt as FaForwardIcon,
 } from "react-icons/fa";
-import { FaMoon, FaSun } from "react-icons/fa"; // New: For theme toggle
 
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../features/auth/authSlice"; // Import the logout action
@@ -2027,10 +1993,10 @@ const AdminPanel = () => {
         className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${isDesktop ? "md:ml-64" : ""
           }`}
       >
-        <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
+        <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-2 sm:px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
           {isMobileSearchVisible && !isDesktop ? (
-            <div className="relative w-full flex items-center">
-              <FaSearch className="absolute left-3.5 text-slate-500 text-base" />
+            <div className="relative w-full flex items-center px-2">
+              <FaSearch className="absolute left-3.5 texdt-slate-500 text-base" />
               <input
                 type="search"
                 placeholder={`Search in ${activeTab}...`}
@@ -2055,13 +2021,8 @@ const AdminPanel = () => {
                 >
                   <FaBars size={24} />
                 </button>
-                <h1 className="text-lg md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight capitalize truncate">
-                  {activeTab === "welcome"
-                    ? "Dashboard"
-                    : `${activeTab} Management`}
-                </h1>
               </div>
-              <div className="flex items-center gap-3 md:gap-6">
+              <div className="flex items-center gap-1 sm:gap-3 md:gap-6">
                 {searchableTabs.includes(activeTab) && (
                   <div className="relative hidden md:block group">
                     <input
@@ -2260,20 +2221,20 @@ const AdminPanel = () => {
         </header>
 
         {/* Content Sections */}
-        <div className="flex-grow p-4 md:p-6 overflow-y-auto space-y-10 custom-scrollbar">
+        <div className="flex-grow p-4 sm:p-6 overflow-y-auto space-y-8 custom-scrollbar">
           {/* Welcome Section */}
           {activeTab === "welcome" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            <div className="space-y-8">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
                 Welcome,{" "}
-                <span className="truncate text-[#1a2a80]">
+                <span className="truncate text-[#1A2A80]">
                   {userInfo?.name ||
                     // userInfo?.email ||
                     (userInfo?.role === "superAdmin" ? "Super Admin" : "Admin")}
                 </span>
                 !
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 mb-8">
                 <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 flex items-center gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5">
                   <div className="bg-gradient-to-br from-indigo-500 to-blue-500 text-white shadow-lg shadow-indigo-500/30 rounded-full p-4">
                     <FaBriefcase size={28} />
@@ -2351,7 +2312,7 @@ const AdminPanel = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
                   <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
                     <FaChartBar className="text-teal-500 mr-3" /> Contact Inquiries Over Time
@@ -2521,10 +2482,13 @@ const AdminPanel = () => {
 
           {/* Jobs Management Section */}
           {activeTab === "jobs" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                Job Listings
-              </h2>
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-4 md:p-6">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200 -m-4 md:-m-6 mb-6">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaBriefcase className="text-[#1A2A80]" />
+                  <span>Job Management</span>
+                </h2>
+              </div>
 
               {/* Button to show/hide Job Creation Form */}
               <button
@@ -2536,7 +2500,7 @@ const AdminPanel = () => {
 
               {/* Job Creation Form - UPDATED */}
               {showJobForm && (
-                <div className="bg-slate-50 p-6 md:p-8 rounded-2xl shadow-inner mb-10 border border-slate-200">
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
                   <h3 className="text-2xl font-bold text-slate-800 mb-6">
                     Post a New Job
                   </h3>
@@ -2556,8 +2520,8 @@ const AdminPanel = () => {
                         value={jobFormData.title}
                         onChange={handleJobChange}
                         placeholder="e.g., Senior React Developer"
-                        required
-                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        required                 
+                         className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       />
                     </div>
                     {/* Location */}
@@ -2575,8 +2539,7 @@ const AdminPanel = () => {
                         value={jobFormData.location}
                         onChange={handleJobChange}
                         placeholder="e.g., Remote, New York, USA"
-                        required
-                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       />
                     </div>
                     {/* Employment Type */}
@@ -2592,8 +2555,7 @@ const AdminPanel = () => {
                         name="timeType"
                         value={jobFormData.timeType}
                         onChange={handleJobChange}
-                        required
-                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       >
                         <option value="">Select employment type</option>
                         <option value="Full-time">Full-time</option>
@@ -2617,8 +2579,7 @@ const AdminPanel = () => {
                         onChange={handleJobChange}
                         placeholder="Provide a brief summary of the job..."
                         rows="4"
-                        required
-                        className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-y text-slate-800"
+                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-y text-slate-800 dark:text-slate-200"
                       ></textarea>
                     </div>
                     {/* Responsibilities */}
@@ -2644,12 +2605,12 @@ const AdminPanel = () => {
                             }
                           }}
                           placeholder="Add one responsibility and press Enter or click Add"
-                          className="flex-grow px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                          className="flex-grow px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                         />
                         <button
                           type="button"
                           onClick={handleAddResponsibility}
-                          className="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200 transition-colors"
+                          className="px-4 py-2 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors"
                         >
                           Add
                         </button>
@@ -2658,7 +2619,7 @@ const AdminPanel = () => {
                         {jobFormData.responsibilities.map((item, index) => (
                           <li
                             key={index}
-                            className="flex items-center justify-between bg-slate-200 p-2 rounded-lg text-sm"
+                            className="flex items-center justify-between bg-slate-200 dark:bg-slate-700 p-2 rounded-lg text-sm"
                           >
                             <span className="text-slate-700">{item}</span>
                             <button
@@ -2695,12 +2656,12 @@ const AdminPanel = () => {
                             }
                           }}
                           placeholder="Add one requirement and press Enter or click Add"
-                          className="flex-grow px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                          className="flex-grow px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                         />
                         <button
                           type="button"
                           onClick={handleAddRequirement}
-                          className="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200 transition-colors"
+                          className="px-4 py-2 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors"
                         >
                           Add
                         </button>
@@ -2709,7 +2670,7 @@ const AdminPanel = () => {
                         {jobFormData.requirements.map((item, index) => (
                           <li
                             key={index}
-                            className="flex items-center justify-between bg-slate-200 p-2 rounded-lg text-sm"
+                            className="flex items-center justify-between bg-slate-200 dark:bg-slate-700 p-2 rounded-lg text-sm"
                           >
                             <span className="text-slate-700">{item}</span>
                             <button
@@ -2740,7 +2701,7 @@ const AdminPanel = () => {
               )}
 
               {/* Job Listings Table / Cards */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
                 <h3 className="text-2xl font-bold text-slate-800 mb-6">
                   Existing Jobs
                 </h3>
@@ -2771,8 +2732,8 @@ const AdminPanel = () => {
                           className="bg-white p-4 rounded-xl shadow-md border border-slate-200"
                         >
                           <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-bold text-lg text-slate-100">
+                            <div className="flex-1">
+                              <h4 className="font-bold text-lg text-[#1A2A80] dark:text-blue-300 truncate">
                                 {job.title}
                               </h4>
                               <p className="text-sm text-slate-400">
@@ -2833,7 +2794,7 @@ const AdminPanel = () => {
                           {filteredJobs.map((job) => (
                             <tr key={job._id} className="hover:bg-slate-100">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                {job.title}
+                                <span className="font-bold text-[#1A2A80]">{job.title}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {job.location}
@@ -2867,10 +2828,13 @@ const AdminPanel = () => {
 
           {/* Blog Management Section */}
           {activeTab === "blogs" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                Blog Management
-              </h2>
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-4 md:p-6">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200 -m-4 md:-m-6 mb-6">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaBlog className="text-[#1A2A80]" />
+                  <span>Blog Management</span>
+                </h2>
+              </div>
 
               {/* Button to show/hide Blog Creation Form */}
               <button
@@ -2882,7 +2846,7 @@ const AdminPanel = () => {
 
               {/* Blog Creation/Edit Form */}
               {showBlogForm && (
-                <div className="bg-slate-50 p-6 md:p-8 rounded-2xl shadow-inner mb-10 border border-slate-200">
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
                   <h3 className="text-2xl font-bold text-slate-800 mb-6">
                     {isEditingBlog ? "Edit Blog Post" : "Create New Blog Post"}
                   </h3>
@@ -3314,7 +3278,7 @@ const AdminPanel = () => {
               )}
 
               {/* Blog Listings Table */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
                 <h3 className="text-2xl font-bold text-slate-800 mb-6">
                   Existing Blog Posts
                 </h3>
@@ -3346,8 +3310,8 @@ const AdminPanel = () => {
                           key={blog._id}
                           className="bg-white p-4 rounded-xl shadow-md border border-slate-200"
                         >
-                          <h4 className="font-bold text-lg text-slate-100">
-                            {blog.title}
+                          <h4 className="font-bold text-lg text-[#1A2A80] dark:text-blue-300 truncate">
+                            {blog.title} 
                           </h4>
                           <p className="text-sm text-slate-400">
                             by {blog.author}
@@ -3413,7 +3377,7 @@ const AdminPanel = () => {
                           {filteredBlogPosts.map((blog) => (
                             <tr key={blog._id} className="hover:bg-slate-100">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                {blog.title}
+                                <span className="font-bold text-[#1A2A80]">{blog.title}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {blog.author}
@@ -3454,12 +3418,18 @@ const AdminPanel = () => {
 
           {/* Media Inquiries Section */}
           {activeTab === "media" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                Media Inquiries
-              </h2>
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaBullhorn className="text-[#1A2A80]" />
+                  <span>Media Inquiries</span>
+                </h2>
+              </div>
+              
+              
+              <div className="p-4 md:p-6">
               {/* Filtering and Sorting for Media Inquiries */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-10 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
                   <label htmlFor="mediaInquirySortBy" className="text-slate-600 font-medium text-sm">Sort by:</label>
                   <select
@@ -3481,12 +3451,13 @@ const AdminPanel = () => {
                 </button>
               </div>
               {/* Media Inquiry Listings Table */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
                 <h3 className="text-2xl font-bold text-slate-800 mb-6">All Media Inquiries</h3>
                 {isMediaLoading ? (
                   <div className="text-center py-10"><FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" /><p className="text-slate-500 mt-3">Loading media inquiries...</p></div>
                 ) : isMediaError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load media inquiries.</span></div>
+                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load media inquiries.</span>
+                  </div>
                 ) : sortedMediaInquiries.length === 0 ? (
                   <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative"><strong className="font-bold">Info!</strong><span className="block sm:inline ml-2">No media inquiries found.</span></div>
                 ) : (
@@ -3504,7 +3475,7 @@ const AdminPanel = () => {
                       <tbody className="divide-y divide-slate-200/70 bg-white">
                         {sortedMediaInquiries.map((inquiry) => (
                           <tr key={inquiry._id} className="hover:bg-slate-100">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{inquiry.name || 'N/A'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900"><span className="font-bold text-[#1A2A80]">{inquiry.name || 'N/A'}</span></td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.company || 'N/A'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.phone || 'N/A'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{new Date(inquiry.createdAt).toLocaleDateString()}</td>
@@ -3518,18 +3489,22 @@ const AdminPanel = () => {
                   </div>
                 )}
               </div>
+              </div>
             </section>
           )}
 
           {/* Contact Management Section */}
           {activeTab === "contact" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                Contact Inquiries
-              </h2>
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaEnvelope className="text-[#1A2A80]" />
+                  <span>Contact Inquiries</span>
+                </h2>
+              </div>
 
-              {/* Filtering and Sorting for Inquiries */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-10 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
+              <div className="p-4 md:p-6">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
                   <label
                     htmlFor="inquiryFilter"
@@ -3575,7 +3550,7 @@ const AdminPanel = () => {
               </div>
 
               {/* Inquiry Listings Table */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
                 <h3 className="text-2xl font-bold text-slate-800 mb-6">
                   All Inquiries
                 </h3>
@@ -3585,19 +3560,9 @@ const AdminPanel = () => {
                     <p className="text-slate-500 mt-3">Loading inquiries...</p>
                   </div>
                 ) : isInquiriesError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Error!</strong>
-                    <span className="block sm:inline ml-2">
-                      Failed to load inquiries.
-                    </span>
-                  </div>
+                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load inquiries.</span></div>
                 ) : sortedInquiries.length === 0 ? (
-                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Info!</strong>
-                    <span className="block sm:inline ml-2">
-                      No inquiries found matching your criteria.
-                    </span>
-                  </div>
+                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative"><strong className="font-bold">Info!</strong><span className="block sm:inline ml-2">No inquiries found matching your criteria.</span></div>
                 ) : (
                   <div>
                     {/* Mobile Card View */}
@@ -3609,7 +3574,7 @@ const AdminPanel = () => {
                         >
                           <div className="flex justify-between items-start gap-2">
                             <div>
-                              <h4 className="font-bold text-lg text-slate-100">
+                              <h4 className="font-bold text-lg text-[#1a2a80] dark:text-blue-300">
                                 {inquiry.name}
                               </h4>
                               <p className="text-sm text-slate-400 break-all">
@@ -3718,7 +3683,7 @@ const AdminPanel = () => {
                           {sortedInquiries.map((inquiry) => (
                             <tr key={inquiry._id} className="hover:bg-slate-100">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                {inquiry.name}
+                                <span className="font-bold text-[#1A2A80]">{inquiry.name}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {inquiry.email}
@@ -3792,12 +3757,21 @@ const AdminPanel = () => {
                   </div>
                 )}
               </div>
+              </div>
             </section>
           )}
 
           {/* Products Section - Add your content here */}
           {activeTab === "products" && (
-            <section className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaBoxOpen className="text-[#1A2A80]" />
+                  <span>Product Management</span>
+                </h2>
+              </div>
+              
+              <div className="text-center py-20 p-4 md:p-6">
               <h2 className="text-4xl font-extrabold text-slate-900 mb-6">
                 Products Coming Soon!
               </h2>
@@ -3808,17 +3782,22 @@ const AdminPanel = () => {
               <div className="mt-8">
                 <FaBoxOpen className="mx-auto text-blue-500/20" size={100} />
               </div>
+              </div>
+              
             </section>
           )}
           {/* User Management Section */}
           {activeTab === "users" && userInfo?.role === "superAdmin" && (
-            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-8">
-                User Management
-              </h2>
+            <section className="bg-white border border-slate-200 rounded-2xl shadow-xl">
+              <div className="p-4 md:p-6 bg-slate-50/50 rounded-t-2xl border-b border-slate-200">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+                  <FaUsers className="text-[#1A2A80]" />
+                  <span>User Management</span>
+                </h2>
+              </div>
 
-              {/* Invite User Form */}
-              <div className="bg-slate-50 p-6 md:p-8 rounded-2xl shadow-inner mb-10 border border-slate-200">
+              <div className="p-4 md:p-6">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
                 <h3 className="text-2xl font-bold text-slate-800 mb-6">
                   Invite New Admin
                 </h3>
@@ -3908,9 +3887,8 @@ const AdminPanel = () => {
                   </div>
                 </form>
               </div>
-
               {/* Existing Users Table */}
-              <div className="bg-slate-50 p-4 md:p-8 rounded-2xl shadow-inner border border-slate-200">
+              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-2xl font-bold text-slate-800">
                     Existing Admins
@@ -3954,7 +3932,7 @@ const AdminPanel = () => {
                           <tr key={admin._id} className="hover:bg-slate-100">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 flex items-center gap-4">
                               <img src={getAvatarUrl(admin.name || admin.email, 40)} alt={`${admin.name || admin.email}'s avatar`} className="w-10 h-10 rounded-full object-cover" />
-                              <p className="font-bold text-slate-800">{admin.name || 'N/A'}</p>
+                              <p className="font-bold text-[#1A2A80]">{admin.name || 'N/A'}</p>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                               {admin.email}
@@ -4008,6 +3986,7 @@ const AdminPanel = () => {
                     </table>
                   </div>
                 )}
+              </div>
               </div>
             </section>
           )}
