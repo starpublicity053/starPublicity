@@ -2225,7 +2225,7 @@ const AdminPanel = () => {
           {/* Welcome Section */}
           {activeTab === "welcome" && (
             <div className="space-y-8">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
                 Welcome,{" "}
                 <span className="truncate text-[#1A2A80]">
                   {userInfo?.name ||
