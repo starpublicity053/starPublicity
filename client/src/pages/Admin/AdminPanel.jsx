@@ -1446,28 +1446,28 @@ const AdminPanel = () => {
     formData.append("keyHighlights", JSON.stringify(blogData.keyHighlights));
 
     if (heroImageFile) {
-      formData.append("image", heroImageFile);
+      formData.append("image", heroImageFile); // multer will look for 'image' field
     } else if (isEditingBlog && existingImageId) {
       formData.append("imageId", existingImageId);
     }
 
-    blogData.contentBlocks.forEach((block) => {
+    // Create a clean version of contentBlocks for the JSON payload
+    const contentForPayload = blogData.contentBlocks.map(block => {
       if (block.type === "image" && block.file) {
-        formData.append(block.id, block.file); // Use a unique identifier like block.id as the key
+        // Replace the local blob URL with a placeholder that includes the unique ID.
+        // The backend will use this ID to find the corresponding file.
+        const imageKey = `contentImage_${block.id}`;
+        formData.append(imageKey, block.file);
+        // The backend will receive the file with key `imageKey` and can map it back
+        return { ...block, file: null, url: `placeholder:${block.id}` }; // placeholder for backend
       }
+      // For other blocks or existing images (which have a URL but no file), return them as is.
+      return block;
     });
 
     formData.append(
       "content",
-      JSON.stringify(
-        blogData.contentBlocks.map((block) => {
-          if (block.type === "image" && block.file) {
-            // Replace the local URL with a placeholder that the backend can recognize
-            return { ...block, file: null, url: `placeholder:${block.id}` };
-          }
-          return block;
-        })
-      )
+      JSON.stringify(contentForPayload)
     );
 
     try {
@@ -1989,8 +1989,8 @@ const AdminPanel = () => {
               if (!isDesktop) setIsSidebarOpen(false);
             }}
             className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === "welcome"
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+              : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
               }`}
           >
             <span className="w-6 text-center text-lg"><FaTachometerAlt /></span>
@@ -2004,8 +2004,8 @@ const AdminPanel = () => {
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
               className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === key
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                  : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
                 }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
@@ -2265,7 +2265,7 @@ const AdminPanel = () => {
           {activeTab === "welcome" && (
             <div className="space-y-6">
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-                 Welcome,{" "}
+                Welcome,{" "}
                 <span className="truncate text-[#1a2a80]">
                   {userInfo?.name ||
                     // userInfo?.email ||
@@ -3618,8 +3618,8 @@ const AdminPanel = () => {
                             </div>
                             <span
                               className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${inquiry.status === "read"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
                                 }`}
                             >
                               {inquiry.status}
@@ -3644,8 +3644,8 @@ const AdminPanel = () => {
                                 )
                               }
                               className={`ml-4 ${inquiry.status === "read"
-                                  ? "text-yellow-500 hover:text-yellow-400"
-                                  : "text-green-500 hover:text-green-400"
+                                ? "text-yellow-500 hover:text-yellow-400"
+                                : "text-green-500 hover:text-green-400"
                                 } transition-colors duration-200`}
                               title={
                                 inquiry.status === "read"
@@ -3736,8 +3736,8 @@ const AdminPanel = () => {
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
                                   className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${inquiry.status === "read"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-yellow-100 text-yellow-800"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-yellow-100 text-yellow-800"
                                     }`}
                                 >
                                   {inquiry.status}
@@ -3759,8 +3759,8 @@ const AdminPanel = () => {
                                     )
                                   }
                                   className={`p-2 rounded-full transition-all duration-200 ${inquiry.status === "read"
-                                      ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
-                                      : "text-green-500 hover:text-green-700 hover:bg-green-100"
+                                    ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
+                                    : "text-green-500 hover:text-green-700 hover:bg-green-100"
                                     }`}
                                   title={
                                     inquiry.status === "read"

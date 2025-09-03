@@ -4,11 +4,11 @@ const cloudinary = require("../config/Cloudinary");
 const streamifier = require("streamifier");
 
 // Helper to upload an image buffer to Cloudinary
-const uploadImageToCloudinary = (fileBuffer, folder) => {
+const uploadImageToCloudinary = (fileBuffer, folder, transformation = []) => {
   return new Promise((resolve, reject) => {
     if (!fileBuffer) return resolve(null);
     const stream = cloudinary.uploader.upload_stream(
-      { folder },
+      { folder, transformation },
       (error, result) => {
         error ? reject(error) : resolve(result);
       }
@@ -28,8 +28,7 @@ const deleteImageFromCloudinary = (publicId) => {
 // Create a new blog post
 exports.createBlogPost = async (req, res) => {
   try {
-    // FIXED: Changed destructuring to use 'title' and 'author' to match the frontend
-    const { title, author, tags, keyHighlightsTitle, keyHighlights, content } =
+    const { title, author, tags, keyHighlightsTitle, keyHighlights, content, slug } =
       req.body;
 
     const contentBlocks = JSON.parse(content);
@@ -44,19 +43,28 @@ exports.createBlogPost = async (req, res) => {
       "blog_featured_images"
     );
 
-    // Upload images from within the content blocks
     for (const block of contentBlocks) {
-      if (block.type === "image" && block.url.startsWith("blob:")) {
-        const fileToUpload = req.files.find(
-          (f) => f.fieldname === `contentImage_${block.id}`
-        );
-        if (fileToUpload) {
-          const contentImgResult = await uploadImageToCloudinary(
-            fileToUpload.buffer,
-            "blog_content_images"
-          );
-          block.url = contentImgResult.secure_url;
-          block.imageId = contentImgResult.public_id;
+      if (block.type === 'image' && block.url && block.url.startsWith('placeholder:')) {
+        const blockId = block.url.split(':')[1];
+        // Multer stores files keyed by their fieldname. We can access it directly.
+        const imageFile = req.files.find(f => f.fieldname === `contentImage_${blockId}`);
+        if (imageFile) {
+          // Apply transformations ONLY to content images to make them smaller
+          const result = await uploadImageToCloudinary(
+            imageFile.buffer,
+            'blog_content_images',
+            [
+              {
+                // Resize to a max width of 800px, keeping aspect ratio.
+                // This is a good balance for quality and size.
+                width: 800,
+                crop: 'limit'
+              }
+            ]);
+          block.url = result.secure_url;
+          block.imageId = result.public_id;
+        } else {
+          block.url = '';
         }
       }
     }
@@ -68,6 +76,7 @@ exports.createBlogPost = async (req, res) => {
       keyHighlightsTitle,
       keyHighlights: JSON.parse(keyHighlights || "[]"),
       imageUrl: featuredUploadResult.secure_url,
+      slug,
       imageId: featuredUploadResult.public_id,
       content: contentBlocks,
     });
@@ -86,8 +95,7 @@ exports.createBlogPost = async (req, res) => {
 exports.updateBlogPost = async (req, res) => {
   try {
     const { id } = req.params;
-    // FIXED: Changed destructuring to use 'title' and 'author'
-    const { title, author, tags, keyHighlightsTitle, keyHighlights, content } =
+    const { title, author, tags, keyHighlightsTitle, keyHighlights, content, slug } =
       req.body;
 
     const blogToUpdate = await BlogPost.findById(id);
@@ -125,17 +133,26 @@ exports.updateBlogPost = async (req, res) => {
     );
 
     for (const block of incomingContentBlocks) {
-      if (block.type === "image" && block.url.startsWith("blob:")) {
-        const fileToUpload = req.files.find(
-          (f) => f.fieldname === `contentImage_${block.id}`
-        );
-        if (fileToUpload) {
+      if (block.type === 'image' && block.url && block.url.startsWith('placeholder:')) {
+        const blockId = block.url.split(':')[1];
+        const imageFile = req.files.find(f => f.fieldname === `contentImage_${blockId}`);
+        if (imageFile) {
+          // Also apply transformations on update
           const result = await uploadImageToCloudinary(
-            fileToUpload.buffer,
-            "blog_content_images"
-          );
+            imageFile.buffer,
+            'blog_content_images',
+            [
+              {
+                // Resize to a max width of 800px, keeping aspect ratio.
+                // This is a good balance for quality and size.
+                width: 800,
+                crop: 'limit'
+              }
+            ]);
           block.url = result.secure_url;
           block.imageId = result.public_id;
+        } else {
+          block.url = '';
         }
       }
     }
@@ -146,6 +163,7 @@ exports.updateBlogPost = async (req, res) => {
     blogToUpdate.tags = JSON.parse(tags || "[]");
     blogToUpdate.keyHighlightsTitle = keyHighlightsTitle;
     blogToUpdate.keyHighlights = JSON.parse(keyHighlights || "[]");
+    blogToUpdate.slug = slug;
     blogToUpdate.imageUrl = newImageUrl;
     blogToUpdate.imageId = newImageId;
     blogToUpdate.content = incomingContentBlocks;
@@ -174,7 +192,10 @@ exports.getAllBlogPosts = async (req, res) => {
 // Get a single blog post by ID
 exports.getBlogPostById = async (req, res) => {
   try {
-    const blog = await BlogPost.findById(req.params.id);
+    // Fetch by slug or ID for flexibility
+    const blog = await BlogPost.findOne({
+      $or: [{ _id: req.params.id }, { slug: req.params.id }],
+    });
     if (!blog) return res.status(404).json({ message: "Blog not found" });
     res.status(200).json(blog);
   } catch (error) {

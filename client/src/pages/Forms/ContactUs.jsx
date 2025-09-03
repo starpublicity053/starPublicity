@@ -34,6 +34,13 @@ const XLogoIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+const YoutubeIcon = ({ size = 24, className = "" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10C2.5 6 4.5 4 7 4h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2h0z"></path>
+    <path d="m10 15 5-3-5-3z"></path>
+  </svg>
+);
+
 const animationStyles = `
     :root { --primary-blue: #1a2a80; --secondary-yellow: #facc15; --tertiary-purple: #8b5cf6; }
     @keyframes orbit-outer { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -200,14 +207,15 @@ const pageData = {
   outerNodes: [
     { icon: Mail, angle: 0, label: "Email", href: "mailto:info@starpublicity.co.in" },
     { icon: Phone, angle: 90, label: "Call", href: "tel:01614668602" },
-    { icon: MessageSquare, angle: 180, label: "WhatsApp", href: "https://wa.me/918283980649" },
+    { icon: MessageSquare, angle: 180, label: "WhatsApp", href: "https://wa.me/917403434074" },
     { icon: LucideGlobe, angle: 270, label: "Website", href: "/" }
   ],
   innerNodes: [
     { icon: Facebook, angle: 0, label: "Facebook", href: "https://www.facebook.com/starpublicityldh" },
-    { icon: Instagram, angle: 90, label: "Instagram", href: "https://www.instagram.com/starpublicity/" },
-    { icon: XLogoIcon, angle: 180, label: "X", href: "#" },
-    { icon: Linkedin, angle: 270, label: "LinkedIn", href: "#" }
+    { icon: Instagram, angle: 72, label: "Instagram", href: "https://www.instagram.com/starpublicityldh/" },
+    { icon: XLogoIcon, angle: 144, label: "X", href: "https://x.com/starpublicityld" },
+    { icon: Linkedin, angle: 216, label: "LinkedIn", href: "https://www.linkedin.com/in/shivam-kumar-0b17342a8/" },
+    { icon: YoutubeIcon, angle: 288, label: "YouTube", href: "https://www.youtube.com/@StarPublicity" }
   ],
   features: [
     { icon: Clock, title: "Speed to Market", description: "We launch your campaigns quickly to seize market opportunities and maximize relevance." },
