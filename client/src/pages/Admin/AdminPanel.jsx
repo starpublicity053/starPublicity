@@ -5,7 +5,52 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { FaMoon, FaSun, FaBars, FaBlog, FaBoxOpen, FaBullhorn, FaBriefcase, FaEnvelope, FaBell, FaUserCircle, FaSignOutAlt, FaSearch, FaTrash, FaUpload, FaPen, FaTachometerAlt, FaChartBar, FaClock, FaUserShield, FaUserPlus, FaUsers, FaUserSlash, FaUserCheck, FaCalendarAlt, FaFire, FaSpinner, FaExclamationCircle, FaTimesCircle, FaSyncAlt, FaArrowUp, FaArrowDown, FaReply, FaEye, FaCheckCircle, FaStickyNote, FaPlus, FaFileDownload, FaInfoCircle, FaUser, FaPhone, FaMapMarkerAlt, FaTag, FaLightbulb, FaExternalLinkAlt } from "react-icons/fa";
+import {
+  FaMoon,
+  FaSun,
+  FaBars,
+  FaBlog,
+  FaBoxOpen,
+  FaBullhorn,
+  FaBriefcase,
+  FaEnvelope,
+  FaBell,
+  FaUserCircle,
+  FaSignOutAlt,
+  FaSearch,
+  FaTrash,
+  FaUpload,
+  FaPen,
+  FaTachometerAlt,
+  FaChartBar,
+  FaClock,
+  FaUserShield,
+  FaUserPlus,
+  FaUsers,
+  FaUserSlash,
+  FaUserCheck,
+  FaCalendarAlt,
+  FaFire,
+  FaSpinner,
+  FaExclamationCircle,
+  FaTimesCircle,
+  FaSyncAlt,
+  FaArrowUp,
+  FaArrowDown,
+  FaReply,
+  FaEye,
+  FaCheckCircle,
+  FaStickyNote,
+  FaPlus,
+  FaFileDownload,
+  FaInfoCircle,
+  FaUser,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaTag,
+  FaLightbulb,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 
 // Use aliases for icons that have a generic name to avoid conflicts and improve clarity
 import {
@@ -186,26 +231,25 @@ const useAverageOverTime = (data, dataKey) => {
     if (!data || data.length === 0) {
       return 0;
     }
-    const total = data.reduce(
-      (sum, entry) => sum + (entry[dataKey] || 0),
-      0
-    );
+    const total = data.reduce((sum, entry) => sum + (entry[dataKey] || 0), 0);
     // Average over the full 12-month period for a more stable metric.
     // This gives a clear view of average monthly performance over the year.
     return total / 12;
   }, [data, dataKey]);
 };
 
-
 // Custom Tooltip for Recharts
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const data = payload[0];
-    const colorClass = data.dataKey === 'Inquiries' ? 'text-blue-600' : 'text-pink-600';
+    const colorClass =
+      data.dataKey === "Inquiries" ? "text-blue-600" : "text-pink-600";
     return (
       <div className="p-4 bg-white/90 backdrop-blur-sm shadow-lg rounded-xl border border-slate-200">
         <p className="label font-bold text-slate-800">{`${label}`}</p>
-        <p className={`intro font-semibold ${colorClass}`}>{`${data.name} : ${data.value}`}</p>
+        <p
+          className={`intro font-semibold ${colorClass}`}
+        >{`${data.name} : ${data.value}`}</p>
       </div>
     );
   }
@@ -356,10 +400,22 @@ const InquiryDetailModal = ({
             value={inquiry.email}
           />
           <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
-            <span className="text-blue-400 mr-3 mt-1 text-lg"><FaStatusIcon /></span>
+            <span className="text-blue-400 mr-3 mt-1 text-lg">
+              <FaStatusIcon />
+            </span>
             <div>
-              <strong className="block text-sm font-semibold text-slate-600">Status:</strong>
-              <span className={`text-base break-words font-semibold capitalize ${inquiry.status === 'read' ? 'text-green-400' : 'text-yellow-400'}`}>{inquiry.status}</span>
+              <strong className="block text-sm font-semibold text-slate-600">
+                Status:
+              </strong>
+              <span
+                className={`text-base break-words font-semibold capitalize ${
+                  inquiry.status === "read"
+                    ? "text-green-400"
+                    : "text-yellow-400"
+                }`}
+              >
+                {inquiry.status}
+              </span>
             </div>
           </div>
           <DetailItem
@@ -553,7 +609,9 @@ const AdminPanel = () => {
   const [isMobileSearchVisible, setIsMobileSearchVisible] = useState(false);
 
   // New: Theme and Quick Actions state
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light"
+  );
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const quickActionsRef = useRef(null);
   const quickActionsButtonRef = useRef(null);
@@ -601,7 +659,10 @@ const AdminPanel = () => {
     try {
       await logoutMutation().unwrap(); // Optional: Call backend logout endpoint
     } catch (error) {
-      console.error("Server logout failed, proceeding with client-side logout.", error);
+      console.error(
+        "Server logout failed, proceeding with client-side logout.",
+        error
+      );
     }
     dispatch(logoutAction());
     // The SessionManager in App.jsx will now handle the redirect to /login
@@ -630,8 +691,7 @@ const AdminPanel = () => {
   // New states for Media Inquiry Filtering, Sorting, and Modal
   const [mediaInquiryFilter, setMediaInquiryFilter] = useState("all"); // e.g., 'all', 'new', 'contacted'
   const [mediaInquirySortBy, setMediaInquirySortBy] = useState("latest"); // 'latest', 'oldest', 'name'
-  const [isMediaInquiryModalOpen, setIsMediaInquiryModalOpen] =
-    useState(false);
+  const [isMediaInquiryModalOpen, setIsMediaInquiryModalOpen] = useState(false);
   const [selectedMediaInquiry, setSelectedMediaInquiry] = useState(null);
 
   // Confirmation modal states
@@ -715,10 +775,12 @@ const AdminPanel = () => {
     isError: isAdminError,
     refetch: refetchAdmins,
   } = useGetAdminsQuery();
-  const [inviteAdmin, { isLoading: isInvitingAdmin }] = useInviteAdminMutation();
+  const [inviteAdmin, { isLoading: isInvitingAdmin }] =
+    useInviteAdminMutation();
   const [updateAdminRole, { isLoading: isUpdatingAdminRole }] =
     useUpdateAdminRoleMutation();
-  const [deleteAdmin, { isLoading: isDeletingAdmin }] = useDeleteAdminMutation();
+  const [deleteAdmin, { isLoading: isDeletingAdmin }] =
+    useDeleteAdminMutation();
   const [updateAdminStatus, { isLoading: isUpdatingAdminStatus }] =
     useUpdateAdminStatusMutation();
   const {
@@ -733,7 +795,11 @@ const AdminPanel = () => {
   useEffect(() => {
     if (isMediaError) {
       console.error("Error loading media inquiries:", mediaError);
-      toast.error(`Media Load Error: ${mediaError?.data?.message || 'Check console for details'}`);
+      toast.error(
+        `Media Load Error: ${
+          mediaError?.data?.message || "Check console for details"
+        }`
+      );
     }
   }, [isMediaError, mediaError]);
 
@@ -785,33 +851,58 @@ const AdminPanel = () => {
     jobs.forEach((job) => {
       if (new Date(job.createdAt).getTime() > checkTimestamp) {
         newFoundNotifications.push({
-          id: `job-${job._id}`, icon: <FaBriefcase className="text-blue-500" />, message: `New job posted: "${job.title}"`, timestamp: job.createdAt, link: "jobs",
+          id: `job-${job._id}`,
+          icon: <FaBriefcase className="text-blue-500" />,
+          message: `New job posted: "${job.title}"`,
+          timestamp: job.createdAt,
+          link: "jobs",
         });
       }
     });
     blogPosts.forEach((blog) => {
       if (new Date(blog.createdAt).getTime() > checkTimestamp) {
         newFoundNotifications.push({
-          id: `blog-${blog._id}`, icon: <FaBlog className="text-orange-500" />, message: `New blog published: "${blog.title}"`, timestamp: blog.createdAt, link: "blogs",
+          id: `blog-${blog._id}`,
+          icon: <FaBlog className="text-orange-500" />,
+          message: `New blog published: "${blog.title}"`,
+          timestamp: blog.createdAt,
+          link: "blogs",
         });
       }
     });
     inquiries.forEach((inquiry) => {
       if (new Date(inquiry.createdAt).getTime() > checkTimestamp) {
         newFoundNotifications.push({
-          id: `inquiry-${inquiry._id}`, icon: <FaEnvelope className="text-teal-500" />, message: `New inquiry from: "${inquiry.name}"`, timestamp: inquiry.createdAt, link: "contact",
+          id: `inquiry-${inquiry._id}`,
+          icon: <FaEnvelope className="text-teal-500" />,
+          message: `New inquiry from: "${inquiry.name}"`,
+          timestamp: inquiry.createdAt,
+          link: "contact",
         });
       }
     });
 
     if (newFoundNotifications.length > 0) {
       const existingIds = new Set(notifications.map((n) => n.id));
-      const trulyNew = newFoundNotifications.filter((n) => !existingIds.has(n.id));
+      const trulyNew = newFoundNotifications.filter(
+        (n) => !existingIds.has(n.id)
+      );
       if (trulyNew.length > 0) {
-        setNotifications((prev) => [...prev, ...trulyNew].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)));
+        setNotifications((prev) =>
+          [...prev, ...trulyNew].sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          )
+        );
       }
     }
-  }, [jobs, blogPosts, inquiries, isJobsLoading, isBlogsLoading, isInquiriesLoading]);
+  }, [
+    jobs,
+    blogPosts,
+    inquiries,
+    isJobsLoading,
+    isBlogsLoading,
+    isInquiriesLoading,
+  ]);
 
   // Effect to close notification panel on outside click
   useEffect(() => {
@@ -859,7 +950,10 @@ const AdminPanel = () => {
         case "welcome":
           // Refresh all data for the dashboard
           await Promise.all([
-            refetchJobs(), refetchBlogs(), refetchInquiries(), refetchMedia(),
+            refetchJobs(),
+            refetchBlogs(),
+            refetchInquiries(),
+            refetchMedia(),
           ]);
           break;
         default:
@@ -961,7 +1055,9 @@ const AdminPanel = () => {
         (blog.content &&
           typeof blog.content === "string" &&
           blog.content.toLowerCase().includes(lowerSearch)) ||
-        blog.tags?.some((tag) => (tag || "").toLowerCase().includes(lowerSearch))
+        blog.tags?.some((tag) =>
+          (tag || "").toLowerCase().includes(lowerSearch)
+        )
     );
   }, [blogPosts, blogSearchTerm]);
 
@@ -1139,7 +1235,8 @@ const AdminPanel = () => {
       else if (modalType === "user") await deleteAdmin(modalId).unwrap();
 
       toast.success(
-        `${modalType.charAt(0).toUpperCase() + modalType.slice(1)
+        `${
+          modalType.charAt(0).toUpperCase() + modalType.slice(1)
         } deleted successfully!`
       );
     } catch (err) {
@@ -1172,7 +1269,20 @@ const AdminPanel = () => {
       return [];
     }
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const monthlyData = {};
 
     // Initialize the last 12 months to ensure a consistent timeline
@@ -1180,12 +1290,15 @@ const AdminPanel = () => {
     for (let i = 11; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
-      const monthName = `${monthNames[d.getMonth()]} '${d.getFullYear().toString().slice(-2)}`;
+      const monthName = `${monthNames[d.getMonth()]} '${d
+        .getFullYear()
+        .toString()
+        .slice(-2)}`;
       monthlyData[monthKey] = { name: monthName, Inquiries: 0 };
     }
 
     // Populate with actual inquiry counts
-    inquiries.forEach(inquiry => {
+    inquiries.forEach((inquiry) => {
       const date = new Date(inquiry.createdAt);
       const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
       if (monthlyData[monthKey]) {
@@ -1196,7 +1309,7 @@ const AdminPanel = () => {
     return Object.values(monthlyData);
   }, [inquiries, isInquiriesLoading]);
 
-  const averageInquiries = useAverageOverTime(inquiryDataOverTime, 'Inquiries');
+  const averageInquiries = useAverageOverTime(inquiryDataOverTime, "Inquiries");
 
   // New: Process media inquiry data for the bar chart
   const mediaDataOverTime = useMemo(() => {
@@ -1204,7 +1317,20 @@ const AdminPanel = () => {
       return [];
     }
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const monthlyData = {};
 
     // Initialize the last 12 months
@@ -1212,12 +1338,15 @@ const AdminPanel = () => {
     for (let i = 11; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
-      const monthName = `${monthNames[d.getMonth()]} '${d.getFullYear().toString().slice(-2)}`;
+      const monthName = `${monthNames[d.getMonth()]} '${d
+        .getFullYear()
+        .toString()
+        .slice(-2)}`;
       monthlyData[monthKey] = { name: monthName, "Media Inquiries": 0 };
     }
 
     // Populate with actual inquiry counts
-    mediaInquiries.forEach(inquiry => {
+    mediaInquiries.forEach((inquiry) => {
       const date = new Date(inquiry.createdAt);
       const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
       if (monthlyData[monthKey]) {
@@ -1227,7 +1356,10 @@ const AdminPanel = () => {
     return Object.values(monthlyData);
   }, [mediaInquiries, isMediaLoading]);
 
-  const averageMediaInquiries = useAverageOverTime(mediaDataOverTime, 'Media Inquiries');
+  const averageMediaInquiries = useAverageOverTime(
+    mediaDataOverTime,
+    "Media Inquiries"
+  );
 
   // --- Blog Management Handlers ---
 
@@ -1418,7 +1550,7 @@ const AdminPanel = () => {
     }
 
     // Create a clean version of contentBlocks for the JSON payload
-    const contentForPayload = blogData.contentBlocks.map(block => {
+    const contentForPayload = blogData.contentBlocks.map((block) => {
       if (block.type === "image" && block.file) {
         // Replace the local blob URL with a placeholder that includes the unique ID.
         // The backend will use this ID to find the corresponding file.
@@ -1431,10 +1563,7 @@ const AdminPanel = () => {
       return block;
     });
 
-    formData.append(
-      "content",
-      JSON.stringify(contentForPayload)
-    );
+    formData.append("content", JSON.stringify(contentForPayload));
 
     try {
       if (isEditingBlog) {
@@ -1606,7 +1735,7 @@ const AdminPanel = () => {
     } catch (error) {
       console.error("Failed to forward inquiry:", error);
       toast.error(
-        `Failed to forward inquiry: ${error?.data?.message || "Server error"}`,
+        `Failed to forward inquiry: ${error?.data?.message || "Server error"}`
       );
     }
   };
@@ -1726,11 +1855,26 @@ const AdminPanel = () => {
     const generationDate = `Generated on: ${new Date().toLocaleString()}`;
     const totalInquiries = `Total Inquiries: ${sortedInquiries.length}`;
 
-    const headers = ["Full Name", "Email", "Message", "Status", "Received Date", "Notes"];
+    const headers = [
+      "Full Name",
+      "Email",
+      "Message",
+      "Status",
+      "Received Date",
+      "Notes",
+    ];
     const data = sortedInquiries.map((inquiry) => {
-      const notes = (inquiry.notes && inquiry.notes.length > 0)
-        ? inquiry.notes.map(note => `${note.content} (on ${new Date(note.createdAt).toLocaleString()})`).join("\n")
-        : "No notes";
+      const notes =
+        inquiry.notes && inquiry.notes.length > 0
+          ? inquiry.notes
+              .map(
+                (note) =>
+                  `${note.content} (on ${new Date(
+                    note.createdAt
+                  ).toLocaleString()})`
+              )
+              .join("\n")
+          : "No notes";
       return [
         inquiry.name || "N/A",
         inquiry.email || "N/A",
@@ -1748,29 +1892,48 @@ const AdminPanel = () => {
       [totalInquiries],
       [], // Spacer
       headers,
-      ...data
+      ...data,
     ];
     const ws = XLSX.utils.aoa_to_sheet(finalData);
 
     // --- 3. Styling Definitions (same as media export) ---
-    const titleStyle = { font: { name: "Arial", sz: 24, bold: true, color: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" } };
-    const subtitleStyle = { font: { name: "Arial", sz: 12, italic: true, color: { rgb: "6B7280" } }, alignment: { horizontal: "center", vertical: "center" } };
-    const summaryStyle = { font: { name: "Arial", sz: 12, bold: true, color: { rgb: "334155" } }, alignment: { horizontal: "center", vertical: "center" } };
+    const titleStyle = {
+      font: { name: "Arial", sz: 24, bold: true, color: { rgb: "1E3A8A" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+    const subtitleStyle = {
+      font: { name: "Arial", sz: 12, italic: true, color: { rgb: "6B7280" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
+    const summaryStyle = {
+      font: { name: "Arial", sz: 12, bold: true, color: { rgb: "334155" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    };
     const headerStyle = {
       font: { name: "Arial", sz: 13, bold: true, color: { rgb: "FFFFFF" } },
       fill: { fgColor: { rgb: "2563EB" } }, // Professional Blue
       alignment: { horizontal: "center", vertical: "center" },
-      border: { top: { style: "thin", color: { rgb: "1E40AF" } }, bottom: { style: "thin", color: { rgb: "1E40AF" } }, left: { style: "thin", color: { rgb: "1E40AF" } }, right: { style: "thin", color: { rgb: "1E40AF" } } },
+      border: {
+        top: { style: "thin", color: { rgb: "1E40AF" } },
+        bottom: { style: "thin", color: { rgb: "1E40AF" } },
+        left: { style: "thin", color: { rgb: "1E40AF" } },
+        right: { style: "thin", color: { rgb: "1E40AF" } },
+      },
     };
     const dataCellStyle = {
       font: { name: "Arial", sz: 11, color: { rgb: "000000" } },
       alignment: { vertical: "center", wrapText: true },
-      border: { top: { style: "thin", color: { rgb: "D1D5DB" } }, bottom: { style: "thin", color: { rgb: "D1D5DB" } }, left: { style: "thin", color: { rgb: "D1D5DB" } }, right: { style: "thin", color: { rgb: "D1D5DB" } } },
+      border: {
+        top: { style: "thin", color: { rgb: "D1D5DB" } },
+        bottom: { style: "thin", color: { rgb: "D1D5DB" } },
+        left: { style: "thin", color: { rgb: "D1D5DB" } },
+        right: { style: "thin", color: { rgb: "D1D5DB" } },
+      },
     };
     const altRowFill = { fill: { fgColor: { rgb: "F3F4F6" } } };
 
     // --- 4. Apply Styles and Formatting ---
-    const range = XLSX.utils.decode_range(ws['!ref']);
+    const range = XLSX.utils.decode_range(ws["!ref"]);
     const headerRowIndex = 4;
 
     for (let R = range.s.r; R <= range.e.r; ++R) {
@@ -1779,10 +1942,22 @@ const AdminPanel = () => {
         let cell = ws[cell_ref];
         if (!cell) continue;
 
-        if (R === 0) { cell.s = titleStyle; continue; }
-        if (R === 1) { cell.s = subtitleStyle; continue; }
-        if (R === 2) { cell.s = summaryStyle; continue; }
-        if (R === headerRowIndex) { cell.s = headerStyle; continue; }
+        if (R === 0) {
+          cell.s = titleStyle;
+          continue;
+        }
+        if (R === 1) {
+          cell.s = subtitleStyle;
+          continue;
+        }
+        if (R === 2) {
+          cell.s = summaryStyle;
+          continue;
+        }
+        if (R === headerRowIndex) {
+          cell.s = headerStyle;
+          continue;
+        }
         if (R > headerRowIndex) {
           cell.s = JSON.parse(JSON.stringify(dataCellStyle));
           if (R % 2 === 0) {
@@ -1793,20 +1968,37 @@ const AdminPanel = () => {
     }
 
     // --- 5. Column Widths, Row Heights, and Merges ---
-    ws["!cols"] = [{ wch: 30 }, { wch: 35 }, { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 50 }];
-    ws["!rows"] = [{ hpt: 40 }, { hpt: 20 }, { hpt: 20 }, { hpt: 10 }, { hpt: 25 }];
+    ws["!cols"] = [
+      { wch: 30 },
+      { wch: 35 },
+      { wch: 50 },
+      { wch: 15 },
+      { wch: 25 },
+      { wch: 50 },
+    ];
+    ws["!rows"] = [
+      { hpt: 40 },
+      { hpt: 20 },
+      { hpt: 20 },
+      { hpt: 10 },
+      { hpt: 25 },
+    ];
     ws["!merges"] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }, // Title
       { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }, // Subtitle
       { s: { r: 2, c: 0 }, e: { r: 2, c: 5 } }, // Summary
     ];
-    ws['!autofilter'] = { ref: `A${headerRowIndex + 1}:F${headerRowIndex + 1}` };
+    ws["!autofilter"] = {
+      ref: `A${headerRowIndex + 1}:F${headerRowIndex + 1}`,
+    };
 
     // --- 6. File Generation ---
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Contact Inquiries");
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
     saveAs(dataBlob, "StarPublicity_Contact_Inquiries_Report.xlsx");
   }, [sortedInquiries]);
 
@@ -1818,12 +2010,12 @@ const AdminPanel = () => {
     const totalInquiries = `Total Inquiries: ${sortedMediaInquiries.length}`;
 
     const headers = ["Name", "Company Name", "Contact Number", "Received Date"];
-    const data = sortedMediaInquiries.map((inquiry) => ([
+    const data = sortedMediaInquiries.map((inquiry) => [
       inquiry.name || "N/A",
       inquiry.company || "N/A",
       inquiry.phone || "N/A",
       new Date(inquiry.createdAt).toLocaleString(),
-    ]));
+    ]);
 
     // --- 2. Worksheet Creation ---
     const finalData = [
@@ -1832,7 +2024,7 @@ const AdminPanel = () => {
       [totalInquiries],
       [], // Spacer
       headers,
-      ...data
+      ...data,
     ];
     const ws = XLSX.utils.aoa_to_sheet(finalData);
 
@@ -1873,7 +2065,7 @@ const AdminPanel = () => {
     const altRowFill = { fill: { fgColor: { rgb: "F3F4F6" } } }; // Light Gray for zebra stripes
 
     // --- 4. Apply Styles and Formatting ---
-    const range = XLSX.utils.decode_range(ws['!ref']);
+    const range = XLSX.utils.decode_range(ws["!ref"]);
     const headerRowIndex = 4;
 
     for (let R = range.s.r; R <= range.e.r; ++R) {
@@ -1882,13 +2074,26 @@ const AdminPanel = () => {
         let cell = ws[cell_ref];
         if (!cell) continue;
 
-        if (R === 0) { cell.s = titleStyle; continue; }
-        if (R === 1) { cell.s = subtitleStyle; continue; }
-        if (R === 2) { cell.s = summaryStyle; continue; }
-        if (R === headerRowIndex) { cell.s = headerStyle; continue; }
+        if (R === 0) {
+          cell.s = titleStyle;
+          continue;
+        }
+        if (R === 1) {
+          cell.s = subtitleStyle;
+          continue;
+        }
+        if (R === 2) {
+          cell.s = summaryStyle;
+          continue;
+        }
+        if (R === headerRowIndex) {
+          cell.s = headerStyle;
+          continue;
+        }
         if (R > headerRowIndex) {
           cell.s = JSON.parse(JSON.stringify(dataCellStyle)); // Deep copy
-          if (R % 2 === 0) { // Zebra stripes on even data rows (R is 0-indexed)
+          if (R % 2 === 0) {
+            // Zebra stripes on even data rows (R is 0-indexed)
             cell.s.fill = altRowFill.fill;
           }
         }
@@ -1916,13 +2121,17 @@ const AdminPanel = () => {
     ];
 
     // Add auto-filter to the header row
-    ws['!autofilter'] = { ref: `A${headerRowIndex + 1}:D${headerRowIndex + 1}` };
+    ws["!autofilter"] = {
+      ref: `A${headerRowIndex + 1}:D${headerRowIndex + 1}`,
+    };
 
     // --- 6. File Generation ---
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Media Inquiries");
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
     saveAs(dataBlob, "StarPublicity_Media_Inquiries_Report.xlsx");
   }, [sortedMediaInquiries]);
 
@@ -1930,7 +2139,9 @@ const AdminPanel = () => {
   return (
     <div
       className="flex h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200 overflow-hidden relative isolate"
-      style={{ backgroundImage: `radial-gradient(at 20% 80%, hsla(212,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 20%, hsla(289,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 80%, hsla(180,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(26, 42, 128, 0.07) 0px, transparent 50%)` }}
+      style={{
+        backgroundImage: `radial-gradient(at 20% 80%, hsla(212,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 20%, hsla(289,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 80% 80%, hsla(180,100%,50%,0.05) 0px, transparent 50%), radial-gradient(at 50% 50%, rgba(26, 42, 128, 0.07) 0px, transparent 50%)`,
+      }}
     >
       {/* Sidebar Navigation */}
       <aside
@@ -1954,12 +2165,15 @@ const AdminPanel = () => {
               setActiveTab("welcome");
               if (!isDesktop) setIsSidebarOpen(false);
             }}
-            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === "welcome"
-              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-              : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-              }`}
+            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
+              activeTab === "welcome"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+            }`}
           >
-            <span className="w-6 text-center text-lg"><FaTachometerAlt /></span>
+            <span className="w-6 text-center text-lg">
+              <FaTachometerAlt />
+            </span>
             Dashboard
           </button>
           {menuItems.map(({ key, label, icon }) => (
@@ -1969,10 +2183,11 @@ const AdminPanel = () => {
                 setActiveTab(key);
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
-              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === key
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-                }`}
+              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
+                activeTab === key
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+                  : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+              }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
             </button>
@@ -1990,8 +2205,9 @@ const AdminPanel = () => {
 
       {/* Main Content Area */}
       <main
-        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${isDesktop ? "md:ml-64" : ""
-          }`}
+        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${
+          isDesktop ? "md:ml-64" : ""
+        }`}
       >
         <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-2 sm:px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
           {isMobileSearchVisible && !isDesktop ? (
@@ -2080,7 +2296,7 @@ const AdminPanel = () => {
                         >
                           <FaBlog className="text-orange-500" /> Create New Blog
                         </button>
-                        {userInfo?.role === 'superAdmin' && (
+                        {userInfo?.role === "superAdmin" && (
                           <button
                             onClick={() => {
                               setActiveTab("users");
@@ -2088,7 +2304,8 @@ const AdminPanel = () => {
                             }}
                             className="w-full text-left px-4 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-3"
                           >
-                            <FaUserPlus className="text-green-500" /> Invite New Admin
+                            <FaUserPlus className="text-green-500" /> Invite New
+                            Admin
                           </button>
                         )}
                       </div>
@@ -2102,7 +2319,11 @@ const AdminPanel = () => {
                   className="relative text-slate-500 hover:text-slate-900 transition-all duration-300 p-2 rounded-full hover:bg-slate-200/70 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700"
                   title="Toggle Theme"
                 >
-                  {theme === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
+                  {theme === "light" ? (
+                    <FaMoon size={20} />
+                  ) : (
+                    <FaSun size={20} />
+                  )}
                 </button>
 
                 <button
@@ -2113,8 +2334,9 @@ const AdminPanel = () => {
                 >
                   <FaSyncAlt
                     size={20}
-                    className={`${isRefreshing ? "animate-spin" : ""
-                      } transition-transform group-hover:rotate-180 duration-500`}
+                    className={`${
+                      isRefreshing ? "animate-spin" : ""
+                    } transition-transform group-hover:rotate-180 duration-500`}
                   />
                 </button>
 
@@ -2240,7 +2462,9 @@ const AdminPanel = () => {
                     <FaBriefcase size={28} />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm font-medium">Total Jobs</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      Total Jobs
+                    </p>
                     <h3 className="text-3xl font-extrabold text-slate-800">
                       {isJobsLoading ? (
                         <FaSpinner className="animate-spin" />
@@ -2255,7 +2479,9 @@ const AdminPanel = () => {
                     <FaClock size={28} />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm font-medium">Full-time</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      Full-time
+                    </p>
                     <h3 className="text-3xl font-extrabold text-slate-800">
                       {isJobsLoading ? (
                         <FaSpinner className="animate-spin" />
@@ -2270,7 +2496,9 @@ const AdminPanel = () => {
                     <FaClock size={28} />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm font-medium">Part-time</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      Part-time
+                    </p>
                     <h3 className="text-3xl font-extrabold text-slate-800">
                       {isJobsLoading ? (
                         <FaSpinner className="animate-spin" />
@@ -2285,7 +2513,9 @@ const AdminPanel = () => {
                     <FaBlog size={28} />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm font-medium">Total Blogs</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      Total Blogs
+                    </p>
                     <h3 className="text-3xl font-extrabold text-slate-800">
                       {isBlogsLoading ? (
                         <FaSpinner className="animate-spin" />
@@ -2300,7 +2530,9 @@ const AdminPanel = () => {
                     <FaEnvelope size={28} />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm font-medium">Inquiries</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      Inquiries
+                    </p>
                     <h3 className="text-3xl font-extrabold text-slate-800">
                       {isInquiriesLoading ? (
                         <FaSpinner className="animate-spin" />
@@ -2315,31 +2547,124 @@ const AdminPanel = () => {
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                 <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
                   <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                    <FaChartBar className="text-teal-500 mr-3" /> Contact Inquiries Over Time
+                    <FaChartBar className="text-teal-500 mr-3" /> Contact
+                    Inquiries Over Time
                   </h3>
                   {isInquiriesLoading ? (
                     <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
                       <FaSpinner className="animate-spin text-4xl text-teal-500 mx-auto" />
-                      <p className="text-slate-500 mt-3">Loading chart data...</p>
+                      <p className="text-slate-500 mt-3">
+                        Loading chart data...
+                      </p>
                     </div>
                   ) : inquiryDataOverTime.every((d) => d.Inquiries === 0) ? (
                     <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
                       <FaChartBar className="text-4xl text-slate-300 mx-auto" />
-                      <p className="text-slate-500 mt-3">No inquiry data available for the last 12 months.</p>
+                      <p className="text-slate-500 mt-3">
+                        No inquiry data available for the last 12 months.
+                      </p>
                     </div>
                   ) : (
-                    <div style={{ width: '100%', height: 350 }}>
+                    <div style={{ width: "100%", height: 350 }}>
                       <ResponsiveContainer>
-                        <BarChart data={inquiryDataOverTime} margin={{ top: 20, right: 30, left: 5, bottom: isDesktop ? 5 : 50 }}>
-                          <defs><linearGradient id="colorInquiries" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9} /><stop offset="95%" stopColor="#22d3ee" stopOpacity={0.4} /></linearGradient></defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.5)" />
-                          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} angle={isDesktop ? 0 : -45} textAnchor={isDesktop ? 'middle' : 'end'} interval={0} />
-                          <YAxis allowDecimals={false} stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(59, 130, 246, 0.1)" }} />
-                          <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px', color: '#475569' }} />
-                          <ReferenceLine y={averageInquiries} label={{ value: `Avg: ${averageInquiries.toFixed(1)}`, position: 'insideTopRight', fill: '#f43f5e', fontSize: 12, fontWeight: 'bold', dy: -10 }} stroke="#f43f5e" strokeDasharray="4 4" strokeWidth={1.5} />
-                          <Bar dataKey="Inquiries" fill="url(#colorInquiries)" barSize={isDesktop ? 20 : 15} radius={[6, 6, 0, 0]} activeBar={{ fill: '#2563eb', stroke: '#1e40af', strokeWidth: 1, fillOpacity: 1 }}>
-                            <LabelList dataKey="Inquiries" position="top" style={{ fill: '#1e40af', fontSize: '12px', fontWeight: 'bold' }} formatter={(value) => (value > 0 ? value : '')} />
+                        <BarChart
+                          data={inquiryDataOverTime}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 5,
+                            bottom: isDesktop ? 5 : 50,
+                          }}
+                        >
+                          <defs>
+                            <linearGradient
+                              id="colorInquiries"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor="#3b82f6"
+                                stopOpacity={0.9}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="#22d3ee"
+                                stopOpacity={0.4}
+                              />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="rgba(226, 232, 240, 0.5)"
+                          />
+                          <XAxis
+                            dataKey="name"
+                            stroke="#94a3b8"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                            angle={isDesktop ? 0 : -45}
+                            textAnchor={isDesktop ? "middle" : "end"}
+                            interval={0}
+                          />
+                          <YAxis
+                            allowDecimals={false}
+                            stroke="#94a3b8"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip
+                            content={<CustomTooltip />}
+                            cursor={{ fill: "rgba(59, 130, 246, 0.1)" }}
+                          />
+                          <Legend
+                            wrapperStyle={{
+                              fontSize: "14px",
+                              paddingTop: "20px",
+                              color: "#475569",
+                            }}
+                          />
+                          <ReferenceLine
+                            y={averageInquiries}
+                            label={{
+                              value: `Avg: ${averageInquiries.toFixed(1)}`,
+                              position: "insideTopRight",
+                              fill: "#f43f5e",
+                              fontSize: 12,
+                              fontWeight: "bold",
+                              dy: -10,
+                            }}
+                            stroke="#f43f5e"
+                            strokeDasharray="4 4"
+                            strokeWidth={1.5}
+                          />
+                          <Bar
+                            dataKey="Inquiries"
+                            fill="url(#colorInquiries)"
+                            barSize={isDesktop ? 20 : 15}
+                            radius={[6, 6, 0, 0]}
+                            activeBar={{
+                              fill: "#2563eb",
+                              stroke: "#1e40af",
+                              strokeWidth: 1,
+                              fillOpacity: 1,
+                            }}
+                          >
+                            <LabelList
+                              dataKey="Inquiries"
+                              position="top"
+                              style={{
+                                fill: "#1e40af",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                              }}
+                              formatter={(value) => (value > 0 ? value : "")}
+                            />
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>
@@ -2348,25 +2673,126 @@ const AdminPanel = () => {
                 </section>
                 <section className="bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
                   <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                    <FaBullhorn className="text-pink-500 mr-3" /> Media Inquiries Over Time
+                    <FaBullhorn className="text-pink-500 mr-3" /> Media
+                    Inquiries Over Time
                   </h3>
                   {isMediaLoading ? (
-                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center"><FaSpinner className="animate-spin text-4xl text-pink-500 mx-auto" /><p className="text-slate-500 mt-3">Loading chart data...</p></div>
-                  ) : mediaDataOverTime.every((d) => d["Media Inquiries"] === 0) ? (
-                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center"><FaBullhorn className="text-4xl text-slate-300 mx-auto" /><p className="text-slate-500 mt-3">No media inquiry data available for the last 12 months.</p></div>
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
+                      <FaSpinner className="animate-spin text-4xl text-pink-500 mx-auto" />
+                      <p className="text-slate-500 mt-3">
+                        Loading chart data...
+                      </p>
+                    </div>
+                  ) : mediaDataOverTime.every(
+                      (d) => d["Media Inquiries"] === 0
+                    ) ? (
+                    <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
+                      <FaBullhorn className="text-4xl text-slate-300 mx-auto" />
+                      <p className="text-slate-500 mt-3">
+                        No media inquiry data available for the last 12 months.
+                      </p>
+                    </div>
                   ) : (
-                    <div style={{ width: '100%', height: 350 }}>
+                    <div style={{ width: "100%", height: 350 }}>
                       <ResponsiveContainer>
-                        <BarChart data={mediaDataOverTime} margin={{ top: 20, right: 30, left: 5, bottom: isDesktop ? 5 : 50 }}>
-                          <defs><linearGradient id="colorMedia" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ec4899" stopOpacity={0.9} /><stop offset="95%" stopColor="#f43f5e" stopOpacity={0.4} /></linearGradient></defs>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.5)" />
-                          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} angle={isDesktop ? 0 : -45} textAnchor={isDesktop ? 'middle' : 'end'} interval={0} />
-                          <YAxis allowDecimals={false} stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(236, 72, 153, 0.1)" }} />
-                          <Legend wrapperStyle={{ fontSize: '14px', paddingTop: '20px', color: '#475569' }} />
-                          <ReferenceLine y={averageMediaInquiries} label={{ value: `Avg: ${averageMediaInquiries.toFixed(1)}`, position: 'insideTopRight', fill: '#16a34a', fontSize: 12, fontWeight: 'bold', dy: -10 }} stroke="#16a34a" strokeDasharray="4 4" strokeWidth={1.5} />
-                          <Bar dataKey="Media Inquiries" fill="url(#colorMedia)" barSize={isDesktop ? 20 : 15} radius={[6, 6, 0, 0]} activeBar={{ fill: '#ec4899', stroke: '#be123c', strokeWidth: 1, fillOpacity: 1 }}>
-                            <LabelList dataKey="Media Inquiries" position="top" style={{ fill: '#be123c', fontSize: '12px', fontWeight: 'bold' }} formatter={(value) => (value > 0 ? value : '')} />
+                        <BarChart
+                          data={mediaDataOverTime}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 5,
+                            bottom: isDesktop ? 5 : 50,
+                          }}
+                        >
+                          <defs>
+                            <linearGradient
+                              id="colorMedia"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor="#ec4899"
+                                stopOpacity={0.9}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="#f43f5e"
+                                stopOpacity={0.4}
+                              />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="rgba(226, 232, 240, 0.5)"
+                          />
+                          <XAxis
+                            dataKey="name"
+                            stroke="#94a3b8"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                            angle={isDesktop ? 0 : -45}
+                            textAnchor={isDesktop ? "middle" : "end"}
+                            interval={0}
+                          />
+                          <YAxis
+                            allowDecimals={false}
+                            stroke="#94a3b8"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip
+                            content={<CustomTooltip />}
+                            cursor={{ fill: "rgba(236, 72, 153, 0.1)" }}
+                          />
+                          <Legend
+                            wrapperStyle={{
+                              fontSize: "14px",
+                              paddingTop: "20px",
+                              color: "#475569",
+                            }}
+                          />
+                          <ReferenceLine
+                            y={averageMediaInquiries}
+                            label={{
+                              value: `Avg: ${averageMediaInquiries.toFixed(1)}`,
+                              position: "insideTopRight",
+                              fill: "#16a34a",
+                              fontSize: 12,
+                              fontWeight: "bold",
+                              dy: -10,
+                            }}
+                            stroke="#16a34a"
+                            strokeDasharray="4 4"
+                            strokeWidth={1.5}
+                          />
+                          <Bar
+                            dataKey="Media Inquiries"
+                            fill="url(#colorMedia)"
+                            barSize={isDesktop ? 20 : 15}
+                            radius={[6, 6, 0, 0]}
+                            activeBar={{
+                              fill: "#ec4899",
+                              stroke: "#be123c",
+                              strokeWidth: 1,
+                              fillOpacity: 1,
+                            }}
+                          >
+                            <LabelList
+                              dataKey="Media Inquiries"
+                              position="top"
+                              style={{
+                                fill: "#be123c",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                              }}
+                              formatter={(value) => (value > 0 ? value : "")}
+                            />
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>
@@ -2379,7 +2805,8 @@ const AdminPanel = () => {
                 {/* Recent Blog Posts */}
                 <section className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-lg p-6">
                   <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center">
-                    <FaFire className="text-red-500 mr-3" /> Recent Blog Activity
+                    <FaFire className="text-red-500 mr-3" /> Recent Blog
+                    Activity
                   </h3>
                   {isBlogsLoading ? (
                     <div className="text-center py-10">
@@ -2410,7 +2837,9 @@ const AdminPanel = () => {
                                 </p>
                                 <p className="text-xs text-slate-500">
                                   by {blog.author} on{" "}
-                                  {new Date(blog.createdAt).toLocaleDateString()}
+                                  {new Date(
+                                    blog.createdAt
+                                  ).toLocaleDateString()}
                                 </p>
                               </div>
                               <button
@@ -2442,7 +2871,9 @@ const AdminPanel = () => {
                       <FaBlog size={28} />
                     </div>
                     <div>
-                      <p className="text-slate-500 text-sm font-medium">Total Blogs</p>
+                      <p className="text-slate-500 text-sm font-medium">
+                        Total Blogs
+                      </p>
                       <h3 className="text-3xl font-extrabold text-slate-800">
                         {isBlogsLoading ? (
                           <FaSpinner className="animate-spin" />
@@ -2462,7 +2893,9 @@ const AdminPanel = () => {
                       <FaEnvelope size={28} />
                     </div>
                     <div>
-                      <p className="text-slate-500 text-sm font-medium">Inquiries</p>
+                      <p className="text-slate-500 text-sm font-medium">
+                        Inquiries
+                      </p>
                       <h3 className="text-3xl font-extrabold text-slate-800">
                         {isInquiriesLoading ? (
                           <FaSpinner className="animate-spin" />
@@ -2520,8 +2953,8 @@ const AdminPanel = () => {
                         value={jobFormData.title}
                         onChange={handleJobChange}
                         placeholder="e.g., Senior React Developer"
-                        required                 
-                         className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
+                        required
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       />
                     </div>
                     {/* Location */}
@@ -2539,7 +2972,8 @@ const AdminPanel = () => {
                         value={jobFormData.location}
                         onChange={handleJobChange}
                         placeholder="e.g., Remote, New York, USA"
-                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
+                        required
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       />
                     </div>
                     {/* Employment Type */}
@@ -2555,7 +2989,8 @@ const AdminPanel = () => {
                         name="timeType"
                         value={jobFormData.timeType}
                         onChange={handleJobChange}
-                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
+                        required
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800 dark:text-slate-200"
                       >
                         <option value="">Select employment type</option>
                         <option value="Full-time">Full-time</option>
@@ -2579,7 +3014,8 @@ const AdminPanel = () => {
                         onChange={handleJobChange}
                         placeholder="Provide a brief summary of the job..."
                         rows="4"
-                        required                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-y text-slate-800 dark:text-slate-200"
+                        required
+                        className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-y text-slate-800 dark:text-slate-200"
                       ></textarea>
                     </div>
                     {/* Responsibilities */}
@@ -2794,7 +3230,9 @@ const AdminPanel = () => {
                           {filteredJobs.map((job) => (
                             <tr key={job._id} className="hover:bg-slate-100">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                <span className="font-bold text-[#1A2A80]">{job.title}</span>
+                                <span className="font-bold text-[#1A2A80]">
+                                  {job.title}
+                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {job.location}
@@ -3311,7 +3749,7 @@ const AdminPanel = () => {
                           className="bg-white p-4 rounded-xl shadow-md border border-slate-200"
                         >
                           <h4 className="font-bold text-lg text-[#1A2A80] dark:text-blue-300 truncate">
-                            {blog.title} 
+                            {blog.title}
                           </h4>
                           <p className="text-sm text-slate-400">
                             by {blog.author}
@@ -3377,7 +3815,9 @@ const AdminPanel = () => {
                           {filteredBlogPosts.map((blog) => (
                             <tr key={blog._id} className="hover:bg-slate-100">
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                <span className="font-bold text-[#1A2A80]">{blog.title}</span>
+                                <span className="font-bold text-[#1A2A80]">
+                                  {blog.title}
+                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {blog.author}
@@ -3425,70 +3865,138 @@ const AdminPanel = () => {
                   <span>Media Inquiries</span>
                 </h2>
               </div>
-              
-              
+
               <div className="p-4 md:p-6">
-              {/* Filtering and Sorting for Media Inquiries */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label htmlFor="mediaInquirySortBy" className="text-slate-600 font-medium text-sm">Sort by:</label>
-                  <select
-                    id="mediaInquirySortBy"
-                    value={mediaInquirySortBy}
-                    onChange={(e) => setMediaInquirySortBy(e.target.value)}
-                    className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
+                {/* Filtering and Sorting for Media Inquiries */}
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="mediaInquirySortBy"
+                      className="text-slate-600 font-medium text-sm"
+                    >
+                      Sort by:
+                    </label>
+                    <select
+                      id="mediaInquirySortBy"
+                      value={mediaInquirySortBy}
+                      onChange={(e) => setMediaInquirySortBy(e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
+                    >
+                      <option value="latest">Latest</option>
+                      <option value="oldest">Oldest</option>
+                      <option value="name">Name</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={handleDownloadMediaExcel}
+                    className="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-green-600/40"
                   >
-                    <option value="latest">Latest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="name">Name</option>
-                  </select>
+                    <FaFileDownload /> Export to Excel
+                  </button>
                 </div>
-                <button
-                  onClick={handleDownloadMediaExcel}
-                  className="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-green-600/40"
-                >
-                  <FaFileDownload /> Export to Excel
-                </button>
-              </div>
-              {/* Media Inquiry Listings Table */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">All Media Inquiries</h3>
-                {isMediaLoading ? (
-                  <div className="text-center py-10"><FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" /><p className="text-slate-500 mt-3">Loading media inquiries...</p></div>
-                ) : isMediaError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load media inquiries.</span>
-                  </div>
-                ) : sortedMediaInquiries.length === 0 ? (
-                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative"><strong className="font-bold">Info!</strong><span className="block sm:inline ml-2">No media inquiries found.</span></div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                      <thead className="border-b-2 border-slate-200">
-                        <tr>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Name</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Company Name</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Number</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                          <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200/70 bg-white">
-                        {sortedMediaInquiries.map((inquiry) => (
-                          <tr key={inquiry._id} className="hover:bg-slate-100">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900"><span className="font-bold text-[#1A2A80]">{inquiry.name || 'N/A'}</span></td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.company || 'N/A'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{inquiry.phone || 'N/A'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{new Date(inquiry.createdAt).toLocaleDateString()}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end items-center gap-2">
-                              <button onClick={() => handleViewMediaInquiry(inquiry)} className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200" title="View Details"><FaEye size={16} /></button>
-                            </td>
+                {/* Media Inquiry Listings Table */}
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6">
+                    All Media Inquiries
+                  </h3>
+                  {isMediaLoading ? (
+                    <div className="text-center py-10">
+                      <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
+                      <p className="text-slate-500 mt-3">
+                        Loading media inquiries...
+                      </p>
+                    </div>
+                  ) : isMediaError ? (
+                    <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Error!</strong>
+                      <span className="block sm:inline ml-2">
+                        Failed to load media inquiries.
+                      </span>
+                    </div>
+                  ) : sortedMediaInquiries.length === 0 ? (
+                    <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Info!</strong>
+                      <span className="block sm:inline ml-2">
+                        No media inquiries found.
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full">
+                        <thead className="border-b-2 border-slate-200">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Name
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Company Name
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Contact Number
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Date
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Actions
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200/70 bg-white">
+                          {sortedMediaInquiries.map((inquiry) => (
+                            <tr
+                              key={inquiry._id}
+                              className="hover:bg-slate-100"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                <span className="font-bold text-[#1A2A80]">
+                                  {inquiry.name || "N/A"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {inquiry.company || "N/A"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {inquiry.phone || "N/A"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {new Date(
+                                  inquiry.createdAt
+                                ).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end items-center gap-2">
+                                <button
+                                  onClick={() =>
+                                    handleViewMediaInquiry(inquiry)
+                                  }
+                                  className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200"
+                                  title="View Details"
+                                >
+                                  <FaEye size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
           )}
@@ -3504,259 +4012,282 @@ const AdminPanel = () => {
               </div>
 
               <div className="p-4 md:p-6">
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label
-                    htmlFor="inquiryFilter"
-                    className="text-slate-600 font-medium text-sm"
-                  >
-                    Status:
-                  </label>
-                  <select
-                    id="inquiryFilter"
-                    value={inquiryFilter}
-                    onChange={(e) => setInquiryFilter(e.target.value)}
-                    className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
-                  >
-                    <option value="all">All</option>
-                    <option value="read">Read</option>
-                    <option value="unread">Unread</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <label
-                    htmlFor="inquirySortBy"
-                    className="text-slate-600 font-medium text-sm"
-                  >
-                    Sort by:
-                  </label>
-                  <select
-                    id="inquirySortBy"
-                    value={inquirySortBy}
-                    onChange={(e) => setInquirySortBy(e.target.value)}
-                    className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
-                  >
-                    <option value="latest">Latest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="name">Name</option>
-                  </select>
-                </div>
-                <button
-                  onClick={handleDownloadExcel}
-                  className="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-green-600/40"
-                >
-                  <FaFileDownload /> Export to Excel
-                </button>
-              </div>
-
-              {/* Inquiry Listings Table */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">
-                  All Inquiries
-                </h3>
-                {isInquiriesLoading ? (
-                  <div className="text-center py-10">
-                    <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
-                    <p className="text-slate-500 mt-3">Loading inquiries...</p>
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200 flex flex-col sm:flex-row flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="inquiryFilter"
+                      className="text-slate-600 font-medium text-sm"
+                    >
+                      Status:
+                    </label>
+                    <select
+                      id="inquiryFilter"
+                      value={inquiryFilter}
+                      onChange={(e) => setInquiryFilter(e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
+                    >
+                      <option value="all">All</option>
+                      <option value="read">Read</option>
+                      <option value="unread">Unread</option>
+                    </select>
                   </div>
-                ) : isInquiriesError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative"><strong className="font-bold">Error!</strong><span className="block sm:inline ml-2">Failed to load inquiries.</span></div>
-                ) : sortedInquiries.length === 0 ? (
-                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative"><strong className="font-bold">Info!</strong><span className="block sm:inline ml-2">No inquiries found matching your criteria.</span></div>
-                ) : (
-                  <div>
-                    {/* Mobile Card View */}
-                    <div className="md:hidden space-y-4">
-                      {sortedInquiries.map((inquiry) => (
-                        <div
-                          key={inquiry._id}
-                          className="bg-white p-4 rounded-xl shadow-md border border-slate-200"
-                        >
-                          <div className="flex justify-between items-start gap-2">
-                            <div>
-                              <h4 className="font-bold text-lg text-[#1a2a80] dark:text-blue-300">
-                                {inquiry.name}
-                              </h4>
-                              <p className="text-sm text-slate-400 break-all">
-                                {inquiry.email}
-                              </p>
-                            </div>
-                            <span
-                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${inquiry.status === "read"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                                }`}
-                            >
-                              {inquiry.status}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-500 mt-1">
-                            {new Date(inquiry.createdAt).toLocaleString()}
-                          </p>
-                          <div className="mt-4 pt-4 border-t border-slate-200 flex justify-end items-center gap-3 flex-wrap">
-                            <button
-                              onClick={() => handleViewInquiry(inquiry)}
-                              className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
-                              title="View Details"
-                            >
-                              <FaEye size={18} />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleToggleReadStatus(
-                                  inquiry._id,
-                                  inquiry.status
-                                )
-                              }
-                              className={`ml-4 ${inquiry.status === "read"
-                                ? "text-yellow-500 hover:text-yellow-400"
-                                : "text-green-500 hover:text-green-400"
-                                } transition-colors duration-200`}
-                              title={
-                                inquiry.status === "read"
-                                  ? "Mark as Unread"
-                                  : "Mark as Read"
-                              }
-                            >
-                              {inquiry.status === "read" ? (
-                                <FaTimesCircle size={18} />
-                              ) : (
-                                <FaCheckCircle size={18} />
-                              )}
-                            </button>
-                            <button
-                              onClick={() => handleForwardInquiryClick(inquiry)}
-                              className="text-purple-400 hover:text-purple-300 transition-colors duration-200 ml-4"
-                              title="Forward Inquiry"
-                            >
-                              <FaReply size={18} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="inquirySortBy"
+                      className="text-slate-600 font-medium text-sm"
+                    >
+                      Sort by:
+                    </label>
+                    <select
+                      id="inquirySortBy"
+                      value={inquirySortBy}
+                      onChange={(e) => setInquirySortBy(e.target.value)}
+                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800 text-sm"
+                    >
+                      <option value="latest">Latest</option>
+                      <option value="oldest">Oldest</option>
+                      <option value="name">Name</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={handleDownloadExcel}
+                    className="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition duration-200 flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-green-600/40"
+                  >
+                    <FaFileDownload /> Export to Excel
+                  </button>
+                </div>
 
-                    {/* Desktop Table View */}
-                    <div className="hidden md:block overflow-x-auto">
-                      <table className="min-w-full">
-                        <thead className="border-b-2 border-slate-200">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Name
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Email
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Message
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Date
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Status
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
-                            >
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200/70 bg-white">
-                          {sortedInquiries.map((inquiry) => (
-                            <tr key={inquiry._id} className="hover:bg-slate-100">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                <span className="font-bold text-[#1A2A80]">{inquiry.name}</span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                {inquiry.email}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 max-w-xs truncate">
-                                {inquiry.message.length > 50
-                                  ? `${inquiry.message.substring(0, 50)}...`
-                                  : inquiry.message}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                                {new Date(
-                                  inquiry.createdAt
-                                ).toLocaleDateString()}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span
-                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${inquiry.status === "read"
+                {/* Inquiry Listings Table */}
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6">
+                    All Inquiries
+                  </h3>
+                  {isInquiriesLoading ? (
+                    <div className="text-center py-10">
+                      <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
+                      <p className="text-slate-500 mt-3">
+                        Loading inquiries...
+                      </p>
+                    </div>
+                  ) : isInquiriesError ? (
+                    <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Error!</strong>
+                      <span className="block sm:inline ml-2">
+                        Failed to load inquiries.
+                      </span>
+                    </div>
+                  ) : sortedInquiries.length === 0 ? (
+                    <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Info!</strong>
+                      <span className="block sm:inline ml-2">
+                        No inquiries found matching your criteria.
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Mobile Card View */}
+                      <div className="md:hidden space-y-4">
+                        {sortedInquiries.map((inquiry) => (
+                          <div
+                            key={inquiry._id}
+                            className="bg-white p-4 rounded-xl shadow-md border border-slate-200"
+                          >
+                            <div className="flex justify-between items-start gap-2">
+                              <div>
+                                <h4 className="font-bold text-lg text-[#1a2a80] dark:text-blue-300">
+                                  {inquiry.name}
+                                </h4>
+                                <p className="text-sm text-slate-400 break-all">
+                                  {inquiry.email}
+                                </p>
+                              </div>
+                              <span
+                                className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${
+                                  inquiry.status === "read"
                                     ? "bg-green-100 text-green-800"
                                     : "bg-yellow-100 text-yellow-800"
-                                    }`}
-                                >
-                                  {inquiry.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end items-center gap-2">
-                                <button
-                                  onClick={() => handleViewInquiry(inquiry)}
-                                  className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200"
-                                  title="View Details"
-                                >
-                                  <FaEye size={16} />
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleToggleReadStatus(
-                                      inquiry._id,
-                                      inquiry.status
-                                    )
-                                  }
-                                  className={`p-2 rounded-full transition-all duration-200 ${inquiry.status === "read"
-                                    ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
-                                    : "text-green-500 hover:text-green-700 hover:bg-green-100"
-                                    }`}
-                                  title={
-                                    inquiry.status === "read"
-                                      ? "Mark as Unread"
-                                      : "Mark as Read"
-                                  }
-                                >
-                                  {inquiry.status === "read" ? (
-                                    <FaTimesCircle size={16} />
-                                  ) : (
-                                    <FaCheckCircle size={16} />
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleForwardInquiryClick(inquiry)
-                                  }
-                                  className="text-purple-500 hover:text-purple-700 p-2 rounded-full hover:bg-purple-100 transition-all duration-200"
-                                  title="Forward Inquiry"
-                                >
-                                  <FaReply size={16} />
-                                </button>
-                              </td>
+                                }`}
+                              >
+                                {inquiry.status}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {new Date(inquiry.createdAt).toLocaleString()}
+                            </p>
+                            <div className="mt-4 pt-4 border-t border-slate-200 flex justify-end items-center gap-3 flex-wrap">
+                              <button
+                                onClick={() => handleViewInquiry(inquiry)}
+                                className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                                title="View Details"
+                              >
+                                <FaEye size={18} />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleToggleReadStatus(
+                                    inquiry._id,
+                                    inquiry.status
+                                  )
+                                }
+                                className={`ml-4 ${
+                                  inquiry.status === "read"
+                                    ? "text-yellow-500 hover:text-yellow-400"
+                                    : "text-green-500 hover:text-green-400"
+                                } transition-colors duration-200`}
+                                title={
+                                  inquiry.status === "read"
+                                    ? "Mark as Unread"
+                                    : "Mark as Read"
+                                }
+                              >
+                                {inquiry.status === "read" ? (
+                                  <FaTimesCircle size={18} />
+                                ) : (
+                                  <FaCheckCircle size={18} />
+                                )}
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleForwardInquiryClick(inquiry)
+                                }
+                                className="text-purple-400 hover:text-purple-300 transition-colors duration-200 ml-4"
+                                title="Forward Inquiry"
+                              >
+                                <FaReply size={18} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop Table View */}
+                      <div className="hidden md:block overflow-x-auto">
+                        <table className="min-w-full">
+                          <thead className="border-b-2 border-slate-200">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Name
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Email
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Message
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Date
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Status
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
+                              >
+                                Actions
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200/70 bg-white">
+                            {sortedInquiries.map((inquiry) => (
+                              <tr
+                                key={inquiry._id}
+                                className="hover:bg-slate-100"
+                              >
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                  <span className="font-bold text-[#1A2A80]">
+                                    {inquiry.name}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                  {inquiry.email}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 max-w-xs truncate">
+                                  {inquiry.message.length > 50
+                                    ? `${inquiry.message.substring(0, 50)}...`
+                                    : inquiry.message}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                  {new Date(
+                                    inquiry.createdAt
+                                  ).toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span
+                                    className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                                      inquiry.status === "read"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-yellow-100 text-yellow-800"
+                                    }`}
+                                  >
+                                    {inquiry.status}
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end items-center gap-2">
+                                  <button
+                                    onClick={() => handleViewInquiry(inquiry)}
+                                    className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200"
+                                    title="View Details"
+                                  >
+                                    <FaEye size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleToggleReadStatus(
+                                        inquiry._id,
+                                        inquiry.status
+                                      )
+                                    }
+                                    className={`p-2 rounded-full transition-all duration-200 ${
+                                      inquiry.status === "read"
+                                        ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
+                                        : "text-green-500 hover:text-green-700 hover:bg-green-100"
+                                    }`}
+                                    title={
+                                      inquiry.status === "read"
+                                        ? "Mark as Unread"
+                                        : "Mark as Read"
+                                    }
+                                  >
+                                    {inquiry.status === "read" ? (
+                                      <FaTimesCircle size={16} />
+                                    ) : (
+                                      <FaCheckCircle size={16} />
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleForwardInquiryClick(inquiry)
+                                    }
+                                    className="text-purple-500 hover:text-purple-700 p-2 rounded-full hover:bg-purple-100 transition-all duration-200"
+                                    title="Forward Inquiry"
+                                  >
+                                    <FaReply size={16} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
               </div>
             </section>
           )}
@@ -3770,20 +4301,19 @@ const AdminPanel = () => {
                   <span>Product Management</span>
                 </h2>
               </div>
-              
+
               <div className="text-center py-20 p-4 md:p-6">
-              <h2 className="text-4xl font-extrabold text-slate-900 mb-6">
-                Products Coming Soon!
-              </h2>
-              <p className="text-lg text-slate-500">
-                We're actively working on bringing you exciting features for
-                product management. Stay tuned!
-              </p>
-              <div className="mt-8">
-                <FaBoxOpen className="mx-auto text-blue-500/20" size={100} />
+                <h2 className="text-4xl font-extrabold text-slate-900 mb-6">
+                  Products Coming Soon!
+                </h2>
+                <p className="text-lg text-slate-500">
+                  We're actively working on bringing you exciting features for
+                  product management. Stay tuned!
+                </p>
+                <div className="mt-8">
+                  <FaBoxOpen className="mx-auto text-blue-500/20" size={100} />
+                </div>
               </div>
-              </div>
-              
             </section>
           )}
           {/* User Management Section */}
@@ -3797,204 +4327,318 @@ const AdminPanel = () => {
               </div>
 
               <div className="p-4 md:p-6">
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">
-                  Invite New Admin
-                </h3>
-                <form
-                  onSubmit={handleInviteAdmin}
-                  className="space-y-6"
-                >
-                  {/* Grid container for inputs */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* User Name Input */}
-                    <div className="lg:col-span-1">
-                      <label htmlFor="inviteName" className="block text-sm font-medium text-slate-600 mb-2">
-                        User Name
-                      </label>
-                      <input
-                        type="text"
-                        id="inviteName"
-                        value={inviteName}
-                        onChange={(e) => setInviteName(e.target.value)}
-                        placeholder="Enter user's full name"
-                        className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
-                      />
-                    </div>
-
-                    {/* User Email Input */}
-                    <div className="lg:col-span-1">
-                      <label htmlFor="inviteEmail" className="block text-sm font-medium text-slate-600 mb-2">
-                        User Email
-                      </label>
-                      <input
-                        type="email"
-                        id="inviteEmail"
-                        value={inviteEmail}
-                        onChange={(e) => setInviteEmail(e.target.value)}
-                        placeholder="Enter user's email"
-                        className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
-                      />
-                    </div>
-
-                    {/* Set Password Input */}
-                    <div className="lg:col-span-1">
-                      <label htmlFor="invitePassword" className="block text-sm font-medium text-slate-600 mb-2">
-                        Set Initial Password
-                      </label>
-                      <input
-                        type="password"
-                        id="invitePassword"
-                        value={invitePassword}
-                        onChange={(e) => setInvitePassword(e.target.value)}
-                        placeholder="Enter a secure password"
-                        minLength="6"
-                        className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
-                      />
-                    </div>
-
-                    {/* NEW: Role Selection Dropdown */}
-                    <div className="lg:col-span-1">
-                      <label htmlFor="inviteRole" className="block text-sm font-medium text-slate-600 mb-2">
-                        Role
-                      </label>
-                      <select
-                        id="inviteRole"
-                        value={inviteRole}
-                        onChange={(e) => setInviteRole(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="superAdmin">Super Admin</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                      disabled={isInvitingAdmin}
-                    >
-                      {isInvitingAdmin ? (
-                        <FaSpinner className="animate-spin" />
-                      ) : (
-                        <FaUserPlus />
-                      )}
-                      {isInvitingAdmin ? "Creating..." : "Create Admin"}
-                    </button>
-                  </div>
-                </form>
-              </div>
-              {/* Existing Users Table */}
-              <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-slate-800">
-                    Existing Admins
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6">
+                    Invite New Admin
                   </h3>
-                  <span className="text-sm font-semibold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
-                    {admins.length} {admins.length === 1 ? "User" : "Users"}
-                  </span>
+                  <form onSubmit={handleInviteAdmin} className="space-y-6">
+                    {/* Grid container for inputs */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* User Name Input */}
+                      <div className="lg:col-span-1">
+                        <label
+                          htmlFor="inviteName"
+                          className="block text-sm font-medium text-slate-600 mb-2"
+                        >
+                          User Name
+                        </label>
+                        <input
+                          type="text"
+                          id="inviteName"
+                          value={inviteName}
+                          onChange={(e) => setInviteName(e.target.value)}
+                          placeholder="Enter user's full name"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        />
+                      </div>
+
+                      {/* User Email Input */}
+                      <div className="lg:col-span-1">
+                        <label
+                          htmlFor="inviteEmail"
+                          className="block text-sm font-medium text-slate-600 mb-2"
+                        >
+                          User Email
+                        </label>
+                        <input
+                          type="email"
+                          id="inviteEmail"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          placeholder="Enter user's email"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        />
+                      </div>
+
+                      {/* Set Password Input */}
+                      <div className="lg:col-span-1">
+                        <label
+                          htmlFor="invitePassword"
+                          className="block text-sm font-medium text-slate-600 mb-2"
+                        >
+                          Set Initial Password
+                        </label>
+                        <input
+                          type="password"
+                          id="invitePassword"
+                          value={invitePassword}
+                          onChange={(e) => setInvitePassword(e.target.value)}
+                          placeholder="Enter a secure password"
+                          minLength="6"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        />
+                      </div>
+
+                      {/* NEW: Role Selection Dropdown */}
+                      <div className="lg:col-span-1">
+                        <label
+                          htmlFor="inviteRole"
+                          className="block text-sm font-medium text-slate-600 mb-2"
+                        >
+                          Role
+                        </label>
+                        <select
+                          id="inviteRole"
+                          value={inviteRole}
+                          onChange={(e) => setInviteRole(e.target.value)}
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-800"
+                        >
+                          <option value="admin">Admin</option>
+                          <option value="superAdmin">Super Admin</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                        disabled={isInvitingAdmin}
+                      >
+                        {isInvitingAdmin ? (
+                          <FaSpinner className="animate-spin" />
+                        ) : (
+                          <FaUserPlus />
+                        )}
+                        {isInvitingAdmin ? "Creating..." : "Create Admin"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                {isAdminLoading ? (
-                  <div className="text-center py-10">
-                    <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
-                    <p className="text-slate-500 mt-3">Loading users...</p>
-                  </div>
-                ) : isAdminError ? (
-                  <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Error!</strong>
-                    <span className="block sm:inline ml-2">
-                      Failed to load users.
+                {/* Existing Users Table */}
+                <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-2xl font-bold text-slate-800">
+                      Existing Admins
+                    </h3>
+                    <span className="text-sm font-semibold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
+                      {admins.length} {admins.length === 1 ? "User" : "Users"}
                     </span>
                   </div>
-                ) : filteredAdmins.length === 0 ? (
-                  <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
-                    <strong className="font-bold">Info!</strong>
-                    <span className="block sm:inline ml-2">No users found.</span>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                      <thead className="border-b-2 border-slate-200">
-                        <tr>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">User</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Role</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                          <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Last Active</th>
-                          <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200/70 bg-white">
-                        {filteredAdmins.map((admin) => (
-                          <tr key={admin._id} className="hover:bg-slate-100">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 flex items-center gap-4">
-                              <img src={getAvatarUrl(admin.name || admin.email, 40)} alt={`${admin.name || admin.email}'s avatar`} className="w-10 h-10 rounded-full object-cover" />
-                              <p className="font-bold text-[#1A2A80]">{admin.name || 'N/A'}</p>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                              {admin.email}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.role === 'superAdmin' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                                {admin.role}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                                {admin.status || 'active'}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                              {admin.lastActive ? timeSince(admin.lastActive) : 'Never'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
-                              {admin._id !== userInfo._id && ( // Can't edit self
-                                <div className="flex justify-end items-center gap-2">
-                                  <button
-                                    onClick={() => handleUpdateRole(admin._id, admin.role === 'superAdmin' ? 'admin' : 'superAdmin')}
-                                    disabled={isUpdatingAdminRole || isUpdatingAdminStatus}
-                                    className={`p-2 rounded-full transition-all duration-200 ${admin.role === 'superAdmin' ? 'text-yellow-500 hover:bg-yellow-100' : 'text-green-500 hover:bg-green-100'}`}
-                                    title={admin.role === 'superAdmin' ? 'Demote to Admin' : 'Promote to Super Admin'}
-                                  >
-                                    <FaUserShield size={18} />
-                                  </button>
-                                  <button
-                                    onClick={() => handleUpdateStatus(admin._id, admin.status || 'active')}
-                                    disabled={isUpdatingAdminRole || isUpdatingAdminStatus}
-                                    className={`p-2 rounded-full transition-all duration-200 ${(admin.status || 'active') === 'active' ? 'text-red-500 hover:bg-red-100' : 'text-green-500 hover:bg-green-100'}`}
-                                    title={(admin.status || 'active') === 'active' ? 'Suspend User' : 'Activate User'}
-                                  >
-                                    {(admin.status || 'active') === 'active' ? <FaUserSlash size={18} /> : <FaUserCheck size={18} />}
-                                  </button>
-                                  <button
-                                    onClick={() => openDeleteModal('user', admin._id)}
-                                    disabled={isDeletingAdmin || isUpdatingAdminStatus}
-                                    className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-all duration-200"
-                                    title="Delete User"
-                                  >
-                                    <FaTrash size={16} />
-                                  </button>
-                                </div>
-                              )}
-                            </td>
+                  {isAdminLoading ? (
+                    <div className="text-center py-10">
+                      <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto" />
+                      <p className="text-slate-500 mt-3">Loading users...</p>
+                    </div>
+                  ) : isAdminError ? (
+                    <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Error!</strong>
+                      <span className="block sm:inline ml-2">
+                        Failed to load users.
+                      </span>
+                    </div>
+                  ) : filteredAdmins.length === 0 ? (
+                    <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-xl relative">
+                      <strong className="font-bold">Info!</strong>
+                      <span className="block sm:inline ml-2">
+                        No users found.
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full">
+                        <thead className="border-b-2 border-slate-200">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              User
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Email
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Role
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Status
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Last Active
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider"
+                            >
+                              Actions
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-200/70 bg-white">
+                          {filteredAdmins.map((admin) => (
+                            <tr key={admin._id} className="hover:bg-slate-100">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 flex items-center gap-4">
+                                <img
+                                  src={getAvatarUrl(
+                                    admin.name || admin.email,
+                                    40
+                                  )}
+                                  alt={`${admin.name || admin.email}'s avatar`}
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                                <p className="font-bold text-[#1A2A80]">
+                                  {admin.name || "N/A"}
+                                </p>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {admin.email}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                <span
+                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                                    admin.role === "superAdmin"
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-blue-100 text-blue-800"
+                                  }`}
+                                >
+                                  {admin.role}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                <span
+                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                                    admin.status === "active"
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {admin.status || "active"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                {admin.lastActive
+                                  ? timeSince(admin.lastActive)
+                                  : "Never"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+                                {admin._id !== userInfo._id && ( // Can't edit self
+                                  <div className="flex justify-end items-center gap-2">
+                                    <button
+                                      onClick={() =>
+                                        handleUpdateRole(
+                                          admin._id,
+                                          admin.role === "superAdmin"
+                                            ? "admin"
+                                            : "superAdmin"
+                                        )
+                                      }
+                                      disabled={
+                                        isUpdatingAdminRole ||
+                                        isUpdatingAdminStatus
+                                      }
+                                      className={`p-2 rounded-full transition-all duration-200 ${
+                                        admin.role === "superAdmin"
+                                          ? "text-yellow-500 hover:bg-yellow-100"
+                                          : "text-green-500 hover:bg-green-100"
+                                      }`}
+                                      title={
+                                        admin.role === "superAdmin"
+                                          ? "Demote to Admin"
+                                          : "Promote to Super Admin"
+                                      }
+                                    >
+                                      <FaUserShield size={18} />
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleUpdateStatus(
+                                          admin._id,
+                                          admin.status || "active"
+                                        )
+                                      }
+                                      disabled={
+                                        isUpdatingAdminRole ||
+                                        isUpdatingAdminStatus
+                                      }
+                                      className={`p-2 rounded-full transition-all duration-200 ${
+                                        (admin.status || "active") === "active"
+                                          ? "text-red-500 hover:bg-red-100"
+                                          : "text-green-500 hover:bg-green-100"
+                                      }`}
+                                      title={
+                                        (admin.status || "active") === "active"
+                                          ? "Suspend User"
+                                          : "Activate User"
+                                      }
+                                    >
+                                      {(admin.status || "active") ===
+                                      "active" ? (
+                                        <FaUserSlash size={18} />
+                                      ) : (
+                                        <FaUserCheck size={18} />
+                                      )}
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        openDeleteModal("user", admin._id)
+                                      }
+                                      disabled={
+                                        isDeletingAdmin || isUpdatingAdminStatus
+                                      }
+                                      className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-all duration-200"
+                                      title="Delete User"
+                                    >
+                                      <FaTrash size={16} />
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
           )}
-          {activeTab === 'users' && userInfo?.role !== 'superAdmin' && (
+          {activeTab === "users" && userInfo?.role !== "superAdmin" && (
             <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xl p-6 md:p-8">
-              <FaExclamationCircle className="mx-auto text-red-500/50" size={80} />
-              <h2 className="text-3xl font-extrabold text-slate-900 mt-6 mb-4">Access Denied</h2>
-              <p className="text-lg text-slate-500">You do not have permission to view or manage users.</p>
+              <FaExclamationCircle
+                className="mx-auto text-red-500/50"
+                size={80}
+              />
+              <h2 className="text-3xl font-extrabold text-slate-900 mt-6 mb-4">
+                Access Denied
+              </h2>
+              <p className="text-lg text-slate-500">
+                You do not have permission to view or manage users.
+              </p>
             </div>
           )}
         </div>
@@ -4009,15 +4653,15 @@ const AdminPanel = () => {
           modalType === "job"
             ? "Confirm Job Deletion"
             : modalType === "blog"
-              ? "Confirm Blog Deletion"
-              : "Confirm User Deletion"
+            ? "Confirm Blog Deletion"
+            : "Confirm User Deletion"
         }
         message={
           modalType === "job"
             ? "Are you sure you want to delete this job? This action cannot be undone."
             : modalType === "blog"
-              ? "Are you sure you want to delete this blog post? This action cannot be undone."
-              : "Are you sure you want to delete this user? This will revoke their access permanently."
+            ? "Are you sure you want to delete this blog post? This action cannot be undone."
+            : "Are you sure you want to delete this user? This will revoke their access permanently."
         }
         isLoading={isDeletingJob || isDeletingBlog || isDeletingAdmin}
       />
@@ -4072,16 +4716,43 @@ const AdminPanel = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
-                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaUserIcon /></span>
-                <div><strong className="block text-sm font-semibold text-slate-600">Name:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.name || 'N/A'}</span></div>
+                <span className="text-pink-400 mr-3 mt-1 text-lg">
+                  <FaUserIcon />
+                </span>
+                <div>
+                  <strong className="block text-sm font-semibold text-slate-600">
+                    Name:
+                  </strong>
+                  <span className="text-slate-800 text-base break-words">
+                    {selectedMediaInquiry.name || "N/A"}
+                  </span>
+                </div>
               </div>
               <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
-                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaPhoneIcon /></span>
-                <div><strong className="block text-sm font-semibold text-slate-600">Phone:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.phone || 'N/A'}</span></div>
+                <span className="text-pink-400 mr-3 mt-1 text-lg">
+                  <FaPhoneIcon />
+                </span>
+                <div>
+                  <strong className="block text-sm font-semibold text-slate-600">
+                    Phone:
+                  </strong>
+                  <span className="text-slate-800 text-base break-words">
+                    {selectedMediaInquiry.phone || "N/A"}
+                  </span>
+                </div>
               </div>
               <div className="flex items-start p-4 bg-slate-50 rounded-lg shadow-sm">
-                <span className="text-pink-400 mr-3 mt-1 text-lg"><FaBriefcase /></span>
-                <div><strong className="block text-sm font-semibold text-slate-600">Company Name:</strong><span className="text-slate-800 text-base break-words">{selectedMediaInquiry.company || 'N/A'}</span></div>
+                <span className="text-pink-400 mr-3 mt-1 text-lg">
+                  <FaBriefcase />
+                </span>
+                <div>
+                  <strong className="block text-sm font-semibold text-slate-600">
+                    Company Name:
+                  </strong>
+                  <span className="text-slate-800 text-base break-words">
+                    {selectedMediaInquiry.company || "N/A"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
