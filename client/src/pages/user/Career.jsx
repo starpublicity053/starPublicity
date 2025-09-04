@@ -12,11 +12,11 @@ const MotionLink = motion(Link);
 // CORRECTED: The incorrect image import has been removed.
 
 const GALLERY_IMAGES = [
-  "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
-  "https://images.pexels.com/photos/5405362/pexels-photo-5405362.jpeg?auto=compress&cs=tinysrgb&w=800&h=1200&dpr=2",
-  "https://images.unsplash.com/photo-1542744173-05336fcc7ad4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-  "https://images.pexels.com/photos/1181283/pexels-photo-1181283.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  "https://images.pexels.com/photos/3184433/pexels-photo-3184433.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+  "/assets/Career images/career 1.png",
+  "/assets/Career images/square img 1.png",
+  "/assets/Career images/career 2.png",
+  "/assets/Career images/square img 2.png",
+  "/assets/Career images/career 3.png",
 ];
 
 const Career = () => {

@@ -409,8 +409,8 @@ const InquiryDetailModal = ({
               </strong>
               <span
                 className={`text-base break-words font-semibold capitalize ${inquiry.status === "read"
-                    ? "text-green-400"
-                    : "text-yellow-400"
+                  ? "text-green-400"
+                  : "text-yellow-400"
                   }`}
               >
                 {inquiry.status}
@@ -2165,8 +2165,8 @@ const AdminPanel = () => {
               if (!isDesktop) setIsSidebarOpen(false);
             }}
             className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === "welcome"
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+              : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
               }`}
           >
             <span className="w-6 text-center text-lg">
@@ -2182,8 +2182,8 @@ const AdminPanel = () => {
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
               className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === key
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
-                  : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
+                : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
                 }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
@@ -4098,8 +4098,8 @@ const AdminPanel = () => {
                               </div>
                               <span
                                 className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${inquiry.status === "read"
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-yellow-100 text-yellow-800"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-yellow-100 text-yellow-800"
                                   }`}
                               >
                                 {inquiry.status}
@@ -4124,8 +4124,8 @@ const AdminPanel = () => {
                                   )
                                 }
                                 className={`ml-4 ${inquiry.status === "read"
-                                    ? "text-yellow-500 hover:text-yellow-400"
-                                    : "text-green-500 hover:text-green-400"
+                                  ? "text-yellow-500 hover:text-yellow-400"
+                                  : "text-green-500 hover:text-green-400"
                                   } transition-colors duration-200`}
                                 title={
                                   inquiry.status === "read"
@@ -4223,8 +4223,8 @@ const AdminPanel = () => {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span
                                     className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${inquiry.status === "read"
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-yellow-100 text-yellow-800"
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-yellow-100 text-yellow-800"
                                       }`}
                                   >
                                     {inquiry.status}
@@ -4246,8 +4246,8 @@ const AdminPanel = () => {
                                       )
                                     }
                                     className={`p-2 rounded-full transition-all duration-200 ${inquiry.status === "read"
-                                        ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
-                                        : "text-green-500 hover:text-green-700 hover:bg-green-100"
+                                      ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
+                                      : "text-green-500 hover:text-green-700 hover:bg-green-100"
                                       }`}
                                     title={
                                       inquiry.status === "read"
@@ -4511,8 +4511,8 @@ const AdminPanel = () => {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 <span
                                   className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.role === "superAdmin"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-blue-100 text-blue-800"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-blue-100 text-blue-800"
                                     }`}
                                 >
                                   {admin.role}
@@ -4521,8 +4521,8 @@ const AdminPanel = () => {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 <span
                                   className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.status === "active"
-                                      ? "bg-green-100 text-green-800"
-                                      : "bg-yellow-100 text-yellow-800"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-yellow-100 text-yellow-800"
                                     }`}
                                 >
                                   {admin.status || "active"}
@@ -4550,8 +4550,8 @@ const AdminPanel = () => {
                                         isUpdatingAdminStatus
                                       }
                                       className={`p-2 rounded-full transition-all duration-200 ${admin.role === "superAdmin"
-                                          ? "text-yellow-500 hover:bg-yellow-100"
-                                          : "text-green-500 hover:bg-green-100"
+                                        ? "text-yellow-500 hover:bg-yellow-100"
+                                        : "text-green-500 hover:bg-green-100"
                                         }`}
                                       title={
                                         admin.role === "superAdmin"
@@ -4573,8 +4573,8 @@ const AdminPanel = () => {
                                         isUpdatingAdminStatus
                                       }
                                       className={`p-2 rounded-full transition-all duration-200 ${(admin.status || "active") === "active"
-                                          ? "text-red-500 hover:bg-red-100"
-                                          : "text-green-500 hover:bg-green-100"
+                                        ? "text-red-500 hover:bg-red-100"
+                                        : "text-green-500 hover:bg-green-100"
                                         }`}
                                       title={
                                         (admin.status || "active") === "active"
