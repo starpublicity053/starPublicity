@@ -408,11 +408,10 @@ const InquiryDetailModal = ({
                 Status:
               </strong>
               <span
-                className={`text-base break-words font-semibold capitalize ${
-                  inquiry.status === "read"
+                className={`text-base break-words font-semibold capitalize ${inquiry.status === "read"
                     ? "text-green-400"
                     : "text-yellow-400"
-                }`}
+                  }`}
               >
                 {inquiry.status}
               </span>
@@ -796,8 +795,7 @@ const AdminPanel = () => {
     if (isMediaError) {
       console.error("Error loading media inquiries:", mediaError);
       toast.error(
-        `Media Load Error: ${
-          mediaError?.data?.message || "Check console for details"
+        `Media Load Error: ${mediaError?.data?.message || "Check console for details"
         }`
       );
     }
@@ -1235,8 +1233,7 @@ const AdminPanel = () => {
       else if (modalType === "user") await deleteAdmin(modalId).unwrap();
 
       toast.success(
-        `${
-          modalType.charAt(0).toUpperCase() + modalType.slice(1)
+        `${modalType.charAt(0).toUpperCase() + modalType.slice(1)
         } deleted successfully!`
       );
     } catch (err) {
@@ -1867,13 +1864,13 @@ const AdminPanel = () => {
       const notes =
         inquiry.notes && inquiry.notes.length > 0
           ? inquiry.notes
-              .map(
-                (note) =>
-                  `${note.content} (on ${new Date(
-                    note.createdAt
-                  ).toLocaleString()})`
-              )
-              .join("\n")
+            .map(
+              (note) =>
+                `${note.content} (on ${new Date(
+                  note.createdAt
+                ).toLocaleString()})`
+            )
+            .join("\n")
           : "No notes";
       return [
         inquiry.name || "N/A",
@@ -2153,8 +2150,10 @@ const AdminPanel = () => {
           md:translate-x-0
         `}
       >
-        <div className="flex items-center h-20 px-6 border-b border-slate-200 dark:border-slate-700">
-          <FaUserCircle className="text-blue-400 text-3xl mr-3" />
+        <div className="relative flex items-center h-20 px-6 border-b border-slate-200 dark:border-slate-700">
+          <div className="relative">
+            <img src="/fevicon.png" alt="Logo" className="w-8 h-8 mr-3" />
+          </div>
           <h2 className="text-xl font-black tracking-wider text-slate-900 dark:text-white">
             Star<span className="font-light">Publicity</span>
           </h2>
@@ -2165,11 +2164,10 @@ const AdminPanel = () => {
               setActiveTab("welcome");
               if (!isDesktop) setIsSidebarOpen(false);
             }}
-            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
-              activeTab === "welcome"
+            className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === "welcome"
                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
                 : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-            }`}
+              }`}
           >
             <span className="w-6 text-center text-lg">
               <FaTachometerAlt />
@@ -2183,11 +2181,10 @@ const AdminPanel = () => {
                 setActiveTab(key);
                 if (!isDesktop) setIsSidebarOpen(false);
               }}
-              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${
-                activeTab === key
+              className={`flex items-center gap-4 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 dark:text-slate-400 ${activeTab === key
                   ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/30"
                   : "text-slate-500 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-white"
-              }`}
+                }`}
             >
               <span className="w-6 text-center text-lg">{icon}</span> {label}
             </button>
@@ -2205,9 +2202,8 @@ const AdminPanel = () => {
 
       {/* Main Content Area */}
       <main
-        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${
-          isDesktop ? "md:ml-64" : ""
-        }`}
+        className={`flex flex-col flex-grow overflow-hidden min-h-screen transition-all duration-300 ease-in-out ${isDesktop ? "md:ml-64" : ""
+          }`}
       >
         <header className="h-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg flex items-center justify-between px-2 sm:px-4 md:px-8 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
           {isMobileSearchVisible && !isDesktop ? (
@@ -2334,9 +2330,8 @@ const AdminPanel = () => {
                 >
                   <FaSyncAlt
                     size={20}
-                    className={`${
-                      isRefreshing ? "animate-spin" : ""
-                    } transition-transform group-hover:rotate-180 duration-500`}
+                    className={`${isRefreshing ? "animate-spin" : ""
+                      } transition-transform group-hover:rotate-180 duration-500`}
                   />
                 </button>
 
@@ -2684,8 +2679,8 @@ const AdminPanel = () => {
                       </p>
                     </div>
                   ) : mediaDataOverTime.every(
-                      (d) => d["Media Inquiries"] === 0
-                    ) ? (
+                    (d) => d["Media Inquiries"] === 0
+                  ) ? (
                     <div className="text-center py-20 h-[300px] flex flex-col justify-center items-center">
                       <FaBullhorn className="text-4xl text-slate-300 mx-auto" />
                       <p className="text-slate-500 mt-3">
@@ -4102,11 +4097,10 @@ const AdminPanel = () => {
                                 </p>
                               </div>
                               <span
-                                className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${
-                                  inquiry.status === "read"
+                                className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap capitalize ${inquiry.status === "read"
                                     ? "bg-green-100 text-green-800"
                                     : "bg-yellow-100 text-yellow-800"
-                                }`}
+                                  }`}
                               >
                                 {inquiry.status}
                               </span>
@@ -4129,11 +4123,10 @@ const AdminPanel = () => {
                                     inquiry.status
                                   )
                                 }
-                                className={`ml-4 ${
-                                  inquiry.status === "read"
+                                className={`ml-4 ${inquiry.status === "read"
                                     ? "text-yellow-500 hover:text-yellow-400"
                                     : "text-green-500 hover:text-green-400"
-                                } transition-colors duration-200`}
+                                  } transition-colors duration-200`}
                                 title={
                                   inquiry.status === "read"
                                     ? "Mark as Unread"
@@ -4229,11 +4222,10 @@ const AdminPanel = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <span
-                                    className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
-                                      inquiry.status === "read"
+                                    className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${inquiry.status === "read"
                                         ? "bg-green-100 text-green-800"
                                         : "bg-yellow-100 text-yellow-800"
-                                    }`}
+                                      }`}
                                   >
                                     {inquiry.status}
                                   </span>
@@ -4253,11 +4245,10 @@ const AdminPanel = () => {
                                         inquiry.status
                                       )
                                     }
-                                    className={`p-2 rounded-full transition-all duration-200 ${
-                                      inquiry.status === "read"
+                                    className={`p-2 rounded-full transition-all duration-200 ${inquiry.status === "read"
                                         ? "text-yellow-500 hover:text-yellow-700 hover:bg-yellow-100"
                                         : "text-green-500 hover:text-green-700 hover:bg-green-100"
-                                    }`}
+                                      }`}
                                     title={
                                       inquiry.status === "read"
                                         ? "Mark as Unread"
@@ -4519,22 +4510,20 @@ const AdminPanel = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 <span
-                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
-                                    admin.role === "superAdmin"
+                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.role === "superAdmin"
                                       ? "bg-green-100 text-green-800"
                                       : "bg-blue-100 text-blue-800"
-                                  }`}
+                                    }`}
                                 >
                                   {admin.role}
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 <span
-                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
-                                    admin.status === "active"
+                                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${admin.status === "active"
                                       ? "bg-green-100 text-green-800"
                                       : "bg-yellow-100 text-yellow-800"
-                                  }`}
+                                    }`}
                                 >
                                   {admin.status || "active"}
                                 </span>
@@ -4560,11 +4549,10 @@ const AdminPanel = () => {
                                         isUpdatingAdminRole ||
                                         isUpdatingAdminStatus
                                       }
-                                      className={`p-2 rounded-full transition-all duration-200 ${
-                                        admin.role === "superAdmin"
+                                      className={`p-2 rounded-full transition-all duration-200 ${admin.role === "superAdmin"
                                           ? "text-yellow-500 hover:bg-yellow-100"
                                           : "text-green-500 hover:bg-green-100"
-                                      }`}
+                                        }`}
                                       title={
                                         admin.role === "superAdmin"
                                           ? "Demote to Admin"
@@ -4584,11 +4572,10 @@ const AdminPanel = () => {
                                         isUpdatingAdminRole ||
                                         isUpdatingAdminStatus
                                       }
-                                      className={`p-2 rounded-full transition-all duration-200 ${
-                                        (admin.status || "active") === "active"
+                                      className={`p-2 rounded-full transition-all duration-200 ${(admin.status || "active") === "active"
                                           ? "text-red-500 hover:bg-red-100"
                                           : "text-green-500 hover:bg-green-100"
-                                      }`}
+                                        }`}
                                       title={
                                         (admin.status || "active") === "active"
                                           ? "Suspend User"
@@ -4596,7 +4583,7 @@ const AdminPanel = () => {
                                       }
                                     >
                                       {(admin.status || "active") ===
-                                      "active" ? (
+                                        "active" ? (
                                         <FaUserSlash size={18} />
                                       ) : (
                                         <FaUserCheck size={18} />
@@ -4653,15 +4640,15 @@ const AdminPanel = () => {
           modalType === "job"
             ? "Confirm Job Deletion"
             : modalType === "blog"
-            ? "Confirm Blog Deletion"
-            : "Confirm User Deletion"
+              ? "Confirm Blog Deletion"
+              : "Confirm User Deletion"
         }
         message={
           modalType === "job"
             ? "Are you sure you want to delete this job? This action cannot be undone."
             : modalType === "blog"
-            ? "Are you sure you want to delete this blog post? This action cannot be undone."
-            : "Are you sure you want to delete this user? This will revoke their access permanently."
+              ? "Are you sure you want to delete this blog post? This action cannot be undone."
+              : "Are you sure you want to delete this user? This will revoke their access permanently."
         }
         isLoading={isDeletingJob || isDeletingBlog || isDeletingAdmin}
       />

@@ -53,33 +53,59 @@ const OrbitingPoint = ({ point, autoRotation }) => {
   );
 };
 
+const LiquidReveal = ({ isInView }) => {
+  const DURATION = 1.2;
+  const EASE = [0.45, 0, 0.55, 1];
+
+  const initialPath = "M0,50 C0,25 25,0 50,0 S100,25 100,50 S75,100 50,100 S0,75 0,50";
+  const openPath = "M0,50 C0,0 0,0 50,0 S100,0 100,50 S100,100 50,100 S0,100 0,50";
+
+  const pathVariants = {
+    initial: { d: initialPath },
+    open: { d: openPath, transition: { duration: DURATION, ease: EASE } },
+  };
+
+  const svgVariants = {
+    initial: { opacity: 1 },
+    open: {
+      scale: 30,
+      transition: { duration: DURATION, delay: DURATION * 0.1, ease: EASE },
+    },
+  };
+
+  return (
+    <motion.svg
+      width="100" height="100" viewBox="0 0 100 100"
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+      variants={svgVariants}
+      initial="initial"
+      animate={isInView ? "open" : "initial"}
+    >
+      <motion.path fill="#1A2A80" variants={pathVariants} />
+    </motion.svg>
+  );
+};
+
 const AboutUs = () => {
-  // --- Animation setup for Expanding Circle Reveal ---
   const welcomeSectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: welcomeSectionRef,
     offset: ["start start", "end end"],
   });
 
-  // Animate the circle's scale to grow and fill the screen
   const circleScale = useTransform(scrollYProgress, [0, 0.8], [1, 80]);
-
-  // Animate the text's properties to appear within the circle's animation
   const textOpacity = useTransform(scrollYProgress, [0.1, 0.45], [0, 1]);
   const textScale = useTransform(scrollYProgress, [0.1, 0.45], [0.7, 1]);
   const textY = useTransform(scrollYProgress, [0.1, 0.45], ["5vh", "0vh"]);
 
-
-  // Ref and inView for the Animated Contact Section
   const contactSectionRef = useRef(null);
   const isInView = useInView(contactSectionRef, { once: true, amount: 0.5 });
 
-  // Variants for the staggered reveal of the main text content in the contact section
   const contentContainerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 1.5 },
+      transition: { staggerChildren: 0.2, delayChildren: 1.2 },
     },
   };
 
@@ -138,7 +164,6 @@ const AboutUs = () => {
                 <span>STAR PUBLICITY • STAR PUBLICITY • STAR PUBLICITY • STAR PUBLICITY • STAR PUBLICITY • </span>
             </div>
         </div>
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 text-white opacity-10 font-black select-none z-10" style={{ fontSize: "30vw", lineHeight: "0.8" }}>C</div>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="relative z-20 max-w-xl px-4 md:px-8 lg:px-16 pt-40">
             <h1 className="text-white font-black text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl leading-tight tracking-tight drop-shadow-lg text-justify">
                 <span className="block">YOUR TRUSTED</span>
@@ -282,25 +307,78 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* === Animated Contact Section (Now Responsive) === */}
-      <section ref={contactSectionRef} className="relative w-full flex items-center justify-center min-h-[90vh] sm:min-h-[700px] overflow-hidden py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-20" style={{ backgroundColor: "#FFFFFF" }}>
-        <motion.div initial={{ opacity: 1, scale: 1, rotate: 0, x: "-50%", y: "-50%", width: "clamp(200px, 50vw, 400px)", height: "clamp(200px, 50vw, 400px)", backgroundColor: "#000000", borderRadius: "50%", top: "50%", left: "50%"}} animate={isInView ? { scale: [1, 2, 10, 50], opacity: [1, 1, 1, 1], rotate: [0, 0, 0, 0], x: "-50%", y: "-50%", borderRadius: ["50%", "50%", "0%", "0%"], backgroundColor: "#0F2633", width: "100vw", height: "100vh" } : {}} transition={{ duration: 1.5, delay: 0.1, ease: "easeInOut" }} className="absolute z-10 flex items-center justify-center">
-            <motion.span initial={{ opacity: 1, scale: 1 }} animate={isInView ? { opacity: 0, scale: 0.5 } : {}} transition={{ duration: 0.3, ease: "easeOut" }} className="font-black text-white select-none" style={{ fontSize: "clamp(150px, 30vw, 300px)", lineHeight: "1" }}>?</motion.span>
-        </motion.div>
-        <motion.div variants={contentContainerVariants} initial="hidden" animate={isInView ? "visible" : "hidden"} className="relative z-30 text-white text-center px-4 max-w-2xl mx-auto w-full h-full flex flex-col justify-center items-center" style={{ opacity: 1, backgroundColor: "transparent" }}>
-            <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 0.08 } : {}} transition={{ duration: 1.5, delay: 1.8, ease: "easeOut" }} className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: `url('/question-mark-bg.png')`, backgroundSize: "95% auto", backgroundRepeat: "no-repeat", backgroundPosition: "center 80%", filter: "grayscale(100%) brightness(0.7)", }}/>
-            <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 md:gap-8">
-                <motion.h2 variants={contentItemVariants} className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-center">HAVE ANY QUESTIONS? WE'RE HERE TO PROVIDE THE ANSWERS.</motion.h2>
-                <motion.p variants={contentItemVariants} className="text-lg sm:text-xl font-medium text-gray-300">Give us a call</motion.p>
-                <motion.a variants={contentItemVariants} href="tel:0308700260" className="block text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 hover:text-[#1A2A80] transition-colors duration-300 tracking-tight" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>030 87 00 260</motion.a>
-                <motion.p variants={contentItemVariants} className="text-lg sm:text-xl mb-4 font-medium text-gray-300">Or send us a message</motion.p>
-                <motion.a variants={contentItemVariants} href="https://wa.me/918839728739?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20your%20services." target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-[#1A2A80] text-white px-6 py-3 sm:px-8 sm:py-3 lg:px-10 lg:py-4 rounded-full text-base sm:text-lg md:text-xl font-bold hover:bg-[#153D52] transition-colors duration-300 shadow-lg" whileHover={{ scale: 1.05, boxShadow: "0 8px 20px rgba(27, 73, 101, 0.4)", }} whileTap={{ scale: 0.95 }}>
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 mr-2 sm:mr-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12.04 2C7.35 2 3.56 5.79 3.56 10.48C3.56 12.07 4.01 13.59 4.79 14.93L3.6 18.23L7.04 17.11C8.29 17.76 9.64 18.11 11.02 18.11C15.71 18.11 19.5 14.32 19.5 9.63C19.5 4.94 15.71 2 12.04 2ZM15.89 13.79C15.72 14.07 15.51 14.16 15.25 14.28C14.86 14.47 13.06 15.34 12.78 15.39C12.49 15.45 12.28 15.42 12.07 15.36C11.87 15.3 11.3 15.06 10.74 14.62C10.18 14.18 9.77 13.56 9.61 13.31C9.46 13.06 8.57 11.96 8.57 11.01C8.57 10.06 9.3 9.77 9.54 9.65C9.77 9.54 10.05 9.52 10.23 9.52C10.42 9.52 10.65 9.55 10.83 9.59C11.02 9.64 11.16 9.8 11.35 10.15C11.55 10.49 11.98 11.13 12.07 11.26C12.16 11.4 12.24 11.53 12.4 11.75C12.56 11.97 12.74 12.23 12.89 12.35C13.06 12.48 13.19 12.57 13.36 12.67C13.54 12.78 13.71 12.88 14.1 13.09C14.47 13.29 14.77 13.40 15.02 13.53C15.26 13.67 15.45 13.75 15.61 13.84C15.77 13.94 15.89 13.97 15.89 13.79Z" />
-                    </svg>
-                    WhatsApp
-                </motion.a>
-            </div>
+      {/* === UPGRADED: Animated Contact Section (Modern & Responsive Design) === */}
+      <section 
+        ref={contactSectionRef} 
+        className="relative w-full min-h-[90vh] sm:min-h-[800px] flex items-center justify-center overflow-hidden bg-gray-100 py-20 px-4 sm:px-6 lg:px-8 mt-20"
+      >
+        {/* The liquid background reveal animation remains the same */}
+        <LiquidReveal isInView={isInView} />
+        
+        {/* Main content container with staggered animation */}
+        <motion.div 
+          variants={contentContainerVariants} 
+          initial="hidden" 
+          animate={isInView ? "visible" : "hidden"} 
+          className="relative z-30 max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+        >
+          {/* === Left Column: Headline & Text === */}
+          <div className="text-center lg:text-left">
+            <motion.h2 
+              variants={contentItemVariants} 
+              className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-white"
+            >
+              Ready to Amplify Your Brand?
+            </motion.h2>
+            <motion.p 
+              variants={contentItemVariants} 
+              className="mt-6 text-lg sm:text-xl text-gray-300 max-w-lg mx-auto lg:mx-0"
+            >
+              Let's connect. Whether you have a question or are ready to start a project, our team is here to provide the answers and guide you forward.
+            </motion.p>
+          </div>
+
+          {/* === Right Column: Contact Action Cards === */}
+          <div className="w-full max-w-md mx-auto lg:mx-0 flex flex-col gap-6">
+            {/* Card 1: Phone Call */}
+            <motion.a
+              variants={contentItemVariants}
+              href="tel:01614668602"
+              className="group flex items-center p-5 rounded-xl bg-white/10 border border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-white/20"
+              whileHover={{ scale: 1.03, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex-shrink-0 bg-white/10 p-3 rounded-lg mr-5">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+              </div>
+              <div>
+                <span className="text-md font-medium text-gray-300">Talk to us directly</span>
+                <p className="text-xl sm:text-2xl font-bold text-white tracking-tight">0161-4668602</p>
+              </div>
+            </motion.a>
+
+            {/* Card 2: WhatsApp */}
+            <motion.a
+              variants={contentItemVariants}
+              href="https://wa.me/917403434074?text=Hello%2C%20I%20would%20like%20to%20inquire%20about%20your%20services."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center p-5 rounded-xl bg-white/10 border border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-white/20"
+              whileHover={{ scale: 1.03, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex-shrink-0 bg-white/10 p-3 rounded-lg mr-5">
+                 {/* === NEW WHATSAPP ICON === */}
+                 <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19.11 4.93A9.92 9.92 0 0 0 12.01 2C6.51 2 2.11 6.4 2.11 11.9c0 1.79.46 3.49 1.29 4.99L2 22l5.34-1.39a9.92 9.92 0 0 0 4.67 1.18h.01c5.49 0 9.9-4.4 9.9-9.9.01-2.73-1.09-5.22-2.9-7.06zm-7.1 14.28c-1.4 0-2.79-.4-4-1.12l-.29-.17-3 1.52.78-2.93-.19-.31a8.13 8.13 0 0 1-1.26-4.38c0-4.53 3.68-8.21 8.22-8.21a8.13 8.13 0 0 1 8.21 8.21c-.01 4.54-3.69 8.22-8.22 8.22zm4.26-6.12c-.24-.12-1.42-.7-1.65-.78s-.39-.12-.56.12c-.17.24-.62.78-.77.94s-.29.18-.54.06c-.25-.12-1.06-.39-2-1.23s-1.44-1.93-1.68-2.27c-.24-.34-.03-.52.1-.68.12-.14.26-.35.39-.53s.18-.29.26-.49.04-.38-.02-.5c-.06-.12-.56-1.34-.76-1.84s-.4-.42-.55-.42h-.53c-.18 0-.47.06-.71.31s-.94.92-.94 2.25.96 2.61 1.1 2.79c.14.18 1.88 2.88 4.56 4.03.62.27 1.1.43 1.48.56.59.2 1.12.17 1.52.1.45-.08 1.42-.58 1.62-1.14s.2-1.04.14-1.14c-.06-.12-.24-.18-.48-.3z"/>
+                 </svg>
+              </div>
+              <div>
+                <span className="text-md font-medium text-gray-300">Message us on WhatsApp</span>
+                <p className="text-xl sm:text-2xl font-bold text-white">Start a Chat</p>
+              </div>
+            </motion.a>
+          </div>
         </motion.div>
       </section>
     </>

@@ -352,7 +352,7 @@ const HeroSection = () => {
   );
 };
 
-const LogoCarousel = ({ baseVelocity = 2.5 }) => {
+const LogoCarousel = ({ baseVelocity = 5 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const resolvedBaseVelocity = isDesktop ? 4 : baseVelocity;
 
@@ -398,8 +398,8 @@ const LogoCarousel = ({ baseVelocity = 2.5 }) => {
       <motion.div className="flex" style={{ x }}>
         {duplicatedLogos.map((logo, index) => (
           <div
-            key={`${logo.split("/").pop()}-${index}`}
-            className="flex-shrink-0 w-[120px] h-[60px] sm:w-[180px] sm:h-[90px] mx-4 sm:mx-8 flex items-center justify-center"
+            key={`${logo.split("/").pop()}-${index}`} // [RESPONSIVE-SM] Adjusted logo sizes and margins for small screens
+            className="flex-shrink-0 w-[100px] h-[50px] sm:w-[180px] sm:h-[90px] mx-4 sm:mx-8 flex items-center justify-center"
           >
             <img
               src={logo}
@@ -450,27 +450,80 @@ const MarqueeText = ({ children, baseVelocity = 100 }) => {
   );
 };
 
+const MobileCampaignShowcase = ({ campaigns }) => {
+  const cardRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+
+  return (
+    <section className="bg-[#f0f2f5] text-gray-900 py-16 font-body w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col items-center px-4">
+        <HeaderSection
+          title="Featured Campaigns"
+          subtitle="Explore our most impactful advertising solutions"
+        />
+      </div>
+      <div className="max-w-md mx-auto mt-12 px-4 space-y-10">
+        {campaigns.map((campaign, index) => (
+          <motion.div
+            key={campaign.title}
+            ref={cardRef}
+            className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200/80"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <div className="w-full h-60 overflow-hidden">
+              <motion.img
+                src={campaign.img}
+                alt={campaign.title}
+                className="w-full h-full object-cover"
+                style={{ y: imageY }}
+                loading="lazy"
+              />
+            </div>
+            <div className="p-6 bg-white">
+              <h3 className="text-xl font-bold font-heading text-gray-800">
+                {campaign.title}
+              </h3>
+              <p className="text-gray-600 mt-2 text-sm leading-relaxed">
+                This campaign showcases our innovative approach to creating
+                memorable and effective advertising solutions that resonate
+                with audiences.
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const NewCampaignShowcaseSection = () => {
   const campaigns = [
     {
-      title: "CityPulse Urban Campaign",
-      img: "/assets/Featured campaigns/Capture 1.PNG",
+      title: "Downtown Digital Display",
+      img: "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
       title: "Bus Wrap Initiative",
-      img: "/assets/Featured campaigns/Capture 2.PNG",
+      img: "https://images.pexels.com/photos/342214/pexels-photo-342214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
       title: "Airport Experience",
-      img: "/assets/Featured campaigns/Capture.PNG",
+      img: "https://images.pexels.com/photos/358319/pexels-photo-358319.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
       title: "Metro Branding Takeover",
-      img: "/assets/Featured campaigns/Capture 3.PNG",
+      img: "https://images.pexels.com/photos/712780/pexels-photo-712780.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
     {
       title: "Digital Billboard Network",
-      img: "/assets/Featured campaigns/Capture 4.PNG",
+      img: "https://images.pexels.com/photos/544247/pexels-photo-544247.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     },
   ];
   const [activeIndex, setActiveIndex] = useState(
@@ -479,12 +532,16 @@ const NewCampaignShowcaseSection = () => {
 
   // [RESPONSIVE-SM] Adjusted values for smaller screens
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
-  const cardWidth = isSmallScreen ? 220 : 320;
-  const cardHeight = isSmallScreen ? 300 : 420;
-  const offsetXValue = isSmallScreen ? 160 : 250;
+  const cardWidth = isSmallScreen ? 180 : 320;
+  const cardHeight = isSmallScreen ? 250 : 420;
+  const offsetXValue = isSmallScreen ? 130 : 250;
+
+  if (isSmallScreen) {
+    return <MobileCampaignShowcase campaigns={campaigns} />;
+  }
 
   return (
-    <section className="bg-gray-100 text-gray-900 py-20 sm:py-32 font-body w-full flex flex-col items-center overflow-hidden">
+    <section className="bg-gray-100 text-gray-900 py-20 sm:py-32 font-body w-full flex flex-col items-center overflow-hidden" style={{ perspective: "1200px" }}>
       <div className="max-w-7xl mx-auto flex flex-col items-center px-4">
         <HeaderSection
           title="Featured Campaigns"
@@ -492,12 +549,12 @@ const NewCampaignShowcaseSection = () => {
         />
       </div>
 
-      <div className="relative w-full h-[380px] sm:h-[550px] flex items-center justify-center mb-12 sm:mb-24">
+      <div className="relative w-full h-[380px] sm:h-[550px] flex items-center justify-center mb-12 sm:mb-24" style={{ transformStyle: "preserve-3d" }}>
         {campaigns.map((campaign, index) => {
           const isActive = index === activeIndex;
           const distance = Math.abs(index - activeIndex);
-          const scale = 1 - distance * 0.15;
-          const offsetX = (index - activeIndex) * offsetXValue;
+          const offsetX = (index - Math.floor(campaigns.length / 2)) * offsetXValue;
+          const rotateY = (index - Math.floor(campaigns.length / 2)) * -15;
           const zIndex = campaigns.length - distance;
           return (
             <motion.div
@@ -507,18 +564,16 @@ const NewCampaignShowcaseSection = () => {
                 width: `${cardWidth}px`,
                 height: `${cardHeight}px`,
                 zIndex,
-                transformOrigin: "center center",
               }}
               animate={{
                 x: offsetX,
-                scale: isActive ? 1.1 : scale,
-                opacity: isActive ? 1 : 0.4,
+                scale: isActive ? 1.1 : 1,
+                translateZ: isActive ? 0 : -distance * 100,
+                rotateY: isActive ? 0 : rotateY,
+                opacity: isActive ? 1 : 0.5,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={() => setActiveIndex(index)}
-              whileHover={
-                !isActive ? { scale: scale + 0.05, opacity: 0.6 } : {}
-              }
             >
               <div className="w-full h-full bg-white rounded-2xl overflow-hidden relative shadow-2xl transition-shadow duration-300">
                 <img
