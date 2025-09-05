@@ -36,6 +36,7 @@ const {
 const {
   getJobs,
   createJob,
+  updateJob,
   deleteJob,
   submitApplication,
 } = require("../controllers/JobController");
@@ -74,6 +75,7 @@ router.delete("/admins/:id", protect, restrictToSuperAdmin, deleteAdmin);
 
 router.get("/jobs", getJobs);
 router.post("/jobs", createJob);
+router.put("/jobs/:id", updateJob);
 router.delete("/jobs/:id", deleteJob);
 router.post("/apply", upload.single("resume"), submitApplication);
 router.post("/blogs", upload.any(), blogController.createBlogPost);

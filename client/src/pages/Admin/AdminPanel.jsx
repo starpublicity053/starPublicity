@@ -72,6 +72,7 @@ import {
   useGetJobsQuery,
   useDeleteJobMutation,
   useAddJobMutation,
+  useUpdateJobMutation,
 } from "../../features/auth/jobApi";
 import {
   useGetBlogsQuery,
@@ -595,6 +596,7 @@ const AdminPanel = () => {
   // --- State Management ---
   const [activeTab, setActiveTab] = useState("welcome");
   const [editingBlogId, setEditingBlogId] = useState(null);
+  const [editingJobId, setEditingJobId] = useState(null);
   const [existingImageId, setExistingImageId] = useState(null); // For hero image updates
 
   // +++ ADD THESE TWO LINES +++
@@ -750,6 +752,8 @@ const AdminPanel = () => {
     useDeleteBlogMutation();
   const [updateBlogMutation, { isLoading: isUpdatingBlog }] =
     useUpdateBlogMutation();
+  const [updateJob, { isLoading: isUpdatingJob }] = useUpdateJobMutation();
+
 
   // New: RTK Query hooks for Contact Inquiries
   const {
@@ -1202,6 +1206,7 @@ const AdminPanel = () => {
 
   const resetJobForm = useCallback(() => {
     setJobFormData(initialJobFormData);
+    setEditingJobId(null);
     setCurrentResponsibility("");
     setCurrentRequirement("");
   }, []);
@@ -1209,12 +1214,18 @@ const AdminPanel = () => {
   const handleJobSubmit = async (e) => {
     e.preventDefault();
     try {
-      await addJob(jobFormData).unwrap();
+      if (editingJobId) {
+        await updateJob({ id: editingJobId, ...jobFormData }).unwrap();
+        toast.success("Job updated successfully!");
+      } else {
+        await addJob(jobFormData).unwrap();
+        toast.success("Job posted successfully!");
+      }
       resetJobForm();
-      toast.success("Job posted successfully!");
     } catch (error) {
-      console.error("Failed to add job:", error);
-      toast.error("Failed to post job.");
+      const action = editingJobId ? "update" : "post";
+      console.error(`Failed to ${action} job:`, error);
+      toast.error(`Failed to ${action} job.`);
     }
   };
 
@@ -1259,6 +1270,19 @@ const AdminPanel = () => {
     }),
     [jobs]
   );
+
+  const handleEditJob = useCallback((job) => {
+    setShowJobForm(true);
+    setEditingJobId(job._id);
+    setJobFormData({
+      title: job.title || "",
+      location: job.location || "",
+      timeType: job.timeType || "",
+      summary: job.summary || "",
+      responsibilities: job.responsibilities || [],
+      requirements: job.requirements || [],
+    });
+  }, []);
 
   // New: Process inquiry data for the chart
   const inquiryDataOverTime = useMemo(() => {
@@ -2929,8 +2953,9 @@ const AdminPanel = () => {
               {/* Job Creation Form - UPDATED */}
               {showJobForm && (
                 <div className="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-inner mb-8 border border-slate-200">
-                  <h3 className="text-2xl font-bold text-slate-800 mb-6">
-                    Post a New Job
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    {editingJobId ? <FaPen /> : <FaPlus />}
+                    {editingJobId ? "Edit Job" : "Post a New Job"}
                   </h3>
                   <form onSubmit={handleJobSubmit} className="space-y-6">
                     {/* Job Title */}
@@ -3115,18 +3140,27 @@ const AdminPanel = () => {
                         ))}
                       </ul>
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
-                      disabled={isAddingJob}
-                    >
-                      {isAddingJob ? (
-                        <FaSpinner className="animate-spin inline-block mr-2" />
-                      ) : (
-                        <FaPlus />
+                    <div className="flex justify-end gap-4">
+                      {editingJobId && (
+                        <button
+                          type="button"
+                          onClick={resetJobForm}
+                          className="px-6 py-3 bg-slate-200 text-slate-800 font-bold rounded-xl hover:bg-slate-300 transition duration-200"
+                        >
+                          Cancel Edit
+                        </button>
                       )}
-                      {isAddingJob ? "Posting Job..." : "Post Job"}
-                    </button>
+                      <button
+                        type="submit"
+                        className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                        disabled={isAddingJob || isUpdatingJob}
+                      >
+                        {isAddingJob || isUpdatingJob ? (
+                          <FaSpinner className="animate-spin" />
+                        ) : editingJobId ? <FaPen /> : <FaPlus />}
+                        {isAddingJob ? "Posting..." : isUpdatingJob ? "Updating..." : editingJobId ? "Update Job" : "Post Job"}
+                      </button>
+                    </div>
                   </form>
                 </div>
               )}
@@ -3175,11 +3209,18 @@ const AdminPanel = () => {
                               {job.timeType}
                             </span>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-slate-200 flex justify-end">
+                          <div className="mt-4 pt-4 border-t border-slate-200 flex justify-end items-center gap-4">
+                            <button
+                              onClick={() => handleEditJob(job)}
+                              className="text-blue-500 hover:text-blue-400 transition-colors duration-200 flex items-center gap-2 text-sm"
+                              title="Edit Job"
+                            >
+                              <FaPen size={16} /> Edit
+                            </button>
                             {userInfo?.role === "superAdmin" && (
                               <button
                                 onClick={() => openDeleteModal("job", job._id)}
-                                className="text-red-500 hover:text-red-400 transition-colors duration-200 flex items-center gap-2 text-sm"
+                                className="text-red-500 hover:text-red-400 transition-colors duration-200 flex items-center gap-2 text-sm ml-4"
                                 title="Delete Job"
                               >
                                 <FaTrash size={16} /> Delete
@@ -3236,17 +3277,24 @@ const AdminPanel = () => {
                                 {job.timeType}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
-                                {userInfo?.role === "superAdmin" && (
+                                <div className="flex justify-end items-center gap-2">
                                   <button
-                                    onClick={() =>
-                                      openDeleteModal("job", job._id)
-                                    }
-                                    className="text-red-500 hover:text-red-400 ml-4 transition-colors duration-200"
-                                    title="Delete Job"
+                                    onClick={() => handleEditJob(job)}
+                                    className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-all duration-200"
+                                    title="Edit Job"
                                   >
-                                    <FaTrash size={18} />
+                                    <FaPen size={16} />
                                   </button>
-                                )}
+                                  {userInfo?.role === "superAdmin" && (
+                                    <button
+                                      onClick={() => openDeleteModal("job", job._id)}
+                                      className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-all duration-200"
+                                      title="Delete Job"
+                                    >
+                                      <FaTrash size={16} />
+                                    </button>
+                                  )}
+                                </div>
                               </td>
                             </tr>
                           ))}

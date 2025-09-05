@@ -13,6 +13,7 @@ import {
   Users,
   Shuffle,
   AreaChart,
+  Search,
   X,
   ChevronRight,
   ChevronsDown,
@@ -484,42 +485,42 @@ const mediaTemplates = {
   "Hoardings & Unipoles": {
     type: "Hoardings & Unipoles",
     category: "ATL",
-    image: "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/unipole.png",
     audience: "General Public, Commuters",
     impressions: "Varies by location",
   },
   "Bus Branding": {
     type: "Bus Branding",
     category: "ATL",
-    image: "https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/bus branding.png",
     audience: "General Commuters, Tourists",
     impressions: "Varies by route",
   },
   "Corporate Branding": {
     type: "Corporate Branding",
     category: "BTL",
-    image: "https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/corporate branding.png",
     audience: "Businesses, Corporates, Professionals",
     impressions: "Varies by location",
   },
   "Wall Wraps": {
     type: "Wall Wraps",
     category: "BTL",
-    image: "https://images.pexels.com/photos/1904100/pexels-photo-1904100.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/wall wrap.png",
     audience: "Shoppers, Local Residents",
     impressions: "Varies by location",
   },
   "Wall Painting": {
     type: "Wall Painting",
     category: "BTL",
-    image: "https://images.pexels.com/photos/1570264/pexels-photo-1570264.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/wall painting.png",
     audience: "Pedestrians, Local Community",
     impressions: "Varies by location",
   },
   "Ludhiana City Bus": {
     type: "Ludhiana City Bus",
     category: "ATL",
-    image: "https://images.pexels.com/photos/1134166/pexels-photo-1134166.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    image: "/assets/media finder/city bus.png",
     audience: "City Commuters, Students",
     impressions: "3.8M/month",
   },
@@ -656,11 +657,32 @@ const MediaFinderSection = ({ onOpenModal }) => {
     dashboardData.states[0].cities[0]
   );
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [locationSearchTerm, setLocationSearchTerm] = useState('');
 
   const availableSpots = dashboardData.availability[selectedCity] || [];
   const uniqueMediaTypes = Array.from(
     new Set(availableSpots.map((spot) => spot.type))
   );
+
+  const handleLocationSearch = (e) => {
+    setLocationSearchTerm(e.target.value);
+  };
+
+  const filteredCities = dashboardData.states
+    .flatMap((state) =>
+      state.cities.map((city) => ({ city, state: state.name }))
+    )
+    .filter(
+      ({ city }) =>
+        locationSearchTerm &&
+        city.toLowerCase().includes(locationSearchTerm.toLowerCase())
+    );
+
+  const handleCitySelect = (city, stateName) => {
+    setSelectedState(stateName);
+    setSelectedCity(city);
+    setLocationSearchTerm(''); // Clear search after selection
+  };
 
   const mediaTypeDetails = {
     "Hoardings & Unipoles": {

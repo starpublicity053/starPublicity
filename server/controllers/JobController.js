@@ -54,6 +54,30 @@ const createJob = async (req, res) => {
   }
 };
 
+// PUT /api/jobs/:id
+const updateJob = async (req, res) => {
+  try {
+    const { title, location, timeType, summary, responsibilities, requirements } = req.body;
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    job.title = title;
+    job.location = location;
+    job.timeType = timeType;
+    job.summary = summary;
+    job.responsibilities = responsibilities;
+    job.requirements = requirements;
+
+    const updatedJob = await job.save();
+    res.json(updatedJob);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update job" });
+  }
+};
+
 // DELETE /api/jobs/:id
 const deleteJob = async (req, res) => {
   try {
@@ -172,4 +196,4 @@ const sendJobApplicationEmail = async ({
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = { createJob, getJobs, deleteJob, submitApplication };
+module.exports = { createJob, getJobs, updateJob, deleteJob, submitApplication };

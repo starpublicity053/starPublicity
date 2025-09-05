@@ -20,6 +20,14 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ['Job'],
     }),
+    updateJob: builder.mutation({
+      query: ({ id, ...job }) => ({
+        url: `/jobs/${id}`,
+        method: 'PUT',
+        body: job,
+      }),
+      invalidatesTags: ['Job'],
+    }),
     deleteJob: builder.mutation({
       query: (id) => ({
         url: `/jobs/${id}`,
@@ -30,4 +38,4 @@ export const jobApi = createApi({
   }),
 });
 
-export const { useGetJobsQuery, useAddJobMutation, useDeleteJobMutation } = jobApi;
+export const { useGetJobsQuery, useAddJobMutation, useUpdateJobMutation, useDeleteJobMutation } = jobApi;
