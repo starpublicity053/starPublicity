@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from "lucide-react"; // Assuming lucide-react is installed
+import { ArrowRight } from "lucide-react";
 import { useGetBlogsQuery } from '../features/auth/blogApi';
+import { FaBlog } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 // Framer Motion Variants for this section
@@ -84,15 +85,34 @@ const LatestBlogsSection = () => {
   return (
     <section className="bg-gray-50 py-16 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
-        <motion.h2
-          className="text-3xl md:text-5xl font-extrabold leading-tight text-gray-800 text-center mb-12"
+
+        {/* === Clean & Themed Header Section === */}
+        <motion.div
+          className="mb-12 text-center"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
-          variants={slideInUp}
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggeredFadeInUp}
         >
-          DISCOVER THE LATEST BLOG <br className="hidden md:inline" /> AND ARTICLES
-        </motion.h2>
+          <motion.p
+            className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-2"
+            variants={slideInUp}
+          >
+            From Our Blog
+          </motion.p>
+          <motion.h2
+            className="text-4xl md:text-5xl font-black tracking-tighter text-gray-900"
+            variants={slideInUp}
+          >
+            Latest Insights & Advertising Trends
+          </motion.h2>
+          <motion.p
+            className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto"
+            variants={slideInUp}
+          >
+            Discover the latest articles, success stories, and expert analysis in the dynamic world of advertising.
+          </motion.p>
+        </motion.div>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {sortedBlogs.length > 0 && (
