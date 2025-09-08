@@ -16,7 +16,6 @@ import {
   useAnimationFrame,
 } from "framer-motion";
 import { BsSunFill, BsMoonStarsFill } from "react-icons/bs";
-import { FaMoon, FaSun } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 const wrap = (min, max, value) => {
@@ -55,299 +54,120 @@ const GlobalAnimations = () => (
     `}</style>
 );
 
-const TrailStar = ({ x, y, size }) => {
-  return (
-    <motion.div
-      // MODIFICATION 1: Changed 'fixed' to 'absolute' to contain stars within the hero section.
-      className="absolute rounded-full z-[9999] pointer-events-none"
-      style={{
-        left: x,
-        top: y,
-        width: size,
-        height: size,
-        backgroundColor: "#FFFFFF",
-        boxShadow: "0 0 10px #FFFFFF, 0 0 20px #FFFFFF",
-        transform: "translate(-50%, -50%)",
-      }}
-      initial={{ scale: 1, opacity: 1 }}
-      exit={{
-        scale: 0,
-        opacity: 0,
-        transition: { duration: 1.2, ease: "easeOut" },
-      }}
-    />
-  );
-};
-const AbstractDayBackground = () => (
-  <div className="absolute inset-0">
-    {" "}
-    <div className="absolute top-0 left-0 w-full h-full bg-[#f4f7fc]" />{" "}
-    <div
-      className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-blue-100 rounded-full"
-      style={{ opacity: 0.2, filter: "blur(100px)" }}
-    />{" "}
-    <div
-      className="absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 bg-gray-200"
-      style={{
-        opacity: 0.3,
-        clipPath: "polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)",
-      }}
-    />{" "}
-  </div>
-);
-const Stars = () => {
-  const starCount = 150;
-  const stars = useMemo(
-    () =>
-      Array.from({ length: starCount }).map((_, i) => ({
-        id: i,
-        x: `${Math.random() * 100}%`,
-        y: `${Math.random() * 80}%`,
-        size: `${Math.random() * 1.5 + 0.5}px`,
-        delay: Math.random() * 5,
-      })),
-    []
-  );
-  return (
-    <div className="absolute inset-0 z-0">
-      {" "}
-      {stars.map((star) => (
-        <motion.div
-          key={star.id}
-          className="absolute rounded-full bg-white"
-          style={{
-            top: star.y,
-            left: star.x,
-            width: star.size,
-            height: star.size,
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 1, 0.5, 1, 0] }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            delay: star.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}{" "}
-    </div>
-  );
-};
+const MotionLink = motion(Link); 
 
-const DigitalCityscape = ({ theme }) => {
-  const buildings = useMemo(
-    () =>
-      Array.from({ length: 40 }).map((_, i) => ({
-        id: i,
-        height: `${Math.random() * 25 + 5}%`,
-      })),
-    []
-  );
-  const cityVariants = {
-    night: { backgroundColor: "rgba(255, 255, 255, 0.05)" },
-    day: { backgroundColor: "#cdd6e4" },
-  };
+const WaveBackground = () => {
   return (
-    // [RESPONSIVE-SM] Reduced height on small screens
-    <div className="absolute bottom-0 left-0 w-full h-1/4 sm:h-1/3 flex items-end justify-center gap-[0.5%] z-10">
-      {buildings.map((building) => (
-        <motion.div
-          key={building.id}
-          className="w-full"
-          initial={{ height: "0%" }}
-          animate={{ height: building.height }}
-          transition={{
-            duration: 1,
-            ease: "easeOut",
-            delay: Math.random() * 1.5,
-          }}
-        >
-          <motion.div
-            className="w-full h-full"
-            variants={cityVariants}
-            animate={theme}
-            transition={{ duration: 1 }}
-          />
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
-const Sky = ({ theme }) => {
-  return (
-    <div className="absolute inset-0 z-0">
-      {" "}
-      <AnimatePresence>
-        {" "}
-        {theme === "night" && (
-          <motion.div
-            key="nightSky"
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, #020111 10%, #20202c 100%)",
+    <div className="absolute inset-0 z-0 overflow-hidden bg-white">
+      <svg
+        className="absolute bottom-0 left-0 w-full h-auto"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 320"
+      >
+        <defs>
+          <motion.path
+            id="wave-path"
+            d="M0,160L48,181.3C96,203,192,245,288,250.7C384,256,480,224,576,192C672,160,768,128,864,133.3C960,139,1056,181,1152,186.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            animate={{
+              d: [
+                "M0,160L48,181.3C96,203,192,245,288,250.7C384,256,480,224,576,192C672,160,768,128,864,133.3C960,139,1056,181,1152,186.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+                "M0,192L48,170.7C96,149,192,107,288,112C384,117,480,171,576,197.3C672,224,768,224,864,202.7C960,181,1056,139,1152,138.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+                "M0,160L48,181.3C96,203,192,245,288,250.7C384,256,480,224,576,192C672,160,768,128,864,133.3C960,139,1056,181,1152,186.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+              ],
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-          >
-            {" "}
-            <motion.div key="moon" className="absolute top-[15%] left-[10%]">
-              {/* [RESPONSIVE-SM] Smaller icon on small screens */}
-              <FaMoon className="text-6xl sm:text-8xl text-slate-200 moon-glow" />
-            </motion.div>{" "}
-          </motion.div>
-        )}{" "}
-        {theme === "day" && (
-          <motion.div
-            key="daySky"
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-          >
-            {" "}
-            <AbstractDayBackground />{" "}
-            <motion.div key="sun" className="absolute top-[15%] right-[10%]">
-              {/* [RESPONSIVE-SM] Smaller icon on small screens */}
-              <FaSun className="text-7xl sm:text-9xl text-yellow-500 sun-glow" />
-            </motion.div>{" "}
-          </motion.div>
-        )}{" "}
-      </AnimatePresence>{" "}
+            transition={{ duration: 15, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          />
+        </defs>
+        <use href="#wave-path" fill="rgba(239, 246, 255, 1)" /> 
+        <use href="#wave-path" fill="rgba(219, 234, 254, 0.5)" transform="translate(20, 20)" />
+        <use href="#wave-path" fill="rgba(191, 219, 254, 0.3)" transform="translate(-20, 40)" />
+      </svg>
     </div>
   );
 };
-
-const ThemeToggle = ({ theme, setTheme }) => {
-  return (
-    <motion.button
-      onClick={() => setTheme(theme === "night" ? "day" : "night")}
-      className="fixed bottom-4 left-4 sm:bottom-8 sm:left-8 z-50 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm border border-white/20"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-    >
-      {" "}
-      <AnimatePresence mode="wait" initial={false}>
-        {" "}
-        {theme === "night" ? (
-          <motion.div
-            key="sun"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-          >
-            {" "}
-            <BsSunFill className="h-6 w-6 text-yellow-400" />{" "}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="moon"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-          >
-            {" "}
-            <BsMoonStarsFill className="h-6 w-6 text-slate-300" />{" "}
-          </motion.div>
-        )}{" "}
-      </AnimatePresence>{" "}
-    </motion.button>
-  );
-};
-
-const MotionLink = motion(Link);
 
 const HeroSection = () => {
-  const [theme, setTheme] = useState("night");
-  const [stars, setStars] = useState([]);
+  const words = ["Captivate", "Engage", "Convert", "Inspire"];
+  const [index, setIndex] = useState(0);
 
-  const handleMouseMove = (e) => {
-    if (theme !== "night") return;
-    const size = Math.random() * 2.5 + 1;
-    setStars((prev) => [
-      ...prev,
-      // MODIFICATION 2: Changed to clientX/clientY for viewport-relative coordinates.
-      { id: Date.now(), x: e.clientX, y: e.clientY, size },
-    ]);
-  };
   useEffect(() => {
-    if (theme === "day") setStars([]);
     const interval = setInterval(() => {
-      setStars((prev) => prev.slice(Math.max(0, prev.length - 20)));
-    }, 500);
+      setIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }, 2500);
     return () => clearInterval(interval);
-  }, [theme]);
+  }, [words.length]);
 
-  const contentVariants = {
-    night: { color: "#FFFFFF", textShadow: "0 2px 10px rgba(0,0,0,0.7)" },
-    day: { color: "#1A202C", textShadow: "none" },
-  };
-  const paragraphVariants = {
-    night: { color: "#E2E8F0" },
-    day: { color: "#4A5568" },
-  };
-  const buttonVariants = {
-    night: {
-      background: "linear-gradient(to right, #1a2a80, #6978D1)",
-      color: "#FFF",
+  const containerVariants = {
+    initial: {},
+    animate: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
     },
-    day: { background: "#2563eb", color: "#FFF" },
+  };
+
+  const itemVariants = {
+    initial: { y: 20, opacity: 0 },
+    animate: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
   };
 
   return (
     <section
-      onMouseMove={handleMouseMove}
-      className="relative w-full h-screen overflow-hidden font-body bg-black"
+      className="relative w-full h-screen overflow-hidden font-body bg-white text-gray-800 flex items-center justify-center"
     >
-      <AnimatePresence>
-        {" "}
-        {stars.map((star) => (
-          <TrailStar key={star.id} x={star.x} y={star.y} size={star.size} />
-        ))}{" "}
-      </AnimatePresence>
-      <Sky theme={theme} />
-      {theme === "night" && <Stars />}
-      <DigitalCityscape theme={theme} />
-      <div className="relative w-full h-full flex items-center justify-center p-4 z-20 pointer-events-none">
-        <div className="w-full max-w-xl md:max-w-3xl text-center">
-          {/* [RESPONSIVE-SM] Reduced base heading size */}
-          <motion.h1
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold font-heading mb-4 md:mb-6 leading-tight"
-            variants={contentVariants}
-            animate={theme}
-            transition={{ duration: 1 }}
-          >
-            Campaigns That Captivate & Convert.
-          </motion.h1>
-          <motion.p
-            className="text-base md:text-xl max-w-sm sm:max-w-lg md:max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed"
-            variants={paragraphVariants}
-            animate={theme}
-            transition={{ duration: 1 }}
-          >
-            Based in Ludhiana, we engineer strategic campaigns that deliver
-            measurable impact and build lasting brand legacies.
-          </motion.p>
-          {/* [RESPONSIVE-SM] Reduced base button padding and text size */}
+      <WaveBackground />
+      <motion.div
+        className="relative w-full max-w-4xl text-center p-4 z-10"
+        variants={containerVariants}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.h1
+          className="flex flex-wrap items-center justify-center text-3xl sm:text-5xl md:text-6xl font-bold font-heading mb-4 md:mb-6 leading-tight"
+          variants={itemVariants}
+        >
+          <span className="mr-2 sm:mr-4">Campaigns That</span>
+          <span className="relative inline-block h-[1.2em] overflow-hidden align-bottom min-w-[180px] sm:min-w-[280px] md:min-w-[350px] text-left">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={words[index]}
+                className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
+                initial={{ y: "100%" }}
+                animate={{ y: "0%" }}
+                exit={{ y: "-100%" }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                {words[index]}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+        </motion.h1>
+        <motion.p
+          className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed"
+          variants={itemVariants}
+        >
+          Based in Ludhiana, we engineer strategic campaigns that deliver
+          measurable impact and build lasting brand legacies.
+        </motion.p>
+        <motion.div variants={itemVariants}>
           <MotionLink
             to="/contact"
-            whileHover={{ scale: 1.05, y: -2 }}
+            className="inline-block px-8 py-4 text-lg font-bold rounded-full shadow-lg pointer-events-auto bg-blue-600 text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-blue-500/40"
+            whileHover={{ scale: 1.05, y: -3 }}
             whileTap={{ scale: 0.95 }}
-            variants={buttonVariants}
-            animate={theme}
-            transition={{ duration: 1 }}
-            className="inline-block px-6 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-bold rounded-full shadow-lg pointer-events-auto"
           >
             Start Your Project
           </MotionLink>
-        </div>
-      </div>
-      <ThemeToggle theme={theme} setTheme={setTheme} />
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

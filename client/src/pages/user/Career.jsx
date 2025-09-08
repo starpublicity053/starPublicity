@@ -123,11 +123,38 @@ const Career = () => {
     >
       {/* 1. Hero Section */}
       <section
-        className="relative w-full py-20 px-4 sm:px-6 md:px-20 flex flex-col md:flex-row items-center justify-center md:justify-between gap-12 min-h-[100vh] overflow-hidden"
-        style={{
-          backgroundColor: "#1A2A80",
-        }}
+        className="relative w-full py-20 px-4 sm:px-6 md:px-20 flex flex-col md:flex-row items-center justify-center md:justify-between gap-12 min-h-[100vh] overflow-hidden bg-[#1A2A80]"
       >
+        {/* Animated Gradient Background */}
+        <motion.div
+          className="absolute inset-0 z-0"
+          animate={{
+            background: [
+              "linear-gradient(135deg, #1A2A80 0%, #3B38A0 50%, #1A2A80 100%)",
+              "linear-gradient(135deg, #1A2A80 0%, #1A2A80 50%, #3B38A0 100%)",
+              "linear-gradient(135deg, #3B38A0 0%, #1A2A80 50%, #1A2A80 100%)",
+              "linear-gradient(135deg, #1A2A80 0%, #3B38A0 50%, #1A2A80 100%)",
+            ],
+          }}
+          transition={{
+            duration: 20,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "mirror",
+          }}
+          style={{ backgroundSize: "400% 400%" }}
+        />
+        {/* Floating Shapes */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-blue-400/10 rounded-full filter blur-2xl"
+          animate={{ x: [-20, 20, -20], y: [-20, 20, -20], rotate: [0, 180, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 40, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-purple-400/10 rounded-xl filter blur-3xl"
+          animate={{ x: [30, -30, 30], y: [30, -30, 30], rotate: [0, -180, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 50, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 5 }}
+        />
         {/* Hero Content */}
         <motion.div
           className="relative z-10 w-full md:w-1/2 text-center md:text-left text-white"
@@ -322,13 +349,21 @@ const Career = () => {
         viewport={{ once: true, amount: 0.3 }}
         variants={ctaSectionVariants}
         style={{
-          background: "linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%)",
+          backgroundColor: "#1A2A80",
         }}
       >
-        <div className="absolute inset-0 z-0">
-          <motion.div className="absolute -top-1/4 -right-1/4 w-3/4 h-3/4 bg-white opacity-5 mix-blend-overlay rounded-full" initial={{ scale: 0.5, rotate: -45 }} whileInView={{ scale: 1, rotate: 0 }} transition={{ duration: 1.5, ease: "easeOut" }} viewport={{ once: true, amount: 0.3 }} />
-          <motion.div className="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4 bg-white opacity-5 mix-blend-overlay rounded-full" initial={{ scale: 0.5, rotate: 45 }} whileInView={{ scale: 1, rotate: 0 }} transition={{ duration: 1.5, ease: "easeOut" }} viewport={{ once: true, amount: 0.3 }} />
-          <motion.div className="absolute inset-0" style={{ background: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`, opacity: 0.5 }} />
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Animated Orbs */}
+          <motion.div
+            className="absolute -top-1/4 -left-1/4 w-96 h-96 bg-blue-400/20 rounded-full filter blur-3xl"
+            animate={{ x: [0, 50, 0], y: [0, -50, 0], scale: [1, 1.1, 1] }}
+            transition={{ duration: 20, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute -bottom-1/4 -right-1/4 w-80 h-80 bg-purple-400/20 rounded-full filter blur-3xl"
+            animate={{ x: [0, -40, 0], y: [0, 60, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 25, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 5 }}
+          />
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto md:px-12 flex flex-col items-center text-center">
