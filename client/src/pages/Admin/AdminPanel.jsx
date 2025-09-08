@@ -1118,7 +1118,7 @@ const AdminPanel = () => {
   // New: Filtered Media Inquiries
   const filteredMediaInquiries = useMemo(() => {
     let filtered = mediaInquiries;
-
+ 
     // Apply search term
     if (mediaSearchTerm) {
       const lowerSearch = mediaSearchTerm.toLowerCase();
@@ -1126,7 +1126,7 @@ const AdminPanel = () => {
         (item) =>
           (item.name || "").toLowerCase().includes(lowerSearch) ||
           (item.company || "").toLowerCase().includes(lowerSearch) ||
-          (item.phone || "").toLowerCase().includes(lowerSearch) ||
+          (item.phone || "").toLowerCase().includes(lowerSearch) || 
           (item.message || "").toLowerCase().includes(lowerSearch)
       );
     }

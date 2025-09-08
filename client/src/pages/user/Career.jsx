@@ -12,12 +12,12 @@ const MotionLink = motion(Link);
 // CORRECTED: The incorrect image import has been removed.
 
 const GALLERY_IMAGES = [
-  "/assets/Career images/career 1.png",
   "/assets/Career images/square img 1.png",
+  "/assets/Career images/career 1.png",
   "/assets/Career images/career 2.png",
-  "/assets/Career images/square img 2.png",
   "/assets/Career images/career 3.png",
-];
+  "/assets/Career images/square img 2.png",
+ ];
 
 const Career = () => {
   const gallerySectionRef = useRef(null);
@@ -258,9 +258,16 @@ const Career = () => {
       {/* 3. Image Gallery Section */}
       <section ref={gallerySectionRef} className="py-16 sm:py-20 md:py-10 overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-12 text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1A2A80] leading-tight mb-4">
-            Our Vibrant Workplace
-          </h2>
+          <div className="relative inline-block">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1A2A80] leading-tight mb-4">
+              Glimpse Into Our World
+            </h2>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-gradient-to-r from-transparent via-[#3B38A0] to-transparent" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 p-1 bg-white rounded-full">
+              <div className="w-3 h-3 bg-[#1A2A80] rounded-full" />
+            </div>
+          </div>
+
           <p className="text-base sm:text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
             Scroll down to explore the daily life, collaboration, and culture
             that make Star Publicity a truly unique place to thrive.
